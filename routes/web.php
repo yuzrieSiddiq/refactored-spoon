@@ -45,3 +45,7 @@ Route::get('/test', function () {
     // the token is valid and we have found the user via the sub claim
     return response()->json(compact('user'));
 });
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index');
