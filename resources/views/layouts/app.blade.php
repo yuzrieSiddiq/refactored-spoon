@@ -19,6 +19,8 @@
             'csrfToken' => csrf_token(),
         ]) !!};
     </script>
+
+    @yield('extra_head')
 </head>
 <body>
     <div id="app">
@@ -83,5 +85,6 @@
 
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}"></script>
+    @yield('extra_js')
 </body>
 </html>

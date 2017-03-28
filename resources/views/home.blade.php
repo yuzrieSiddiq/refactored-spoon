@@ -10,8 +10,43 @@
                 <div class="panel-body">
                     You are logged in!
                 </div>
+                <div class="panel-footer">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <input type="file" id="excel">
+                        </div>
+                        <div class="col-md-4">
+                            <button class="btn btn-success process">PROCESS</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
+@endsection
+
+@section('extra_js')
+<script>
+(function() {
+    let getToken = function() {
+        return $('meta[name=csrf-token]').attr('content')
+    }
+
+    $('.process').click(function() {
+        let data = {
+            '_token': getToken(),
+            'file': $('#excel').val()
+        }
+        $.ajax({
+            'url': '{{ route('excel.import') }}',
+            'method': 'POST',
+            'data': data,
+            'enctype': 'multipart/form-data'
+        }).done(function(response) {
+            console.log(response)
+        })
+    })
+})()
+</script>
 @endsection
