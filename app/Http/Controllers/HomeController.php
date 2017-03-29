@@ -30,17 +30,13 @@ class HomeController extends Controller
 
     public function import(Request $request)
     {
-        try {
-            return $result = Excel::load("public/upload/test.xls",function($reader){
-                //
-            })->get();
-        } catch (Exception $e) {
-            echo "<br>".$e->getMessage();
-        }
-        // $input = $request->only([ 'file' ]);
-        //
-        // return Excel::load($request['file'], function($reader) { })->get();
+        $input = $request->only([ 'file' ]);
+        $rows = json_decode($input['file']);
 
-        // return response()->json($path);
+        foreach ($rows as $row) {
+            return response()->json($row);
+        }
+
+        // return response()->json($input);
     }
 }
