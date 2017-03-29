@@ -28,15 +28,45 @@ class HomeController extends Controller
         return view('home');
     }
 
-    public function import(Request $request)
+    /**
+     * The csv file does not include headers, simply starts from real data, headers works as follows:
+     * 1) importLecturer: firstname, lastname, email, password
+     * 2) importStudent: firstname, lastname, email, student id, password, local/international, unitcode n
+     * 3) importQuestions: unitcode, questions, ans n, correct answer
+     **/
+    public function uploadLecturers(Request $request)
     {
         $input = $request->only([ 'file' ]);
-        $rows = json_decode($input['file']);
+        $lecturers = json_decode($input['file']);
 
-        foreach ($rows as $row) {
+        foreach ($lecturers as $row) {
             return response()->json($row);
         }
 
-        // return response()->json($input);
+        // return 'ok';
+    }
+
+    public function uploadStudents(Request $request)
+    {
+        $input = $request->only([ 'file' ]);
+        $students = json_decode($input['file']);
+
+        foreach ($students as $row) {
+            return response()->json($row);
+        }
+
+        // return 'ok';
+    }
+
+    public function uploadQuestions(Request $request)
+    {
+        $input = $request->only([ 'file' ]);
+        $questions = json_decode($input['file']);
+
+        foreach ($questions as $row) {
+            return response()->json($row);
+        }
+
+        // return 'ok';
     }
 }

@@ -10,13 +10,41 @@
                 <div class="panel-body">
                     You are logged in!
                 </div>
-                <div class="panel-footer">
-                    <div class="row">
-                        <div class="col-md-8">
-                            <input type="file" id="excel">
+            </div>
+        </div>
+
+        <div class="col-md-8 col-md-offset-2">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">LECTURERS</div>
+                        <div class="panel-body">
+                            <input type="file" id="lecturers">
                         </div>
-                        <div class="col-md-4">
-                            <button class="btn btn-success process">PROCESS</button>
+                        <div class="panel-footer">
+                            <button class="btn btn-primary process form-control" data-upload="lecturers">PROCESS</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">STUDENTS</div>
+                        <div class="panel-body">
+                            <input type="file" id="students">
+                        </div>
+                        <div class="panel-footer">
+                            <button class="btn btn-info process form-control" data-upload="students">PROCESS</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="panel panel-success">
+                        <div class="panel-heading">QUESTIONS</div>
+                        <div class="panel-body">
+                            <input type="file" id="questions">
+                        </div>
+                        <div class="panel-footer">
+                            <button class="btn btn-success process form-control" data-upload="questions">PROCESS</button>
                         </div>
                     </div>
                 </div>
@@ -34,26 +62,39 @@
         return $('meta[name=csrf-token]').attr('content')
     }
 
-    let papaparseafile = function(file) {
-        let jsonstring = ''
-
-    }
-
     $('.process').click(function() {
-        // do the ajax after parsing complete
-        Papa.parse($('#excel')[0].files[0], {
+        let file = {}
+        let data = {}
+        let url = ""
+        let method = "POST"
+
+        if ($(this).data('upload') == 'lecturers') {
+            inputfile = $('#lecturers')
+            url = '{{ route('csv.lecturers') }}'
+        } else if ($(this).data('upload') == 'students') {
+            inputfile = $('#students')
+            url = '{{ route('csv.students') }}'
+        } else if ($(this).data('upload') == 'questions') {
+            inputfile = $('#questions')
+            url = '{{ route('csv.questions') }}'
+        } else {
+            console.log('something is wrong with the data-attribute for this button')
+        }
+
+        // do the csv file parsing
+        Papa.parse(inputfile[0].files[0], {
             complete: function(results) {
-                jsonstring = JSON.stringify(results.data)
+                let jsonstring = JSON.stringify(results.data)
 
                 // after complete parsing, send to controller via ajax
-                let data = {
+                data = {
                     '_token': getToken(),
                     'file': jsonstring
                 }
 
                 $.ajax({
-                    'url': '{{ route('excel.import') }}',
-                    'method': 'POST',
+                    'url': url,
+                    'method': method,
                     'data': data,
                     'enctype': 'multipart/form-data'
                 }).done(function(response) {

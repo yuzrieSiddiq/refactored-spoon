@@ -49,4 +49,6 @@ Route::get('/test', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index');
-Route::post('/excel', 'HomeController@import')->name('excel.import');
+Route::post('/csv/lecturers', 'HomeController@uploadLecturers')->name('csv.lecturers');
+Route::post('/csv/students',  'HomeController@uploadStudents')->name('csv.students');
+Route::post('/csv/questions', 'HomeController@uploadQuestions')->name('csv.questions');
