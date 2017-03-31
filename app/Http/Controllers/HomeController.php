@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Input;
-use Excel;
+use Auth;
 
 class HomeController extends Controller
 {
@@ -25,7 +25,27 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        $user = Auth::user();
+
+        // TODO: convert to using roles/permissions
+        switch ($user->name) {
+            case 'student':
+                return view ('home.student');
+                break;
+
+            case 'lecturer':
+                return view ('home.lecturer');
+                break;
+
+            case 'admin':
+                return view ('home.admin');
+                break;
+
+            default:
+                return view('home');
+                break;
+        }
+
     }
 
     /**
