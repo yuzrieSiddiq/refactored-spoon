@@ -8,7 +8,14 @@
                 <div class="panel-heading">Dashboard</div>
 
                 <div class="panel-body">
-                    You are logged in!
+                    <h3>YOUR TASKS</h3>
+                    <ul>
+                        <li>CRUD QUIZZES</li>
+                        <li>UPLOAD QUIZ</li>
+                        <li>CRUD QUESTION</li>
+                        <li>ASSIGN STUDENT GROUPS</li>
+                        <li>CRUD UNIT</li>
+                    </ul>
                 </div>
             </div>
         </div>

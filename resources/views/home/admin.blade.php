@@ -8,7 +8,12 @@
                 <div class="panel-heading">Dashboard</div>
 
                 <div class="panel-body">
-                    You are logged in!
+                    <h3>YOUR TASKS</h3>
+                    <ul>
+                        <li>CRUD USER</li>
+                        <li>CRUD ROLES PERMISSIONS</li>
+                        <li>CRUD UNIT</li>
+                    </ul>
                 </div>
             </div>
         </div>
