@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\User;
 
-class LecturerController extends Controller
+class UserController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -13,7 +14,7 @@ class LecturerController extends Controller
      */
     public function index()
     {
-        //
+        return view ('user.index');
     }
 
     /**
@@ -23,7 +24,7 @@ class LecturerController extends Controller
      */
     public function create()
     {
-        //
+        return view ('user.create');
     }
 
     /**
@@ -45,7 +46,10 @@ class LecturerController extends Controller
      */
     public function show($id)
     {
-        //
+        $data = [];
+        $data['user'] = User::find($id);
+
+        return view ('user.show', $data);
     }
 
     /**
@@ -56,7 +60,10 @@ class LecturerController extends Controller
      */
     public function edit($id)
     {
-        //
+        $data = [];
+        $data['user'] = User::find($id);
+
+        return view ('user.edit', $data);
     }
 
     /**
@@ -68,7 +75,16 @@ class LecturerController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $input = $request->only([
+            'name', 'email'
+        ]);
+        $user = User::find($id);
+        $user->update([
+            'name' => $input['name'],
+            'email' => $input['email']
+        ]);
+
+        return 'updated';
     }
 
     /**
@@ -79,6 +95,9 @@ class LecturerController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $user = User::find($id);
+        $user->delete();
+
+        return 'deleted';
     }
 }

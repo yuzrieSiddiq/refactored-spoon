@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Model\Unit;
 
 class UnitController extends Controller
 {
@@ -13,7 +14,7 @@ class UnitController extends Controller
      */
     public function index()
     {
-        //
+        return view ('unit.index');
     }
 
     /**
@@ -23,7 +24,7 @@ class UnitController extends Controller
      */
     public function create()
     {
-        //
+        return view ('unit.create');
     }
 
     /**
@@ -45,7 +46,10 @@ class UnitController extends Controller
      */
     public function show($id)
     {
-        //
+        $data = [];
+        $data['unit'] = Unit::find($id);
+
+        return view ('unit.show', $data);
     }
 
     /**
@@ -56,7 +60,10 @@ class UnitController extends Controller
      */
     public function edit($id)
     {
-        //
+        $data = [];
+        $data['unit'] = Unit::find($id);
+
+        return view ('unit.edit', $data);
     }
 
     /**
@@ -68,7 +75,18 @@ class UnitController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $input = $request->only([
+            'code', 'name', 'description'
+        ]);
+
+        $unit = Unit::find($id);
+        $unit->update([
+            'code' => $input['code'],
+            'name' => $input['name'],
+            'description' => $input['description'],
+        ]);
+
+        return 'updated';
     }
 
     /**
@@ -79,6 +97,9 @@ class UnitController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $unit = Unit::find($id);
+        $unit->delete();
+
+        return 'deleted';
     }
 }

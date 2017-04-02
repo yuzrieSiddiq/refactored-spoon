@@ -55,9 +55,10 @@
                             <li><a href="{{ route('login') }}">Login</a></li>
                             <li><a href="{{ route('register') }}">Register</a></li>
                         @else
-                            <li><a href="{{ route('lecturers.index') }}">LECTURER</a></li>
+                            <li><a href="{{ route('users.index') }}">USERS</a></li>
                             <li><a href="{{ route('students.index') }}">STUDENT</a></li>
                             <li><a href="{{ route('questions.index') }}">QUESTION</a></li>
+                            <li><a href="{{ route('quizs.index') }}">QUIZ</a></li>
                             <li><a href="{{ route('units.index') }}">UNIT</a></li>
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">

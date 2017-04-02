@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Model\Student;
+use App\Quiz;
 
-class StudentController extends Controller
+class QuizController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -14,7 +14,7 @@ class StudentController extends Controller
      */
     public function index()
     {
-        return view ('student.index');
+        return view ('quiz.index');
     }
 
     /**
@@ -24,7 +24,7 @@ class StudentController extends Controller
      */
     public function create()
     {
-        return view ('student.create');
+        return view ('quiz.create');
     }
 
     /**
@@ -47,9 +47,9 @@ class StudentController extends Controller
     public function show($id)
     {
         $data = [];
-        $data['student'] = Student::find($id);
+        $data['quiz'] = Quiz::find($id);
 
-        return view ('student.show', $data);
+        return view ('quiz.show', $data);
     }
 
     /**
@@ -61,9 +61,9 @@ class StudentController extends Controller
     public function edit($id)
     {
         $data = [];
-        $data['student'] = Student::find($id);
+        $data['quiz'] = Quiz::find($id);
 
-        return view ('student.edit', $data);
+        return view ('quiz.edit', $data);
     }
 
     /**
@@ -76,16 +76,14 @@ class StudentController extends Controller
     public function update(Request $request, $id)
     {
         $input = $request->only([
-            'user_id', 'unit_id', 'semester', 'year', 'team_number', 'is_group_leader'
+            'unit_id', 'title', 'type', 'status'
         ]);
-        $student = Student::find($id);
-        $student->update([
-            'user_id' => $input['user_id'],
+        $quiz = Quiz::find($id);
+        $quiz->update([
             'unit_id' => $input['unit_id'],
-            'semester' => $input['semester'],
-            'year' => $input['year'],
-            'team_number' => $input['team_number'],
-            'is_group_leader' => $input['is_group_leader']
+            'title' => $input['title'],
+            'type' => $input['type'],
+            'status' => $input['status']
         ]);
 
         return 'updated';
@@ -99,8 +97,8 @@ class StudentController extends Controller
      */
     public function destroy($id)
     {
-        $student = Student::find($id);
-        $student->delete();
+        $quiz = Quiz::find($id);
+        $quiz->delete();
 
         return 'deleted';
     }
