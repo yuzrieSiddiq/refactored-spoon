@@ -7,7 +7,7 @@
 @section('content')
 <div class="container">
     <div class="row">
-        <div class="col-md-offset-1 col-md-10">
+        <div class="col-md-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
                     LECTURER INDEX
@@ -17,9 +17,11 @@
                         <table class="table table-striped table-bordered" id="users-table">
                             <thead>
                                 <tr>
-                                    <th class="col-md-1">ID</th>
-                                    <th class="col-md-4">Name</th>
-                                    <th class="col-md-4">Email</th>
+                                    <th>ID</th>
+                                    <th>First Name</th>
+                                    <th>Last Name</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
                                     {{-- <th>Role</th> --}}
                                     <th></th>
                                 </tr>

@@ -19,13 +19,10 @@ class DatatablesController extends Controller
     #1 users
     public function getUsersDatatable()
     {
-        return Datatables::of(User::select('id', 'firstname', 'lastname', 'email'))->make();
-
-        // TODO: after populate, uncomment these lines
-        // return Datatables::of(
-        //     User::select('users.id', 'users.username', 'users.email', 'roles.name')
-        //     ->leftJoin('user_has_roles', 'user_has_roles.user_id', '=', 'users.id')
-        //     ->leftJoin('roles', 'user_has_roles.role_id', '=', 'roles.id')
-        // )->make();
+        return Datatables::of(
+            User::select('users.id', 'users.firstname', 'users.lastname', 'users.email', 'roles.name')
+            ->leftJoin('user_has_roles', 'user_has_roles.user_id', '=', 'users.id')
+            ->leftJoin('roles', 'user_has_roles.role_id', '=', 'roles.id')
+        )->make();
     }
 }

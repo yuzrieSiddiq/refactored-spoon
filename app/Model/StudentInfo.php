@@ -9,4 +9,10 @@ class StudentInfo extends Model
     protected $fillable = [
         'user_id', 'student_id', 'locality'
     ];
+
+    // this info belongs to one student
+    public function user()
+    {
+        return $this->belongsTo('App\User');
+    }
 }

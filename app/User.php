@@ -41,9 +41,27 @@ class User extends Authenticatable
         $this->attributes['password'] = Hash::make($value);
     }
 
+    // TODO: remove this -> unrelated to this project
     public function books()
     {
         return $this->hasMany('App\Book');
     }
 
+    // for `role: lecturer`
+    public function lecturer_units()
+    {
+        return $this->hasMany('App\Model\LecturerUnit');
+    }
+
+    // for `role: student`
+    public function student_info()
+    {
+        return $this->hasOne('App\Model\StudentInfo');
+    }
+
+    // student listing `one user may have many student list entry`
+    public function students()
+    {
+        return $this->hasMany('App\Model\Student');
+    }
 }

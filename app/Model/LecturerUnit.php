@@ -9,4 +9,16 @@ class LecturerUnit extends Model
     protected $fillable = [
         'user_id', 'unit_id'
     ];
+
+    // this belongs to a lecturer (user)
+    public function user()
+    {
+        return $this->belongsTo('App\User');
+    }
+
+    // this belongs to a unit
+    public function unit()
+    {
+        return $this->belongsTo('App\Model\Unit');
+    }
 }
