@@ -16,3 +16,9 @@ mix.js('resources/assets/js/app.js', 'public/js')
 
 const papaparsePath = './node_modules/papaparse/'
 mix.copy(papaparsePath + 'papaparse.min.js', 'public/js/papaparse.min.js');
+
+const jQueryPath = './node_modules/jquery/dist/';
+mix.copy(jQueryPath + 'jquery.min.js', 'public/js/jquery.min.js');
+
+const bootstrapJSPath = './node_modules/bootstrap-sass/assets/javascripts/';
+mix.copy(bootstrapJSPath + 'bootstrap.min.js', 'public/js/bootstrap.min.js');

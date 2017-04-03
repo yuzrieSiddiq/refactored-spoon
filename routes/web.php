@@ -57,3 +57,5 @@ Route::resource('students',  'StudentController');
 Route::resource('questions', 'QuestionController');
 Route::resource('quizs', 'QuizController');
 Route::resource('units', 'UnitController');
+
+Route::get('usersdatatable', 'DatatablesController@getUsersDatatable')->name('get.users.datatable');
