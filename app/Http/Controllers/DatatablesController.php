@@ -19,7 +19,7 @@ class DatatablesController extends Controller
     #1 users
     public function getUsersDatatable()
     {
-        return Datatables::of(User::select('id', 'name', 'email'))->make();
+        return Datatables::of(User::select('id', 'firstname', 'lastname', 'email'))->make();
 
         // TODO: after populate, uncomment these lines
         // return Datatables::of(
