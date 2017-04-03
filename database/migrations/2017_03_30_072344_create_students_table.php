@@ -22,7 +22,7 @@ class CreateStudentsTable extends Migration
             $table->foreign('unit_id')->references('id')->on('units');
 
             $table->string('semester');
-            $table->date('year');
+            $table->integer('year');
             $table->integer('team_number');
             $table->boolean('is_group_leader');
 
