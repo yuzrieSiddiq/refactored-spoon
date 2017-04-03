@@ -49,7 +49,7 @@
                 </div>
                 <div class="modal-body">
                     <button type="button" class="btn btn-default cancel-modal" data-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-danger delete" disabled>DELETE</button>
+                    <button type="button" class="btn btn-danger delete">DELETE</button>
                 </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
@@ -68,9 +68,7 @@
         return $('meta[name=csrf-token]').attr('content')
     }
 
-    let table_operations = '\
-        <button class="btn btn-success manage" data-url="{{ route('students.edit', "id")}}">Manage</button>\
-        <button class="btn btn-danger modal-remove" data-toggle="modal">Remove</button>';
+    let table_operations = '<button class="btn btn-danger modal-remove" data-toggle="modal">Remove</button>';
 
     let table = $('#students-table').DataTable( {
         "ajax": "{{ route('get.students.datatable') }}",
@@ -81,16 +79,6 @@
         } ]
     } );
 
-    $('#students-table tbody').on( 'click', '.manage', function () {
-        // get the row data
-        let data = table.row( $(this).parents('tr') ).data()
-
-        // get the url
-        let url = $(this).data('url').replace('id', data[0])
-
-        // redirect using href
-        window.location.href = url;
-    } );
 
     $('#students-table tbody').on( 'click', '.modal-remove', function () {
         let data = table.row( $(this).parents('tr') ).data()
@@ -101,7 +89,7 @@
         modal.prop('id', 'delete-modal-' + data[0])
 
         // replacing values inside the specified classes
-        let modal_title = modal.find('.modal-title').text('Remove ' + data[1]);
+        let modal_title = modal.find('.modal-title').text('Remove ' + data[2]);
 
         // register the modal to the body and toggle the modal
         $('.container').append(modal)

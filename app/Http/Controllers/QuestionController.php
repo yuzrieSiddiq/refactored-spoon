@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Model\Question;
+use App\Model\Quiz;
 
 class QuestionController extends Controller
 {
@@ -62,6 +63,7 @@ class QuestionController extends Controller
     {
         $data = [];
         $data['question'] = Question::find($id);
+        $data['quiz'] = Quiz::find($data['question']->quiz_id);
 
         return view ('question.edit', $data);
     }

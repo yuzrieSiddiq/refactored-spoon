@@ -16,10 +16,12 @@ class CreateLecturerUnitsTable extends Migration
         Schema::create('lecturer_units', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('user_id')->unsigned();
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('user_id')->references('id')->on('users')
+                    ->onUpdate('cascade')->onDelete('cascade');
             $table->integer('unit_id')->unsigned();
-            $table->foreign('unit_id')->references('id')->on('units');
-            
+            $table->foreign('unit_id')->references('id')->on('units')
+                    ->onUpdate('cascade')->onDelete('cascade');
+
             $table->timestamps();
         });
     }

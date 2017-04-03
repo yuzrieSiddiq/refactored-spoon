@@ -16,7 +16,8 @@ class CreateQuestionsTable extends Migration
         Schema::create('questions', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('quiz_id')->unsigned();
-            $table->foreign('quiz_id')->references('id')->on('quizzes');
+            $table->foreign('quiz_id')->references('id')->on('quizzes')
+                    ->onUpdate('cascade')->onDelete('cascade');
 
             $table->string('answer_type');    // single answer / rank 1-5
             $table->text('question');

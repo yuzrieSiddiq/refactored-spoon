@@ -29,7 +29,7 @@
                 </div> {{-- end .panel-body --}}
                 <div class="panel-footer">
                     <a class="btn btn-success" href="{{ route('questions.create') }}">
-                        CREATE NEW UNIT
+                        CREATE NEW QUESTION
                     </a>
                 </div> {{-- end .panel-footer --}}
             </div>
@@ -45,7 +45,7 @@
                 </div>
                 <div class="modal-body">
                     <button type="button" class="btn btn-default cancel-modal" data-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-danger delete" disabled>DELETE</button>
+                    <button type="button" class="btn btn-danger delete">DELETE</button>
                 </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->

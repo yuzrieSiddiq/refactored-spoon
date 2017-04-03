@@ -16,9 +16,11 @@ class CreateStudentAnswersTable extends Migration
         Schema::create('student_answers', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('quiz_attempt_id')->unsigned();
-            $table->foreign('quiz_attempt_id')->references('id')->on('quiz_attempts');
+            $table->foreign('quiz_attempt_id')->references('id')->on('quiz_attempts')
+                    ->onUpdate('cascade')->onDelete('cascade');
             $table->integer('question_id')->unsigned();
-            $table->foreign('question_id')->references('id')->on('questions');
+            $table->foreign('question_id')->references('id')->on('questions')
+                    ->onUpdate('cascade')->onDelete('cascade');
 
             $table->text('answer');
 

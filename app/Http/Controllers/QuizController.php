@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Quiz;
+use App\Model\Quiz;
 
 class QuizController extends Controller
 {

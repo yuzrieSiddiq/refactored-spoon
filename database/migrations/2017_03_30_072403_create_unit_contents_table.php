@@ -16,7 +16,8 @@ class CreateUnitContentsTable extends Migration
         Schema::create('unit_contents', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('unit_id')->unsigned();
-            $table->foreign('unit_id')->references('id')->on('units');
+            $table->foreign('unit_id')->references('id')->on('units')
+                    ->onUpdate('cascade')->onDelete('cascade');
 
             $table->text('content');
 

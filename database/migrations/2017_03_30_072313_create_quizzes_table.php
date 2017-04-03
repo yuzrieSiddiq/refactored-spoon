@@ -16,7 +16,8 @@ class CreateQuizzesTable extends Migration
         Schema::create('quizzes', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('unit_id')->unsigned();
-            $table->foreign('unit_id')->references('id')->on('units');
+            $table->foreign('unit_id')->references('id')->on('units')
+                    ->onUpdate('cascade')->onDelete('cascade');
 
             $table->string('title');    // e.g: iRAT1
             $table->string('type');     // individual/group
