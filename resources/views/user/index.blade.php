@@ -10,7 +10,7 @@
         <div class="col-md-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    LECTURER INDEX
+                    USERS INDEX
                 </div>
                 <div class="panel-body">
                     <div class="table-responsive">
@@ -22,7 +22,6 @@
                                     <th>Last Name</th>
                                     <th>Email</th>
                                     <th>Role</th>
-                                    {{-- <th>Role</th> --}}
                                     <th></th>
                                 </tr>
                             </thead>

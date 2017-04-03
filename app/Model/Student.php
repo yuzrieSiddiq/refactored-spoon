@@ -24,7 +24,7 @@ class Student extends Model
     }
 
     // a student can answer many quiz (1 quiz 1 attempt)
-    public function user()
+    public function quiz_attempts()
     {
         return $this->hasMany('App\Model\QuizAttempt');
     }

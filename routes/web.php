@@ -55,7 +55,11 @@ Route::post('/csv/questions', 'HomeController@uploadQuestions')->name('csv.quest
 Route::resource('users', 'UserController');
 Route::resource('students',  'StudentController');
 Route::resource('questions', 'QuestionController');
-Route::resource('quizs', 'QuizController');
+Route::resource('quizzes', 'QuizController');
 Route::resource('units', 'UnitController');
 
 Route::get('usersdatatable', 'DatatablesController@getUsersDatatable')->name('get.users.datatable');
+Route::get('unitsdatatable', 'DatatablesController@getUnitsDatatable')->name('get.units.datatable');
+Route::get('studentsdatatable', 'DatatablesController@getStudentsDatatable')->name('get.students.datatable');
+Route::get('quizzesdatatable', 'DatatablesController@getQuizzesDatatable')->name('get.quizzes.datatable');
+Route::get('questionsdatatable', 'DatatablesController@getQuestionsDatatable')->name('get.questions.datatable');
