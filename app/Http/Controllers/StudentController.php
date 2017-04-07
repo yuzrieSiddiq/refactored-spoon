@@ -102,10 +102,6 @@ class StudentController extends Controller
      */
     public function update(Request $request, $unit_id, $student_id)
     {
-        $input = $request->only([
-            'user_id', 'unit_id', 'semester', 'year', 'team_number', 'is_group_leader'
-        ]);
-
         $newteam = 0;
         $students = Student::where('unit_id', $unit_id)->where('is_group_leader', true)->get();
         foreach ($students as $student) {
