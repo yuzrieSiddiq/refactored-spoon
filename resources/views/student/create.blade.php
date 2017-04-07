@@ -6,10 +6,10 @@
         <div class="col-md-offset-1 col-md-10">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    STUDENT CREATE
+                    <h4>ADD STUDENT</h4>
                 </div>
                 <div class="panel-body">
-                    Create Content
+                    STUDENT CREATE
                 </div>
             </div>
         </div>

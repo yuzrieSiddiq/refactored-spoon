@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Model\Unit;
 use App\Model\Student;
+use App\User;
 
 class StudentController extends Controller
 {
@@ -18,7 +19,12 @@ class StudentController extends Controller
         $data = [];
 
         $unit = Unit::find($unit_id);
+        $students = User::role('Student')->with('student_info', 'students')->get();
+
         $data['unit'] = $unit;
+        $data['students'] = $students;
+
+        // return response()->json($data);
 
         return view ('student.index', $data);
     }
@@ -30,12 +36,9 @@ class StudentController extends Controller
      */
     public function create($unit_id)
     {
-        $data = [];
-
-        $unit = Unit::find($unit_id);
-        $data['unit'] = $unit;
-        
-        return view ('student.create', $data);
+        // $data = [];
+        // return view ('student.create', $data);
+        // empty
     }
 
     /**
@@ -46,7 +49,20 @@ class StudentController extends Controller
      */
     public function store(Request $request, $unit_id)
     {
-        //
+        $input = $request->only([
+            'student_user_id', 'semester', 'year'
+        ]);
+
+        Student::create([
+            'user_id' => $input['student_user_id'],
+            'unit_id' => $unit_id,
+            'semester'=> $input['semester'],
+            'year'    => $input['year'],
+            'team_number' => null,
+            'is_group_leader' => false,
+        ]);
+
+        return 'ok';
     }
 
     /**
@@ -89,14 +105,22 @@ class StudentController extends Controller
         $input = $request->only([
             'user_id', 'unit_id', 'semester', 'year', 'team_number', 'is_group_leader'
         ]);
+
+        $newteam = 0;
+        $students = Student::where('unit_id', $unit_id)->where('is_group_leader', true)->get();
+        foreach ($students as $student) {
+            if ($student->team_number != null) {
+                if ($student->team_number > $newteam) {
+                    $newteam = $student->team_number;
+                }
+            }
+        }
+        $newteam += 1;
+
         $student = Student::find($student_id);
         $student->update([
-            'user_id' => $input['user_id'],
-            'unit_id' => $input['unit_id'],
-            'semester' => $input['semester'],
-            'year' => $input['year'],
-            'team_number' => $input['team_number'],
-            'is_group_leader' => $input['is_group_leader']
+            'team_number' => $newteam,
+            'is_group_leader' => true
         ]);
 
         return 'updated';

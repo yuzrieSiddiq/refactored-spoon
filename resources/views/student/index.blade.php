@@ -10,13 +10,14 @@
         <div class="col-md-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    STUDENTS INDEX
+                    <h4>STUDENTS LIST <small>{{ $unit->code }} {{ $unit->name }}</small></h4>
                 </div>
                 <div class="panel-body">
                     <div class="table-responsive">
                         <table class="table table-striped table-bordered" id="students-table">
                             <thead>
                                 <tr>
+                                    <th></th>
                                     <th>First Name</th>
                                     <th>Last Name</th>
                                     <th>Semester</th>
@@ -30,13 +31,58 @@
                     </div> {{-- end .table-responsive --}}
                 </div> {{-- end .panel-body --}}
                 <div class="panel-footer">
-                    <a class="btn btn-success" href="{{ route('units.students.create', $unit->id) }}">
+                    <button class="btn btn-success" data-target="#modal-add-student" data-toggle="modal">
                         ADD NEW STUDENT
-                    </a>
+                    </button>
                 </div> {{-- end .panel-footer --}}
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="modal-add-student" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">ADD NEW STUDENT</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Student</label>
+                            <div class="col-sm-10">
+                                <select class="form-control select-student">
+                                    @foreach ($students as $user)
+                                        <option value="{{ $user->id}}">
+                                            {{ $user->student_info->student_id }} {{ $user->firstname }} {{ $user->lastname }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Semester</label>
+                            <div class="col-sm-10">
+                                <input class="form-control semester">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Year</label>
+                            <div class="col-sm-10">
+                                <input class="form-control year">
+                            </div>
+                        </div>
+                    </div>
+                </div> {{-- modal-body --}}
+                <div class="modal-footer">
+                    <button class="btn btn-success add-student">ADD STUDENT</button>
+                </div> {{-- modal-footer --}}
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+
 
     <div class="modal fade modal-template" id="delete-modal-id" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
@@ -68,20 +114,28 @@
         return $('meta[name=csrf-token]').attr('content')
     }
 
-    let table_operations = '<button class="btn btn-danger modal-remove" data-toggle="modal">Remove</button>';
+    let table_operations = '\
+        <button class="btn btn-info make-teamleader">Make Team Leader</button>\
+        <button class="btn btn-danger modal-remove" data-toggle="modal">Remove</button>'
 
     let table = $('#students-table').DataTable( {
         "ajax": "{{ route('get.students.datatable') }}",
         "columnDefs": [
             {
-                // hide unit id
+                // hide student id
                 "targets": 0,
                 "visible": false,
             },
             {
-                // hide student id
-                "targets": 0,
-                "visible": false,
+                // yes and no for is_a_group_leader
+                "targets": 6,
+                "render": function(data, type, full, meta) {
+                    if (data == 1) {
+                        return "YES"
+                    } else {
+                        return "NO"
+                    }
+                }
             },
             {
                 // add extra column
@@ -102,7 +156,7 @@
         modal.prop('id', 'delete-modal-' + data[0])
 
         // replacing values inside the specified classes
-        let modal_title = modal.find('.modal-title').text('Remove ' + data[2]);
+        let modal_title = modal.find('.modal-title').text('Remove ' + data[1] + ' ' + data[2]);
 
         // register the modal to the body and toggle the modal
         $('.container').append(modal)
@@ -110,8 +164,9 @@
 
         modal.find('.delete').click(function() {
             let url = $(this).data('url')
-            url = url.replace('unit_id', data[1])
+            url = url.replace('unit_id', {{ $unit->id }})
             url = url.replace('student_id', data[0])
+
             $.ajax({
                 'url': url,
                 'method': 'DELETE',
@@ -127,6 +182,40 @@
         })
     } );
 
+    $('.add-student').click(function() {
+        url = $(this).data('url')
+        data = {
+            '_token': getToken(),
+            'student_user_id': $('.select-student').val(),
+            'semester': $('.semester').val(),
+            'year': $('.year').val(),
+        }
+
+        $.ajax({
+            'url': url,
+            'method': 'POST',
+            'data': data
+        }).done(function(response) {
+            window.location.reload()
+        })
+    })
+
+    $('#students-table tbody').on( 'click', '.make-teamleader', function () {
+        let data = table.row( $(this).parents('tr') ).data()
+
+        let url = '{{ route('units.students.destroy', ['unit' => 'unit_id', 'student' => 'student_id']) }}'
+        url = url.replace('unit_id', {{ $unit->id }})
+        url = url.replace('student_id', data[0])
+        console.log(url)
+
+        $.ajax({
+            'url': url,
+            'method': 'PUT',
+            'data': { '_token': getToken() }
+        }).done(function(response) {
+            window.location.reload()
+        })
+    })
 }) ()
 </script>
 @endsection
