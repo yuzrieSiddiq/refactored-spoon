@@ -5,97 +5,87 @@
     <div class="row">
         <div class="col-md-offset-1 col-md-10">
             <div class="panel panel-default">
+                <div class="panel-heading">
+                    QUIZ {{ $quiz->id }}: {{ $quiz->title }}
+                </div>
                 <div class="panel-body">
-                    <h4 class="text-uppercase">MANAGE QUESTION</h4>
-                    <hr>
-
                     <div class="form-horizontal">
-                        {{-- Quiz --}}
+                        {{-- QUESTION --}}
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">Quiz</label>
-                            <div class="col-sm-9">
-                                <input class="form-control" id="quiz-title" placeholder="iRAT1" value="{{ $quiz->title }}">
-                            </div>
-                        </div>
-
-                        {{-- Question --}}
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">Quesion</label>
+                            <label class="col-sm-3 control-label">QUESTION</label>
                             <div class="col-sm-9">
                                 <input class="form-control" id="question" placeholder="MCQ / RANKING" value="{{ $question->question }}">
                             </div>
                         </div>
 
-                        {{-- Answer Type --}}
+                        {{-- ANSwER TYPE --}}
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">Answer Type</label>
+                            <label class="col-sm-3 control-label">ANSWER TYPE</label>
                             <div class="col-sm-9">
                                 <input class="form-control" id="answer-type" placeholder="MCQ / RANKING" value="{{ $question->answer_type }}">
                             </div>
                         </div>
 
-                        {{-- Answer 1 --}}
+                        {{-- ANSWER 1 --}}
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">Answer 1</label>
+                            <label class="col-sm-3 control-label">ANSWER 1</label>
                             <div class="col-sm-9">
                                 <input class="form-control" id="answer1" placeholder="-" value="{{ $question->answer1 }}">
                             </div>
                         </div>
 
-                        {{-- Answer 2 --}}
+                        {{-- ANSWER 2 --}}
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">Answer 2</label>
+                            <label class="col-sm-3 control-label">ANSWER 2</label>
                             <div class="col-sm-9">
                                 <input class="form-control" id="answer2" placeholder="-" value="{{ $question->answer2 }}">
                             </div>
                         </div>
 
-                        {{-- Answer 3 --}}
+                        {{-- ANSWER 3 --}}
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">Answer 3</label>
+                            <label class="col-sm-3 control-label">ANSWER 3</label>
                             <div class="col-sm-9">
                                 <input class="form-control" id="answer3" placeholder="-" value="{{ $question->answer3 }}">
                             </div>
                         </div>
 
-                        {{-- Answer 4 --}}
+                        {{-- ANSWER 4 --}}
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">Answer 4</label>
+                            <label class="col-sm-3 control-label">ANSWER 4</label>
                             <div class="col-sm-9">
                                 <input class="form-control" id="answer4" placeholder="-" value="{{ $question->answer4 }}">
                             </div>
                         </div>
 
-                        {{-- Answer 5 --}}
+                        {{-- ANSWER 5 --}}
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">Answer 5</label>
+                            <label class="col-sm-3 control-label">ANSWER 5</label>
                             <div class="col-sm-9">
                                 <input class="form-control" id="answer5" placeholder="-" value="{{ $question->answer5 }}">
                             </div>
                         </div>
 
-                        {{-- Correct Answer --}}
+                        {{-- CORRECT ANSWER --}}
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">Correct Answer</label>
+                            <label class="col-sm-3 control-label">CORRECT ANSWER</label>
                             <div class="col-sm-9">
                                 <input class="form-control" id="correct-answer" placeholder="-" value="{{ $question->correct_answer }}">
                             </div>
                         </div>
-
-                        {{-- Update Button --}}
-                        <div class="form-group">
-                            <div class="col-sm-offset-2 col-sm-9">
-                                <button class="btn btn-success submit">Update</button>
-                                <a href="{{ route('questions.index') }}" class="btn btn-primary pull-right">Back to Previous Page</a>
-                            </div>
-                        </div>
-                    </div> {{-- end .form-horizontal --}}
-
-                </div> {{-- end .panel-body --}}
-            </div> {{-- end .panel --}}
-        </div> {{-- end .col-10 --}}
-    </div> {{-- end .row --}}
-</div> {{-- end .container --}}
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <button class="btn btn-success" data-url="{{ route('quizzes.questions.update', ['quiz' => $quiz->id, 'question' => $question->id]) }}"
+                        data-redirect="{{ route('quizzes.questions.show', ['quiz' => $quiz->id, 'question' => $question->id]) }}">
+                        UPDATE QUESTION DETAILS
+                    </button>
+                    <a class="btn btn-info pull-right" href="{{ route('quizzes.questions.show', ['quiz' => $quiz->id, 'question' => $question->id]) }}">CANCEL</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 @section('extra_js')
@@ -128,7 +118,7 @@
         }
 
         $.ajax({
-            'url': '{{ route('questions.update', $quiz->id) }}',
+            'url': url,
             'method': 'PUT',
             'data': data
         }).done(function(response) {
@@ -136,20 +126,8 @@
                 let errormsg = 'Something is wrong with this question please review and make sure the answers are all correct (no typos)'
                 showErrorMessage(errormsg)
             } else {
-                window.location.href = "{{ route('questions.show', $quiz->id) }}"
+                window.location.href = $(this).data('redirect')
             }
-        })
-    })
-
-    $('.remove').click(function() {
-        let data = { '_token': getToken() }
-
-        $.ajax({
-            'url': '{{ route('questions.destroy', $quiz->id) }}',
-            'method': 'DELETE',
-            'data': data
-        }).done(function(data) {
-            window.location.href = "{{ route('questions.index') }}"
         })
     })
 }) ()

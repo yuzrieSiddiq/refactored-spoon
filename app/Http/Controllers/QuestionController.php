@@ -13,9 +13,16 @@ class QuestionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($quiz_id)
     {
-        return view ('question.index');
+        $data = [];
+
+        $quiz = Quiz::find($quiz_id);
+        $questions = Question::where('quiz_id', $quiz_id)->get();
+        $data['quiz'] = $quiz;
+        $data['questions'] = $questions;
+
+        return view ('question.index', $data);
     }
 
     /**
@@ -23,9 +30,12 @@ class QuestionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create($quiz_id)
     {
-        return view ('question.create');
+        $data = [];
+        $data['quiz'] = Quiz::find($quiz_id);
+
+        return view ('question.create', $data);
     }
 
     /**
@@ -34,7 +44,7 @@ class QuestionController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, $quiz_id)
     {
         //
     }
@@ -45,10 +55,11 @@ class QuestionController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($quiz_id, $question_id)
     {
         $data = [];
-        $data['question'] = Question::find($id);
+        $data['question'] = Question::find($question_id);
+        $data['quiz'] = Quiz::find($quiz_id);
 
         return view ('question.show', $data);
     }
@@ -59,11 +70,11 @@ class QuestionController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($quiz_id, $question_id)
     {
         $data = [];
-        $data['question'] = Question::find($id);
-        $data['quiz'] = Quiz::find($data['question']->quiz_id);
+        $data['question'] = Question::find($question_id);
+        $data['quiz'] = Quiz::find($quiz_id);
 
         return view ('question.edit', $data);
     }
@@ -75,7 +86,7 @@ class QuestionController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $quiz_id, $question_id)
     {
         $input = $request->only([
             'question', 'answer_type', 'answer1', 'answer2', 'answer3',
@@ -103,7 +114,7 @@ class QuestionController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($quiz_id, $question_id)
     {
         $question = Question::find($id);
         $question->delete();

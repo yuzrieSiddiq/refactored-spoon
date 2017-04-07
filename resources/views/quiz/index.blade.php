@@ -65,7 +65,8 @@
     }
 
     let table_operations = '\
-        <button class="btn btn-success manage" data-url="{{ route('quizzes.edit', "id")}}">Manage</button>\
+        <button class="btn btn-info manage" data-url="{{ route('quizzes.questions.index', "id")}}">Manage Questions</button>\
+        <button class="btn btn-success edit" data-url="{{ route('quizzes.edit', "id")}}">Edit</button>\
         <button class="btn btn-danger modal-remove" data-toggle="modal">Remove</button>';
 
     let table = $('#quizzes-table').DataTable( {
@@ -78,6 +79,17 @@
     } );
 
     $('#quizzes-table tbody').on( 'click', '.manage', function () {
+        // get the row data
+        let data = table.row( $(this).parents('tr') ).data()
+
+        // get the url
+        let url = $(this).data('url').replace('id', data[0])
+
+        // redirect using href
+        window.location.href = url;
+    } );
+
+    $('#quizzes-table tbody').on( 'click', '.edit', function () {
         // get the row data
         let data = table.row( $(this).parents('tr') ).data()
 

@@ -54,8 +54,24 @@ Route::post('/csv/students',  'HomeController@uploadStudents')->name('csv.studen
 Route::post('/csv/questions', 'HomeController@uploadQuestions')->name('csv.questions');
 Route::resource('users', 'UserController');
 Route::resource('students',  'StudentController');
-Route::resource('questions', 'QuestionController');
 Route::resource('quizzes', 'QuizController');
+
+// QUIZ QUESTION
+/** index  **/  Route::get('quizzes/{quiz}/questions', 'QuestionController@index')
+                ->name('quizzes.questions.index');
+/** post   **/  Route::post('quizzes/{quiz}/questions', 'QuestionController@store')
+                ->name('quizzes.questions.store');
+/** create **/  Route::get('quizzes/{quiz}/questions/create', 'QuestionController@create')
+                ->name('quizzes.questions.create');
+/** show   **/  Route::get('quizzes/{quiz}/questions/{question}', 'QuestionController@show')
+                ->name('quizzes.questions.show');
+/** edit   **/  Route::get('quizzes/{quiz}/questions/{question}/edit', 'QuestionController@edit')
+                ->name('quizzes.questions.edit');
+/** update **/  Route::put('quizzes/{quiz}/questions/{question}', 'QuestionController@update')
+                ->name('quizzes.questions.update');
+/** delete **/  Route::delete('quizzes/{quiz}/questions/{question}', 'QuestionController@destroy')
+                ->name('quizzes.questions.destroy');
+
 Route::resource('units', 'UnitController');
 Route::resource('l_units', 'LecturerUnitController');
 
@@ -64,4 +80,3 @@ Route::get('unitsdatatable', 'DatatablesController@getUnitsDatatable')->name('ge
 Route::get('l_unitsdatatable', 'DatatablesController@getLUnitsDatatable')->name('get.l_units.datatable');
 Route::get('studentsdatatable', 'DatatablesController@getStudentsDatatable')->name('get.students.datatable');
 Route::get('quizzesdatatable', 'DatatablesController@getQuizzesDatatable')->name('get.quizzes.datatable');
-Route::get('questionsdatatable', 'DatatablesController@getQuestionsDatatable')->name('get.questions.datatable');
