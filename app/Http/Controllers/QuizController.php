@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Model\Unit;
 use App\Model\Quiz;
 
 class QuizController extends Controller
@@ -24,7 +25,10 @@ class QuizController extends Controller
      */
     public function create()
     {
-        return view ('quiz.create');
+        $data = [];
+        $data['units'] = Unit::all();
+
+        return view ('quiz.create', $data);
     }
 
     /**
@@ -35,7 +39,20 @@ class QuizController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $input = $request->only([
+            'unit_code', 'title', 'type', 'status'
+        ]);
+
+        $unit = Unit::where('code', $input['unit_code'])->first();
+
+        Quiz::create([
+            'unit_id' => $unit->id,
+            'title' => $input['title'],
+            'type' => $input['type'],
+            'status' => $input['status']
+        ]);
+
+        return 'ok';
     }
 
     /**

@@ -76,7 +76,7 @@
                     </div>
                 </div>
                 <div class="panel-footer">
-                    <button class="btn btn-success" data-url="{{ route('quizzes.questions.store', $quiz->id) }}">CREATE</button>
+                    <button class="btn btn-success submit" data-url="{{ route('quizzes.questions.store', $quiz->id) }}">CREATE</button>
                     <a class="btn btn-info pull-right" href="{{ route('quizzes.questions.index', $quiz->id) }}">CANCEL</a>
                 </div>
             </div>
@@ -116,7 +116,7 @@
 
         $.ajax({
             'url': url,
-            'method': 'PUT',
+            'method': 'POST',
             'data': data
         }).done(function(response) {
             if (response == '1') {

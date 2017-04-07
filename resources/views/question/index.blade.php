@@ -21,16 +21,18 @@
                         </thead>
                         <tbody>
                             @foreach ($questions as $question)
-                                <td>{{ $question->id }}</td>
-                                <td>{{ $question->question }}</td>
-                                <td>{{ $question->answer_type }}</td>
-                                <td>{{ $question->correct_answer }}</td>
-                                <td>
-                                    <a class="btn btn-primary" href="{{ route('quizzes.questions.show', ['quiz' => $quiz->id, 'question' => $question->id]) }}">
-                                        VIEW QUESTION
-                                    </a>
-                                    <button class="btn btn-danger modal-remove"><span class="glyphicon glyphicon-remove"></span></button>
-                                </td>
+                                <tr>
+                                    <td>{{ $question->id }}</td>
+                                    <td>{{ $question->question }}</td>
+                                    <td>{{ $question->answer_type }}</td>
+                                    <td>{{ $question->correct_answer }}</td>
+                                    <td>
+                                        <a class="btn btn-primary" href="{{ route('quizzes.questions.show', ['quiz' => $quiz->id, 'question' => $question->id]) }}">
+                                            VIEW QUESTION
+                                        </a>
+                                        <button class="btn btn-danger modal-remove"><span class="glyphicon glyphicon-remove"></span></button>
+                                    </td>
+                                </tr>
                             @endforeach
                         </tbody>
                     </table>

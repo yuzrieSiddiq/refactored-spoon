@@ -46,7 +46,24 @@ class QuestionController extends Controller
      */
     public function store(Request $request, $quiz_id)
     {
-        //
+        $input = $request->only([
+            'quiz_title', 'question', 'answer_type', 'correct_answer',
+            'answer1', 'answer2', 'answer3', 'answer4', 'answer5'
+        ]);
+
+        Question::create([
+            'quiz_id' => $quiz_id,
+            'question' => $input['question'],
+            'answer_type' => $input['answer_type'],
+            'answer1' => $input['answer1'],
+            'answer2' => $input['answer2'],
+            'answer3' => $input['answer3'],
+            'answer4' => $input['answer4'],
+            'answer5' => $input['answer5'],
+            'correct_answer' => $input['correct_answer'],
+        ]);
+
+        return 'ok';
     }
 
     /**
