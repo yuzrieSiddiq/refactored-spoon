@@ -11,6 +11,7 @@ use App\Model\Unit;
 use App\Model\Quiz;
 use App\Model\Question;
 use App\Model\Student;
+use App\Model\LecturerUnit;
 
 class DatatablesController extends Controller
 {
@@ -46,6 +47,17 @@ class DatatablesController extends Controller
     public function getUnitsDatatable()
     {
         return Datatables::of(Unit::select('id', 'code', 'name'))->make();
+    }
+
+    // lecturer_units index
+    public function getLUnitsDatatable()
+    {
+        // TODO: filter by Lecturer, only show units for current lecturer
+        return Datatables::of(
+            LecturerUnit::select('lecturer_units.id', 'units.code', 'users.firstname', 'users.lastname')
+            ->leftJoin('users', 'users.id', '=', 'lecturer_units.user_id')
+            ->leftJoin('units', 'units.id', '=', 'lecturer_units.unit_id')
+        )->make();
     }
 
     // quiz index

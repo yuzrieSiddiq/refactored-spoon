@@ -57,9 +57,11 @@ Route::resource('students',  'StudentController');
 Route::resource('questions', 'QuestionController');
 Route::resource('quizzes', 'QuizController');
 Route::resource('units', 'UnitController');
+Route::resource('l_units', 'LecturerUnitController');
 
 Route::get('usersdatatable', 'DatatablesController@getUsersDatatable')->name('get.users.datatable');
 Route::get('unitsdatatable', 'DatatablesController@getUnitsDatatable')->name('get.units.datatable');
+Route::get('l_unitsdatatable', 'DatatablesController@getLUnitsDatatable')->name('get.l_units.datatable');
 Route::get('studentsdatatable', 'DatatablesController@getStudentsDatatable')->name('get.students.datatable');
 Route::get('quizzesdatatable', 'DatatablesController@getQuizzesDatatable')->name('get.quizzes.datatable');
 Route::get('questionsdatatable', 'DatatablesController@getQuestionsDatatable')->name('get.questions.datatable');
