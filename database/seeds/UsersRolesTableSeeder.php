@@ -26,8 +26,20 @@ class UsersRolesTableSeeder extends Seeder
                 'user_id'       => '2',
                 'role_id'       => '2',
             ],[
-                // Student
+                // Student 1
                 'user_id'       => '3',
+                'role_id'       => '3',
+            ],[
+                // Student 2
+                'user_id'       => '4',
+                'role_id'       => '3',
+            ],[
+                // Student 3
+                'user_id'       => '5',
+                'role_id'       => '3',
+            ],[
+                // Student 4
+                'user_id'       => '6',
                 'role_id'       => '3',
             ],
         ]);

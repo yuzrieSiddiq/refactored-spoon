@@ -25,7 +25,7 @@ class CreateStudentsTable extends Migration
 
             $table->string('semester');
             $table->integer('year');
-            $table->integer('team_number');
+            $table->integer('team_number')->nullable();
             $table->boolean('is_group_leader');
 
             $table->timestamps();

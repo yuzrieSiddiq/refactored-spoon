@@ -16,6 +16,18 @@ class StudentInfosTableSeeder extends Seeder
                 'user_id'   => '3',
                 'student_id'=> '4301710',
                 'locality'  => 'LOCAL'
+            ],[
+                'user_id'   => '4',
+                'student_id'=> '4301711',
+                'locality'  => 'LOCAL'
+            ],[
+                'user_id'   => '5',
+                'student_id'=> '4301712',
+                'locality'  => 'LOCAL'
+            ],[
+                'user_id'   => '6',
+                'student_id'=> '4301713',
+                'locality'  => 'LOCAL'
             ],
         ]);
     }
