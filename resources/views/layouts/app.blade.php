@@ -56,7 +56,6 @@
                             <li><a href="{{ route('register') }}">Register</a></li>
                         @else
                             <li><a href="{{ route('users.index') }}">USERS</a></li>
-                            <li><a href="{{ route('students.index') }}">STUDENT</a></li>
                             <li><a href="{{ route('quizzes.index') }}">QUIZ</a></li>
                             <li><a href="{{ route('units.index') }}">UNIT</a></li>
                             <li><a href="{{ route('l_units.index') }}">LECTURER UNIT</a></li>

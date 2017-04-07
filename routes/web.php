@@ -53,7 +53,6 @@ Route::post('/csv/lecturers', 'HomeController@uploadLecturers')->name('csv.lectu
 Route::post('/csv/students',  'HomeController@uploadStudents')->name('csv.students');
 Route::post('/csv/questions', 'HomeController@uploadQuestions')->name('csv.questions');
 Route::resource('users', 'UserController');
-Route::resource('students',  'StudentController');
 Route::resource('quizzes', 'QuizController');
 
 // QUIZ QUESTION
@@ -73,6 +72,22 @@ Route::resource('quizzes', 'QuizController');
                 ->name('quizzes.questions.destroy');
 
 Route::resource('units', 'UnitController');
+// QUIZ QUESTION
+/** index  **/  Route::get('units/{unit}/students', 'StudentController@index')
+                ->name('units.students.index');
+/** post   **/  Route::post('units/{unit}/students', 'StudentController@store')
+                ->name('units.students.store');
+/** create **/  Route::get('units/{unit}/students/create', 'StudentController@create')
+                ->name('units.students.create');
+/** show   **/  Route::get('units/{unit}/students/{student}', 'StudentController@show')
+                ->name('units.students.show');
+/** edit   **/  Route::get('units/{unit}/students/{student}/edit', 'StudentController@edit')
+                ->name('units.students.edit');
+/** update **/  Route::put('units/{unit}/students/{student}', 'StudentController@update')
+                ->name('units.students.update');
+/** delete **/  Route::delete('units/{unit}/students/{student}', 'StudentController@destroy')
+                ->name('units.students.destroy');
+
 Route::resource('l_units', 'LecturerUnitController');
 
 Route::get('usersdatatable', 'DatatablesController@getUsersDatatable')->name('get.users.datatable');

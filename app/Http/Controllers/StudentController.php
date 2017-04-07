@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Model\Unit;
 use App\Model\Student;
 
 class StudentController extends Controller
@@ -12,9 +13,14 @@ class StudentController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($unit_id)
     {
-        return view ('student.index');
+        $data = [];
+
+        $unit = Unit::find($unit_id);
+        $data['unit'] = $unit;
+
+        return view ('student.index', $data);
     }
 
     /**
@@ -22,9 +28,14 @@ class StudentController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create($unit_id)
     {
-        return view ('student.create');
+        $data = [];
+
+        $unit = Unit::find($unit_id);
+        $data['unit'] = $unit;
+        
+        return view ('student.create', $data);
     }
 
     /**
@@ -33,7 +44,7 @@ class StudentController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, $unit_id)
     {
         //
     }
@@ -44,10 +55,10 @@ class StudentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($unit_id, $student_id)
     {
         $data = [];
-        $data['student'] = Student::find($id);
+        $data['student'] = Student::find($student_id);
 
         return view ('student.show', $data);
     }
@@ -58,10 +69,10 @@ class StudentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($unit_id, $student_id)
     {
         $data = [];
-        $data['student'] = Student::find($id);
+        $data['student'] = Student::find($student_id);
 
         return view ('student.edit', $data);
     }
@@ -73,12 +84,12 @@ class StudentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $unit_id, $student_id)
     {
         $input = $request->only([
             'user_id', 'unit_id', 'semester', 'year', 'team_number', 'is_group_leader'
         ]);
-        $student = Student::find($id);
+        $student = Student::find($student_id);
         $student->update([
             'user_id' => $input['user_id'],
             'unit_id' => $input['unit_id'],
@@ -97,9 +108,9 @@ class StudentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($unit_id, $student_id)
     {
-        $student = Student::find($id);
+        $student = Student::find($student_id);
         $student->delete();
 
         return 'deleted';

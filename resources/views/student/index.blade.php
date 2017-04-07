@@ -17,8 +17,6 @@
                         <table class="table table-striped table-bordered" id="students-table">
                             <thead>
                                 <tr>
-                                    <th>ID</th>
-                                    <th>Unit</th>
                                     <th>First Name</th>
                                     <th>Last Name</th>
                                     <th>Semester</th>
@@ -32,7 +30,7 @@
                     </div> {{-- end .table-responsive --}}
                 </div> {{-- end .panel-body --}}
                 <div class="panel-footer">
-                    <a class="btn btn-success" href="{{ route('students.create') }}">
+                    <a class="btn btn-success" href="{{ route('units.students.create', $unit->id) }}">
                         ADD NEW STUDENT
                     </a>
                 </div> {{-- end .panel-footer --}}
@@ -48,8 +46,10 @@
                     <h4 class="modal-title"></h4>
                 </div>
                 <div class="modal-body">
-                    <button type="button" class="btn btn-default cancel-modal" data-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-danger delete">DELETE</button>
+                    <button class="btn btn-default cancel-modal" data-dismiss="modal">Cancel</button>
+                    <button class="btn btn-danger delete" data-url="{{ route('units.students.destroy', ['unit' => 'unit_id', 'student' => 'student_id']) }}">
+                        DELETE
+                    </button>
                 </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
@@ -72,11 +72,24 @@
 
     let table = $('#students-table').DataTable( {
         "ajax": "{{ route('get.students.datatable') }}",
-        "columnDefs": [ {
-            "targets": -1,
-            "data": null,
-            "defaultContent": table_operations
-        } ]
+        "columnDefs": [
+            {
+                // hide unit id
+                "targets": 0,
+                "visible": false,
+            },
+            {
+                // hide student id
+                "targets": 0,
+                "visible": false,
+            },
+            {
+                // add extra column
+                "targets": -1,
+                "data": null,
+                "defaultContent": table_operations
+            }
+        ]
     } );
 
 
@@ -95,14 +108,12 @@
         $('.container').append(modal)
         modal.modal('toggle')
 
-        // set the destroy url
-        let url_destroy = '{{ route('students.destroy', 'id') }}'
-        url_destroy = url_destroy.replace('id', id)
-
-
         modal.find('.delete').click(function() {
+            let url = $(this).data('url')
+            url = url.replace('unit_id', data[1])
+            url = url.replace('student_id', data[0])
             $.ajax({
-                'url': url_destroy,
+                'url': url,
                 'method': 'DELETE',
                 'data': { '_token': getToken() }
             }).done(function() {

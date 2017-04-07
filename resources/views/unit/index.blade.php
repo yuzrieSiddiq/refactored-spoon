@@ -64,7 +64,8 @@
     }
 
     let table_operations = '\
-        <button class="btn btn-success manage" data-url="{{ route('units.edit', "id")}}">Manage</button>\
+        <button class="btn btn-info studentlist" data-url="{{ route('units.students.index', "id")}}">Student List</button>\
+        <button class="btn btn-success edit" data-url="{{ route('units.edit', "id")}}">Edit</button>\
         <button class="btn btn-danger modal-remove" data-toggle="modal">Remove</button>';
 
     let table = $('#units-table').DataTable( {
@@ -76,7 +77,18 @@
         } ]
     } );
 
-    $('#units-table tbody').on( 'click', '.manage', function () {
+    $('#units-table tbody').on( 'click', '.studentlist', function () {
+        // get the row data
+        let data = table.row( $(this).parents('tr') ).data()
+
+        // get the url
+        let url = $(this).data('url').replace('id', data[0])
+
+        // redirect using href
+        window.location.href = url;
+    } );
+
+    $('#units-table tbody').on( 'click', '.edit', function () {
         // get the row data
         let data = table.row( $(this).parents('tr') ).data()
 
