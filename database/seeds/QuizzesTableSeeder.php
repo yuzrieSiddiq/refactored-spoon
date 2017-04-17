@@ -16,14 +16,14 @@ class QuizzesTableSeeder extends Seeder
             [
                 'unit_id'   => '1',
                 'semester'  => 'S1',
-                'year'   => Carbon::createFromFormat('Y', 2017),
+                'year'   => 2017,
                 'title'  => 'iRAT1',
                 'type'   => 'individual',
                 'status' => 'open',
             ],[
                 'unit_id'=> '1',
                 'semester'  => 'S1',
-                'year'   => Carbon::createFromFormat('Y', 2017),
+                'year'   => 2017,
                 'title'  => 'tRAT1',
                 'type'   => 'group',
                 'status' => 'open',

@@ -49,7 +49,7 @@ class QuizController extends Controller
         Quiz::create([
             'unit_id' => $unit->id,
             'semester' => $input['semester'],
-            'year' => Carbon::createFromFormat('Y', $input['year']),
+            'year' => $input['year'],
             'title' => $input['title'],
             'type' => $input['type'],
             'status' => $input['status']
@@ -101,7 +101,7 @@ class QuizController extends Controller
         $quiz = Quiz::find($id);
         $quiz->update([
             'semester' => $input['semester'],
-            'year' => Carbon::createFromFormat('Y', $input['year']),
+            'year' => $input['year'],
             'title' => $input['title'],
             'type' => $input['type'],
             'status' => $input['status']

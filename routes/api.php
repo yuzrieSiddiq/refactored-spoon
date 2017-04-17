@@ -46,7 +46,7 @@ $api->version('v1', function (Router $api) {
 
         // 1. Lecturer Unit
         // $api->post('book/store', 'App\\Api\\V1\\Controllers\\BookController@store');
-        $api->get('lecturerunits', 'App\\Api\\V1\\Controllers\\LecturerUnitController@index');
+        // $api->get('lecturerunits', 'App\\Api\\V1\\Controllers\\LecturerUnitController@index');
     	// $api->get('books/{id}', 'App\\Api\\V1\Controllers\\BookController@show');
     	// $api->post('books', 'App\\Api\\V1\\Controllers\\BookController@store');
     	// $api->delete('books/{id}', 'App\\Api\\V1\Controllers\\BookController@destroy');
@@ -60,7 +60,10 @@ $api->version('v1', function (Router $api) {
         //
         // // 3. Quiz
         // $api->post('book/store', 'App\\Api\\V1\\Controllers\\BookController@store');
-        // $api->get('books', 'App\\Api\\V1\\Controllers\\BookController@index');
+        $api->get('quizzes', 'App\\Api\\V1\\Controllers\\QuizController@index');
+        $api->get('quizzes/{quiz_id}', 'App\\Api\\V1\\Controllers\\QuizController@show');
+        $api->post('quizzes/submit/{quiz_id}', 'App\\Api\\V1\\Controllers\\QuizController@submit_answers');
+        $api->get('quizzes/report/{quiz_id}', 'App\\Api\\V1\\Controllers\\QuizController@quiz_report');
     	// $api->get('books/{id}', 'App\\Api\\V1\Controllers\\BookController@show');
     	// $api->post('books', 'App\\Api\\V1\\Controllers\\BookController@store');
     	// $api->delete('books/{id}', 'App\\Api\\V1\Controllers\\BookController@destroy');
@@ -74,7 +77,9 @@ $api->version('v1', function (Router $api) {
         //
         // // 5. Student
         // $api->post('book/store', 'App\\Api\\V1\\Controllers\\BookController@store');
-        // $api->get('books', 'App\\Api\\V1\\Controllers\\BookController@index');
+        $api->get('students', 'App\\Api\\V1\\Controllers\\StudentController@index');
+        $api->get('team_info/{unit_id}', 'App\\Api\\V1\\Controllers\\StudentController@team_info');
+        $api->post('enlist/{student_id}', 'App\\Api\\V1\\Controllers\\StudentController@enlist_new_member');
     	// $api->get('books/{id}', 'App\\Api\\V1\Controllers\\BookController@show');
     	// $api->post('books', 'App\\Api\\V1\\Controllers\\BookController@store');
     	// $api->delete('books/{id}', 'App\\Api\\V1\Controllers\\BookController@destroy');
@@ -95,7 +100,7 @@ $api->version('v1', function (Router $api) {
         //
         // // 8. Unit
         // $api->post('book/store', 'App\\Api\\V1\\Controllers\\BookController@store');
-        // $api->get('books', 'App\\Api\\V1\\Controllers\\BookController@index');
+        $api->get('units', 'App\\Api\\V1\\Controllers\\UnitController@index');
     	// $api->get('books/{id}', 'App\\Api\\V1\Controllers\\BookController@show');
     	// $api->post('books', 'App\\Api\\V1\\Controllers\\BookController@store');
     	// $api->delete('books/{id}', 'App\\Api\\V1\Controllers\\BookController@destroy');

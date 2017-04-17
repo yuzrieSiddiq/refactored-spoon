@@ -19,7 +19,7 @@ class CreateQuizzesTable extends Migration
             $table->foreign('unit_id')->references('id')->on('units')
                     ->onUpdate('cascade')->onDelete('cascade');
             $table->string('semester'); // S1
-            $table->date('year');       // 2017
+            $table->integer('year');    // 2017
             $table->string('title');    // e.g: iRAT1
             $table->string('type');     // individual/group
             $table->string('status');   // open/closed/attempted
