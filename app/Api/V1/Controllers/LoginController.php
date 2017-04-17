@@ -11,6 +11,11 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class LoginController extends Controller
 {
+    public function __constructor()
+    {
+        $this->middleware('role:Student');
+    }
+
     public function login(LoginRequest $request, JWTAuth $JWTAuth)
     {
         $credentials = $request->only(['email', 'password']);
