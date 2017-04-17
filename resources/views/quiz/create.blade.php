@@ -22,6 +22,22 @@
                             </div>
                         </div>
 
+                        {{-- Semester --}}
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Semester</label>
+                            <div class="col-sm-9">
+                                <input class="form-control semester" placeholder="i.e: S1">
+                            </div>
+                        </div>
+
+                        {{-- Year --}}
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Year</label>
+                            <div class="col-sm-9">
+                                <input class="form-control year" placeholder="i.e: 2017">
+                            </div>
+                        </div>
+
                         {{-- Title --}}
                         <div class="form-group">
                             <label class="col-sm-2 control-label">Title</label>
@@ -72,6 +88,8 @@
         let data = {
             '_token': getToken(),
             'unit_code': $('.unit-code').val(),
+            'semester': $('.semester').val(),
+            'year': $('.year').val(),
             'title': $('.title').val(),
             'type': $('.type').val(),
             'status': $('.status').val(),

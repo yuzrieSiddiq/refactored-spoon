@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Database\Seeder;
+use Carbon\Carbon;
 
 class QuizzesTableSeeder extends Seeder
 {
@@ -13,12 +14,16 @@ class QuizzesTableSeeder extends Seeder
     {
         DB::table('quizzes')->insert([
             [
-                'unit_id'=> '1',
+                'unit_id'   => '1',
+                'semester'  => 'S1',
+                'year'   => Carbon::createFromFormat('Y', 2017),
                 'title'  => 'iRAT1',
                 'type'   => 'individual',
                 'status' => 'open',
             ],[
                 'unit_id'=> '1',
+                'semester'  => 'S1',
+                'year'   => Carbon::createFromFormat('Y', 2017),
                 'title'  => 'tRAT1',
                 'type'   => 'group',
                 'status' => 'open',

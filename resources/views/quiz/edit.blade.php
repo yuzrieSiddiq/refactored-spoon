@@ -10,6 +10,22 @@
                     <hr>
 
                     <div class="form-horizontal">
+                        {{-- Semester --}}
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Semester</label>
+                            <div class="col-sm-9">
+                                <input class="form-control" id="semester" placeholder="i.e: S1" value="{{ $quiz->semester }}">
+                            </div>
+                        </div>
+
+                        {{-- Year --}}
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Year</label>
+                            <div class="col-sm-9">
+                                <input class="form-control" id="year" placeholder="i.e: 2017" value="{{ Carbon\Carbon::parse($quiz->year)->format('Y') }}">
+                            </div>
+                        </div>
+
                         {{-- Title --}}
                         <div class="form-group">
                             <label class="col-sm-2 control-label">Title</label>
@@ -66,13 +82,13 @@
 
     $('.submit').click(function() {
         let url = $(this).data('url')
-        let role = selectRole.val()
-
         let data = {
             '_token': getToken(),
+            'semester': $('#semester').val(),
+            'year': $('#year').val(),
             'title' : $('#title').val(),
-            'type'  : $('#status').val(),
-            'status': $('#type').text(),
+            'type'  : $('#type').val(),
+            'status': $('#status').val(),
         }
 
         $.ajax({
@@ -84,7 +100,7 @@
                 let errormsg = 'A quiz with that title already exist'
                 showErrorMessage(errormsg)
             } else {
-                window.location.href = "{{ route('quizzes.show', $quiz->id) }}"
+                window.location.href = "{{ route('quizzes.index') }}"
             }
         })
     })

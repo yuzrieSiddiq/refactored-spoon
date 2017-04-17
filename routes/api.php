@@ -43,6 +43,69 @@ $api->version('v1', function (Router $api) {
     	$api->get('books/{id}', 'App\\Api\\V1\Controllers\\BookController@show');
     	$api->post('books', 'App\\Api\\V1\\Controllers\\BookController@store');
     	$api->delete('books/{id}', 'App\\Api\\V1\Controllers\\BookController@destroy');
+
+        // 1. Lecturer Unit
+        // $api->post('book/store', 'App\\Api\\V1\\Controllers\\BookController@store');
+        $api->get('lecturerunits', 'App\\Api\\V1\\Controllers\\LecturerUnitController@index');
+    	// $api->get('books/{id}', 'App\\Api\\V1\Controllers\\BookController@show');
+    	// $api->post('books', 'App\\Api\\V1\\Controllers\\BookController@store');
+    	// $api->delete('books/{id}', 'App\\Api\\V1\Controllers\\BookController@destroy');
+
+        // // 2. Question
+        // $api->post('book/store', 'App\\Api\\V1\\Controllers\\BookController@store');
+        // $api->get('books', 'App\\Api\\V1\\Controllers\\BookController@index');
+    	// $api->get('books/{id}', 'App\\Api\\V1\Controllers\\BookController@show');
+    	// $api->post('books', 'App\\Api\\V1\\Controllers\\BookController@store');
+    	// $api->delete('books/{id}', 'App\\Api\\V1\Controllers\\BookController@destroy');
+        //
+        // // 3. Quiz
+        // $api->post('book/store', 'App\\Api\\V1\\Controllers\\BookController@store');
+        // $api->get('books', 'App\\Api\\V1\\Controllers\\BookController@index');
+    	// $api->get('books/{id}', 'App\\Api\\V1\Controllers\\BookController@show');
+    	// $api->post('books', 'App\\Api\\V1\\Controllers\\BookController@store');
+    	// $api->delete('books/{id}', 'App\\Api\\V1\Controllers\\BookController@destroy');
+        //
+        // // 4. QuizAttempt
+        // $api->post('book/store', 'App\\Api\\V1\\Controllers\\BookController@store');
+        // $api->get('books', 'App\\Api\\V1\\Controllers\\BookController@index');
+    	// $api->get('books/{id}', 'App\\Api\\V1\Controllers\\BookController@show');
+    	// $api->post('books', 'App\\Api\\V1\\Controllers\\BookController@store');
+    	// $api->delete('books/{id}', 'App\\Api\\V1\Controllers\\BookController@destroy');
+        //
+        // // 5. Student
+        // $api->post('book/store', 'App\\Api\\V1\\Controllers\\BookController@store');
+        // $api->get('books', 'App\\Api\\V1\\Controllers\\BookController@index');
+    	// $api->get('books/{id}', 'App\\Api\\V1\Controllers\\BookController@show');
+    	// $api->post('books', 'App\\Api\\V1\\Controllers\\BookController@store');
+    	// $api->delete('books/{id}', 'App\\Api\\V1\Controllers\\BookController@destroy');
+        //
+        // // 6. StudentAnswer
+        // $api->post('book/store', 'App\\Api\\V1\\Controllers\\BookController@store');
+        // $api->get('books', 'App\\Api\\V1\\Controllers\\BookController@index');
+    	// $api->get('books/{id}', 'App\\Api\\V1\Controllers\\BookController@show');
+    	// $api->post('books', 'App\\Api\\V1\\Controllers\\BookController@store');
+    	// $api->delete('books/{id}', 'App\\Api\\V1\Controllers\\BookController@destroy');
+        //
+        // // 7. StudentInfo
+        // $api->post('book/store', 'App\\Api\\V1\\Controllers\\BookController@store');
+        // $api->get('books', 'App\\Api\\V1\\Controllers\\BookController@index');
+    	// $api->get('books/{id}', 'App\\Api\\V1\Controllers\\BookController@show');
+    	// $api->post('books', 'App\\Api\\V1\\Controllers\\BookController@store');
+    	// $api->delete('books/{id}', 'App\\Api\\V1\Controllers\\BookController@destroy');
+        //
+        // // 8. Unit
+        // $api->post('book/store', 'App\\Api\\V1\\Controllers\\BookController@store');
+        // $api->get('books', 'App\\Api\\V1\\Controllers\\BookController@index');
+    	// $api->get('books/{id}', 'App\\Api\\V1\Controllers\\BookController@show');
+    	// $api->post('books', 'App\\Api\\V1\\Controllers\\BookController@store');
+    	// $api->delete('books/{id}', 'App\\Api\\V1\Controllers\\BookController@destroy');
+        //
+        // // 9. UnitContent
+        // $api->post('book/store', 'App\\Api\\V1\\Controllers\\BookController@store');
+        // $api->get('books', 'App\\Api\\V1\\Controllers\\BookController@index');
+    	// $api->get('books/{id}', 'App\\Api\\V1\Controllers\\BookController@show');
+    	// $api->post('books', 'App\\Api\\V1\\Controllers\\BookController@store');
+    	// $api->delete('books/{id}', 'App\\Api\\V1\Controllers\\BookController@destroy');
     });
 
 });

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 use App\Model\Unit;
 use App\Model\Quiz;
 
@@ -40,13 +41,15 @@ class QuizController extends Controller
     public function store(Request $request)
     {
         $input = $request->only([
-            'unit_code', 'title', 'type', 'status'
+            'unit_code', 'semester', 'year', 'title', 'type', 'status'
         ]);
 
         $unit = Unit::where('code', $input['unit_code'])->first();
 
         Quiz::create([
             'unit_id' => $unit->id,
+            'semester' => $input['semester'],
+            'year' => Carbon::createFromFormat('Y', $input['year']),
             'title' => $input['title'],
             'type' => $input['type'],
             'status' => $input['status']
@@ -93,11 +96,12 @@ class QuizController extends Controller
     public function update(Request $request, $id)
     {
         $input = $request->only([
-            'unit_id', 'title', 'type', 'status'
+            'semester', 'year', 'title', 'type', 'status'
         ]);
         $quiz = Quiz::find($id);
         $quiz->update([
-            'unit_id' => $input['unit_id'],
+            'semester' => $input['semester'],
+            'year' => Carbon::createFromFormat('Y', $input['year']),
             'title' => $input['title'],
             'type' => $input['type'],
             'status' => $input['status']

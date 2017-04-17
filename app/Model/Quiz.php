@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Quiz extends Model
 {
     protected $fillable = [
-        'unit_id', 'title', 'type', 'status'
+        'unit_id', 'title', 'type', 'status', 'semester', 'year'
     ];
 
     // this quiz is made for a specific unit
@@ -16,10 +16,10 @@ class Quiz extends Model
         return $this->belongsTo('App\Model\Unit');
     }
 
-    // one quiz can have multiple attempts from different students (1 student 1 attempt)
-    public function quiz_attempts()
+    // one quiz can have answers from many students
+    public function student_answers()
     {
-        return $this->hasMany('App\Model\QuizAttempt');
+        return $this->hasMany('App\Model\StudentAnswer');
     }
 
     // one quiz has many questions
