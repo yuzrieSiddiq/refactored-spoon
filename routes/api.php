@@ -60,7 +60,7 @@ $api->version('v1', function (Router $api) {
         //
         // // 3. Quiz
         // $api->post('book/store', 'App\\Api\\V1\\Controllers\\BookController@store');
-        $api->get('quizzes', 'App\\Api\\V1\\Controllers\\QuizController@index');
+        $api->get('quizzes/{unit_id}', 'App\\Api\\V1\\Controllers\\QuizController@index');
         $api->get('quizzes/{quiz_id}', 'App\\Api\\V1\\Controllers\\QuizController@show');
         $api->post('quizzes/submit/{quiz_id}', 'App\\Api\\V1\\Controllers\\QuizController@submit_answers');
         $api->get('quizzes/report/{quiz_id}', 'App\\Api\\V1\\Controllers\\QuizController@quiz_report');
@@ -78,6 +78,7 @@ $api->version('v1', function (Router $api) {
         // // 5. Student
         // $api->post('book/store', 'App\\Api\\V1\\Controllers\\BookController@store');
         $api->get('students', 'App\\Api\\V1\\Controllers\\StudentController@index');
+        $api->get('student_units', 'App\\Api\\V1\\Controllers\\StudentController@students_units');
         $api->get('team_info/{unit_id}', 'App\\Api\\V1\\Controllers\\StudentController@team_info');
         $api->post('enlist/{student_id}', 'App\\Api\\V1\\Controllers\\StudentController@enlist_new_member');
     	// $api->get('books/{id}', 'App\\Api\\V1\Controllers\\BookController@show');

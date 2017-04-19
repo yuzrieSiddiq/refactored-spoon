@@ -8,22 +8,20 @@ use App\Http\Controllers\Controller;
 use App\Api\V1\Requests\LoginRequest;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Auth;
 
 class LoginController extends Controller
 {
-    public function __constructor()
-    {
-        $this->middleware('role:Student');
-    }
-
     public function login(LoginRequest $request, JWTAuth $JWTAuth)
     {
         $credentials = $request->only(['email', 'password']);
 
         try {
             $token = $JWTAuth->attempt($credentials);
+            $user = Auth::user();
 
-            if(!$token) {
+            // check if a student -> use check here instead of middleware
+            if(!$token || !$user->hasRole('Student')) {
                 throw new AccessDeniedHttpException();
             }
 
@@ -34,7 +32,8 @@ class LoginController extends Controller
         return response()
             ->json([
                 'status' => 'ok',
-                'token' => $token
+                'token' => $token,
+                'user' => $user,
             ]);
     }
 }

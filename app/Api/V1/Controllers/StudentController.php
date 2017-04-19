@@ -69,4 +69,14 @@ class StudentController extends Controller
 
         return 'new member added';
     }
+
+    public function student_units()
+    {
+        $auth_user = JWTAuth::parseToken()->authenticate();
+        $this_student = Student::with('unit')
+            ->where('user_id', $auth_user->id)
+            ->get();
+
+        return response()->json($this_student);
+    }
 }

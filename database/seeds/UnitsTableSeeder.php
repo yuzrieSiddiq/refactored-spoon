@@ -17,6 +17,11 @@ class UnitsTableSeeder extends Seeder
                 'name'  => 'Introduction to Human Resource Management',
                 'description' => '-'
             ],
+            [
+                'code'  => 'TEST0001',
+                'name'  => 'Test Subject 01',
+                'description' => 'very fun much wow'
+            ],
         ]);
     }
 }

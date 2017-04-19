@@ -15,14 +15,14 @@ class QuizController extends Controller
 {
     use Helpers;
 
-    public function index()
+    public function index($unit_id)
     {
         $auth_user = JWTAuth::parseToken()->authenticate();
         $this_student = Student::with('unit', 'user')
             ->where('user_id', $auth_user->id)
             ->first();
 
-        $quizzes = Quiz::where('unit_id', $this_student->unit->id)
+        $quizzes = Quiz::where('unit_id', $unit_id)
             ->where('semester', $this_student->semester)
             ->where('year', $this_student->year)
             ->get();
