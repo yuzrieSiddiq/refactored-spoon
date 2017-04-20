@@ -60,7 +60,7 @@ $api->version('v1', function (Router $api) {
         //
         // // 3. Quiz
         // $api->post('book/store', 'App\\Api\\V1\\Controllers\\BookController@store');
-        $api->get('quizzes/{unit_id}', 'App\\Api\\V1\\Controllers\\QuizController@index');
+        $api->get('quizzes/unit/{unit_id}', 'App\\Api\\V1\\Controllers\\QuizController@index');
         $api->get('quizzes/{quiz_id}', 'App\\Api\\V1\\Controllers\\QuizController@show');
         $api->post('quizzes/submit/{quiz_id}', 'App\\Api\\V1\\Controllers\\QuizController@submit_answers');
         $api->get('quizzes/report/{quiz_id}', 'App\\Api\\V1\\Controllers\\QuizController@quiz_report');

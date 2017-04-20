@@ -22,6 +22,16 @@ class QuestionsTableSeeder extends Seeder
                 'answer4'       => 'Yit Yung',
                 'answer5'       => '',
                 'correct_answer'=> 'Yuzrie',
+            ],[
+                'quiz_id'       => '1',
+                'question'      => 'What is your name?',
+                'answer_type'   => 'mcq',
+                'answer1'       => 'How should I know',
+                'answer2'       => 'Should I not already know',
+                'answer3'       => 'Well have a guess',
+                'answer4'       => 'Itik',
+                'answer5'       => '',
+                'correct_answer'=> 'Itik',
             ],
         ]);
     }

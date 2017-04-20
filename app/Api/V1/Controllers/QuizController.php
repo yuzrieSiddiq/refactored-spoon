@@ -40,11 +40,11 @@ class QuizController extends Controller
         $quiz = Quiz::find($quiz_id);
         $questions = Question::where('quiz_id', $quiz_id)->get();
 
-        $data['this_student'] = $this_student;
-        $data['quiz'] = $quiz;
-        $data['questions'] = $questions;
+        // $data['this_student'] = $this_student;
+        // $data['quiz'] = $quiz;
+        // $data['questions'] = $questions;
 
-        return response()->json($data);
+        return response()->json($questions);
     }
 
     public function submit_answers(Request $request, $quiz_id)
