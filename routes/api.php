@@ -102,6 +102,7 @@ $api->version('v1', function (Router $api) {
         // // 8. Unit
         // $api->post('book/store', 'App\\Api\\V1\\Controllers\\BookController@store');
         $api->get('units', 'App\\Api\\V1\\Controllers\\UnitController@index');
+        $api->get('units/{unit_id}', 'App\\Api\\V1\\Controllers\\UnitController@show');
     	// $api->get('books/{id}', 'App\\Api\\V1\Controllers\\BookController@show');
     	// $api->post('books', 'App\\Api\\V1\\Controllers\\BookController@store');
     	// $api->delete('books/{id}', 'App\\Api\\V1\Controllers\\BookController@destroy');

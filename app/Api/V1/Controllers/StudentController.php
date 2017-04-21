@@ -7,6 +7,7 @@ use JWTAuth;
 
 use App\Http\Controllers\Controller;
 use App\Model\Student;
+use App\Model\StudentInfo;
 use App\Model\Unit;
 use Dingo\Api\Routing\Helpers;
 
@@ -38,6 +39,7 @@ class StudentController extends Controller
             ->where('unit_id', $this_student->unit->id)
             ->where('semester', $this_student->semester)
             ->where('year', $this_student->year)
+            ->where('team_number', $this_student->team_number)
             ->get();
 
         $available_students = Student::with('user')
@@ -47,9 +49,31 @@ class StudentController extends Controller
             ->whereNull('team_number')
             ->get();
 
-        $data['this_team'] = $this_team;
         $data['this_student'] = $this_student;
-        $data['available_students'] = $available_students;
+
+        $data['this_team'] = [];
+        foreach ($this_team as $team_member) {
+            $detail = [];
+            $detail['student_id'] = $team_member->id;
+            $detail['team_number'] = $team_member->id;
+            $detail['is_group_leader'] = $team_member->id;
+            $detail['user_name'] = $team_member->user->firstname . " " . $team_member->user->lastname;
+            $detail['user_id'] = $team_member->user_id;
+            $detail['student_std_id'] = StudentInfo::where('user_id',$detail['user_id'])->first()->student_id;
+
+            array_push($data['this_team'], $detail);
+        }
+
+        $data['available_students'] = [];
+        foreach ($available_students as $student) {
+            $detail = [];
+            $detail['student_id'] = $student->id;
+            $detail['user_name'] = $student->user->firstname . " " . $student->user->lastname;
+            $detail['user_id'] = $student->user_id;
+            $detail['student_std_id'] = StudentInfo::where('user_id',$detail['user_id'])->first()->student_id;
+
+            array_push($data['available_students'], $detail);
+        }
 
         return response()->json($data);
     }

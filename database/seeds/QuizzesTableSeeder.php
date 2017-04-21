@@ -17,17 +17,31 @@ class QuizzesTableSeeder extends Seeder
                 'unit_id'   => '1',
                 'semester'  => 'S1',
                 'year'   => 2017,
-                'title'  => 'iRAT1',
+                'title'  => 'Test 1',
                 'type'   => 'individual',
                 'status' => 'open',
             ],[
                 'unit_id'=> '1',
                 'semester'  => 'S1',
                 'year'   => 2017,
-                'title'  => 'tRAT1',
+                'title'  => 'Test 1',
                 'type'   => 'group',
                 'status' => 'open',
-            ]
+            ],[
+                'unit_id'=> '1',
+                'semester'  => 'S1',
+                'year'   => 2017,
+                'title'  => 'Test 2',
+                'type'   => 'individual',
+                'status' => 'open',
+            ],[
+                'unit_id'=> '1',
+                'semester'  => 'S1',
+                'year'   => 2017,
+                'title'  => 'Test 2',
+                'type'   => 'group',
+                'status' => 'close',
+            ],
         ]);
     }
 }

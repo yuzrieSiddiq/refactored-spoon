@@ -21,7 +21,14 @@ class UnitController extends Controller
             ->where('user_id', $auth_user->id)
             ->first();
 
-        $unit = Unit::with('unit_contents')->find($this_student->unit->id);
+        $unit = Unit::find($this_student->unit->id);
+
+        return response()->json($unit);
+    }
+
+    public function show($unit_id)
+    {
+        $unit = Unit::with('unit_contents')->find($unit_id);
 
         return response()->json($unit);
     }

@@ -7,6 +7,7 @@ use JWTAuth;
 
 use App\Http\Controllers\Controller;
 use App\Model\Student;
+use App\Model\StudentAnswer;
 use App\Model\Quiz;
 use App\Model\Question;
 use Dingo\Api\Routing\Helpers;
@@ -25,9 +26,35 @@ class QuizController extends Controller
         $quizzes = Quiz::where('unit_id', $unit_id)
             ->where('semester', $this_student->semester)
             ->where('year', $this_student->year)
+            ->where('status', 'open')
             ->get();
 
-        return response()->json($quizzes);
+        $quizzes_data = [];
+        foreach ($quizzes as $quiz) {
+            $data = [];
+            $data['quiz'] = $quiz;
+            $data['has_been_attempted'] = false;
+            $data['answers_count'] = StudentAnswer::where('student_id', $this_student->id)
+                ->where('quiz_id', $quiz->id)->count();
+
+            $student_answers = StudentAnswer::where('student_id', $this_student->id)
+                ->where('quiz_id', $quiz->id)->get();
+
+            $data['correct_count'] = 0;
+            foreach ($student_answers as $answer) {
+                $correct_answer = Question::find($answer->question_id)->correct_answer;
+                if ($answer->answer == $correct_answer) {
+                    $data['correct_count']++;
+                }
+            }
+
+            if ($data['answers_count'] > 0)
+                $data['has_been_attempted'] = true;
+
+            array_push($quizzes_data, $data);
+        }
+
+        return response()->json($quizzes_data);
     }
 
     public function show($quiz_id)
@@ -50,12 +77,16 @@ class QuizController extends Controller
     public function submit_answers(Request $request, $quiz_id)
     {
         $auth_user = JWTAuth::parseToken()->authenticate();
+        $quiz = Quiz::find($quiz_id);
         $this_student = Student::with('unit', 'user')
             ->where('user_id', $auth_user->id)
+            ->where('unit_id', $quiz->unit_id)
             ->first();
 
         $input = $request->only(['answers']);
-        $answers = json_decode($input['answers']);
+        $answers = json_decode($input['answers'], true);
+
+        // return response()->json($answers);
 
         if (isset($answers)) {
             foreach ($answers as $answer) {
