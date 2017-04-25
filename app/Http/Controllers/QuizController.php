@@ -22,6 +22,7 @@ class QuizController extends Controller
     public function index_unit($unit_id)
     {
         $data = [];
+        $data['unit'] = Unit::find($unit_id);
         $data['quizzes'] = Quiz::where('unit_id', $unit_id)->get();
 
         return view ('unit.index_quiz', $data);
@@ -36,6 +37,14 @@ class QuizController extends Controller
     {
         $data = [];
         $data['units'] = Unit::all();
+
+        return view ('quiz.create', $data);
+    }
+
+    public function create_unit($unit_id)
+    {
+        $data = [];
+        $data['unit'] = Unit::find($unit_id);
 
         return view ('quiz.create', $data);
     }

@@ -8,6 +8,7 @@
                 <div class="panel-heading">
                     <h4 class="text-center">QUIZ {{ $quiz->id }}: {{ $quiz->title }}</h4>
                 </div>
+                {{-- TODO: properly query the  if statement --}}
                 <div class="table-responsive">
                     <table class="table table-striped table-bordered" id="questions-table">
                         <thead>
@@ -24,7 +25,7 @@
                                 <tr>
                                     <td>{{ $question->id }}</td>
                                     <td>{{ $question->question }}</td>
-                                    <td>{{ $question->answer_type }}</td>
+                                    <td class="text-uppercase">{{ $question->answer_type }}</td>
                                     <td>{{ $question->correct_answer }}</td>
                                     <td>
                                         <a class="btn btn-primary" href="{{ route('quizzes.questions.show', ['quiz' => $quiz->id, 'question' => $question->id]) }}">

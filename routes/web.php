@@ -56,8 +56,6 @@ Route::resource('users', 'UserController');
 Route::resource('quizzes', 'QuizController');
 
 // QUIZ QUESTION
-/** index  **/  Route::get('quizzes/{unit}/index', 'QuizController@index_unit')
-                ->name('units.quizzes.index');
 /** index  **/  Route::get('quizzes/{quiz}/questions', 'QuestionController@index')
                 ->name('quizzes.questions.index');
 /** post   **/  Route::post('quizzes/{quiz}/questions', 'QuestionController@store')
@@ -79,6 +77,10 @@ Route::resource('units', 'UnitController');
                 ->name('units.lecturer');
 /** index  **/  Route::get('units/{unit}/students', 'StudentController@index')
                 ->name('units.students.index');
+/** index  **/  Route::get('quizzes/{unit}/index', 'QuizController@index_unit')
+                ->name('units.quizzes.index');
+/** create **/  Route::get('units/{unit}/quizzes/create', 'QuizController@create_unit')
+                ->name('units.quizzes.create');
 /** post   **/  Route::post('units/{unit}/students', 'StudentController@store')
                 ->name('units.students.store');
 /** create **/  Route::get('units/{unit}/students/create', 'StudentController@create')

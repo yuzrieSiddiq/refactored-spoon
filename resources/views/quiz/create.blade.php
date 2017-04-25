@@ -14,11 +14,16 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">Unit</label>
                             <div class="col-sm-9">
-                                <select class="form-control unit-code">
-                                    @foreach ($units as $unit)
-                                        <option value="{{ $unit->code }}">{{ $unit->code }} {{ $unit->name }}</option>
-                                    @endforeach
-                                </select>
+                                @if (!isset($unit))
+                                    <select class="form-control unit-code">
+                                        @foreach ($units as $unit)
+                                            <option value="{{ $unit->code }}">{{ $unit->code }} {{ $unit->name }}</option>
+                                        @endforeach
+                                    </select>
+                                @else
+                                    <input class="form-control" disabled value="{{ $unit->code }} {{ $unit->name }}">
+                                    <input class="unit-code" hidden value="{{ $unit->code }}">
+                                @endif
                             </div>
                         </div>
 
@@ -50,7 +55,10 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">Type</label>
                             <div class="col-sm-9">
-                                <input class="form-control type" placeholder="INDIVIDUAL / GROUP">
+                                <select class="form-control type">
+                                    <option value="individual">Individual</option>
+                                    <option value="group">Group</option>
+                                </select>
                             </div>
                         </div>
 
@@ -58,7 +66,10 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">Status</label>
                             <div class="col-sm-9">
-                                <input class="form-control status" placeholder="OPEN / CLOSE">
+                                <select class="form-control status">
+                                    <option value="open">Open</option>
+                                    <option value="close">Close</option>
+                                </select>
                             </div>
                         </div>
 

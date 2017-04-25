@@ -34,7 +34,13 @@
                             </tbody>
                         </table>
                     </div>
-                </div>
+                </div> {{-- end .panel-body --}}
+                <div class="panel-footer">
+                    <a class="btn btn-info" href="{{ route('quizzes.index') }}">BACK TO PREVIOUS PAGE</a>
+                    <a class="btn btn-success pull-right" href="{{ route('units.quizzes.create', $unit->id) }}">
+                        CREATE NEW QUIZ
+                    </a>
+                </div> {{-- end .panel-footer --}}
             </div>
 
         </div> {{-- end .col --}}

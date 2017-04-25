@@ -18,17 +18,19 @@
                                     <th class="col-md-6">Unit Name</th>
                                     <th class="col-md-2">Student Count</th>
                                     <th class="col-md-2">Quizzes Count</th>
-                                    <th></th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>Unit Code</td>
-                                    <td>Unit Name</td>
-                                    <td>Student Count</td>
-                                    <td>Quizzes Count</td>
-                                    <td><a href="#" class="btn btn-primary">View Unit</a></td>
-                                </tr>
+                                @if (isset($units))
+                                    @foreach ($units as $unit)
+                                        <tr>
+                                            <td>{{ $unit->code }}</td>
+                                            <td>{{ $unit->name }}</td>
+                                            <td>{{ $unit->students->count() }}</td>
+                                            <td>{{ $unit->quizzes->count() }}</td>
+                                        </tr>
+                                    @endforeach
+                                @endif
                             </tbody>
                         </table>
                     </div>

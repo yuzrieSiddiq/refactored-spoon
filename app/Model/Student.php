@@ -22,10 +22,4 @@ class Student extends Model
     {
         return $this->belongsTo('App\Model\Unit');
     }
-
-    // a student can answer many quiz (1 quiz 1 attempt)
-    public function quiz_attempts()
-    {
-        return $this->hasMany('App\Model\QuizAttempt');
-    }
 }

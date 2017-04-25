@@ -38,7 +38,15 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">Type</label>
                             <div class="col-sm-9">
-                                <input class="form-control" id="type" placeholder="INDIVIDUAL / GROUP" value="{{ $quiz->type }}">
+                                <select class="form-control" id="type">
+                                    @if ($quiz->type == 'individual')
+                                        <option value="individual">Individual</option>
+                                        <option value="group">Group</option>
+                                    @else
+                                        <option value="group">Group</option>
+                                        <option value="individual">Individual</option>
+                                    @endif
+                                </select>
                             </div>
                         </div>
 
@@ -46,7 +54,15 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">Status</label>
                             <div class="col-sm-9">
-                                <input class="form-control" id="status" placeholder="OPEN / CLOSE" value="{{ $quiz->status }}">
+                                <select class="form-control" id="status">
+                                    @if ($quiz->status == 'open')
+                                        <option value="open">Open</option>
+                                        <option value="close">Close</option>
+                                    @else
+                                        <option value="open">Open</option>
+                                        <option value="close">Close</option>
+                                    @endif
+                                </select>
                             </div>
                         </div>
 

@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Input;
 use Auth;
 
+use App\Model\Unit;
+use App\Model\Quiz;
+
 class HomeController extends Controller
 {
     /**
@@ -27,24 +30,36 @@ class HomeController extends Controller
     {
         $user = Auth::user();
 
-        // TODO: convert to using roles/permissions
         switch ($user->roles()->pluck('id')[0]) {
             case '1':
                 return view ('home.student');
-                break;
 
             case '2':
-                return view ('home.lecturer');
-                break;
+                $data = Self::lecturer($user);
+                return view ('home.lecturer', $data);
 
             case '3':
+                $data = Self::admin($user);
                 return view ('home.admin');
-                break;
 
             default:
                 return view('home');
-                break;
         }
+    }
+
+    public function lecturer($user)
+    {
+        $data = [];
+        $data['units'] = Unit::with('students','quizzes')->get();
+
+        return $data;
+    }
+
+    public function admin($user)
+    {
+        $data = [];
+
+        return $data;
     }
 
     /**

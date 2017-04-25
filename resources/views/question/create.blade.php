@@ -123,7 +123,7 @@
                 let errormsg = 'Something is wrong with this question please review and make sure the answers are all correct (no typos)'
                 showErrorMessage(errormsg)
             } else {
-                window.location.href = $(this).data('redirect')
+                window.location.href = '{{ route('quizzes.show', $quiz->id) }}'
             }
         })
     })
