@@ -28,16 +28,16 @@ class HomeController extends Controller
         $user = Auth::user();
 
         // TODO: convert to using roles/permissions
-        switch ($user->name) {
-            case 'student':
+        switch ($user->roles()->pluck('id')[0]) {
+            case '1':
                 return view ('home.student');
                 break;
 
-            case 'lecturer':
+            case '2':
                 return view ('home.lecturer');
                 break;
 
-            case 'admin':
+            case '3':
                 return view ('home.admin');
                 break;
 
@@ -45,7 +45,6 @@ class HomeController extends Controller
                 return view('home');
                 break;
         }
-
     }
 
     /**

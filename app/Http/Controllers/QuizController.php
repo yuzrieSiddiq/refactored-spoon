@@ -19,6 +19,14 @@ class QuizController extends Controller
         return view ('quiz.index');
     }
 
+    public function index_unit($unit_id)
+    {
+        $data = [];
+        $data['quizzes'] = Quiz::where('unit_id', $unit_id)->get();
+
+        return view ('unit.index_quiz', $data);
+    }
+
     /**
      * Show the form for creating a new resource.
      *

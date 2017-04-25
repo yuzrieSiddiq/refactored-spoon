@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Auth;
+
 use App\Model\Unit;
+use App\Model\LecturerUnit;
 
 class UnitController extends Controller
 {
@@ -15,6 +18,16 @@ class UnitController extends Controller
     public function index()
     {
         return view ('unit.index');
+    }
+
+    public function index_lecturer()
+    {
+        $data = [];
+
+        $user = Auth::user();
+        $data['units'] = LecturerUnit::with('unit')->where('user_id', $user->id)->get();
+
+        return view ('unit.index_lecturer', $data);
     }
 
     /**

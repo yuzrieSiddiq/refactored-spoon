@@ -3,56 +3,34 @@
 @section('content')
 <div class="container">
     <div class="row">
-        <div class="col-md-offset-1 col-md-10">
+        {{-- MAIN PANEL --}}
+        <div class="col-md-10 col-md-offset-1">
             <div class="panel panel-default">
-                <div class="panel-heading">Dashboard</div>
-
+                <div class="panel-heading">
+                    <div class="panel-title">REPORT</div>
+                </div>
                 <div class="panel-body">
-                    <h3>YOUR TASKS</h3>
-                    <ul>
-                        <li>CRUD QUIZZES</li>
-                        <li>UPLOAD QUIZ</li>
-                        <li>CRUD QUESTION</li>
-                        <li>ASSIGN STUDENT GROUPS</li>
-                        <li>CRUD UNIT</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-offset-1 col-md-10">
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="panel panel-primary">
-                        <div class="panel-heading">LECTURERS</div>
-                        <div class="panel-body">
-                            <input type="file" id="lecturers">
-                        </div>
-                        <div class="panel-footer">
-                            <button class="btn btn-primary process form-control" data-upload="lecturers">PROCESS</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="panel panel-info">
-                        <div class="panel-heading">STUDENTS</div>
-                        <div class="panel-body">
-                            <input type="file" id="students">
-                        </div>
-                        <div class="panel-footer">
-                            <button class="btn btn-info process form-control" data-upload="students">PROCESS</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="panel panel-success">
-                        <div class="panel-heading">QUESTIONS</div>
-                        <div class="panel-body">
-                            <input type="file" id="questions">
-                        </div>
-                        <div class="panel-footer">
-                            <button class="btn btn-success process form-control" data-upload="questions">PROCESS</button>
-                        </div>
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th class="col-md-2">Unit Code</th>
+                                    <th class="col-md-6">Unit Name</th>
+                                    <th class="col-md-2">Student Count</th>
+                                    <th class="col-md-2">Quizzes Count</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Unit Code</td>
+                                    <td>Unit Name</td>
+                                    <td>Student Count</td>
+                                    <td>Quizzes Count</td>
+                                    <td><a href="#" class="btn btn-primary">View Unit</a></td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>

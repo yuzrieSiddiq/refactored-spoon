@@ -48,7 +48,7 @@ Route::get('/test', function () {
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index');
+Route::get('/home', 'HomeController@index')->name('home');
 Route::post('/csv/lecturers', 'HomeController@uploadLecturers')->name('csv.lecturers');
 Route::post('/csv/students',  'HomeController@uploadStudents')->name('csv.students');
 Route::post('/csv/questions', 'HomeController@uploadQuestions')->name('csv.questions');
@@ -56,6 +56,8 @@ Route::resource('users', 'UserController');
 Route::resource('quizzes', 'QuizController');
 
 // QUIZ QUESTION
+/** index  **/  Route::get('quizzes/{unit}/index', 'QuizController@index_unit')
+                ->name('units.quizzes.index');
 /** index  **/  Route::get('quizzes/{quiz}/questions', 'QuestionController@index')
                 ->name('quizzes.questions.index');
 /** post   **/  Route::post('quizzes/{quiz}/questions', 'QuestionController@store')
@@ -72,7 +74,9 @@ Route::resource('quizzes', 'QuizController');
                 ->name('quizzes.questions.destroy');
 
 Route::resource('units', 'UnitController');
-// QUIZ QUESTION
+// UNTIS
+/** index  **/  Route::get('units/lecturer/index', 'UnitController@index_lecturer')
+                ->name('units.lecturer');
 /** index  **/  Route::get('units/{unit}/students', 'StudentController@index')
                 ->name('units.students.index');
 /** post   **/  Route::post('units/{unit}/students', 'StudentController@store')
