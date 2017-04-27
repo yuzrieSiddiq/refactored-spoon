@@ -23,7 +23,8 @@ class QuizController extends Controller
     {
         $data = [];
         $data['unit'] = Unit::find($unit_id);
-        $data['quizzes'] = Quiz::where('unit_id', $unit_id)->get();
+        $data['quizzes'] = Quiz::where('unit_id', $unit_id)
+            ->where('semester', 'S1')->where('year', 2017)->get();
 
         return view ('unit.index_quiz', $data);
     }

@@ -69,8 +69,8 @@
                         {{-- Update Button --}}
                         <div class="form-group">
                             <div class="col-sm-offset-2 col-sm-9">
-                                <button class="btn btn-success submit">Update</button>
-                                <a href="{{ route('quizzes.index') }}" class="btn btn-primary pull-right">Back to Previous Page</a>
+                                <a class="btn btn-info" href="{{ route('units.quizzes.index', $quiz->unit_id) }}">BACK TO PREVIOUS PAGE</a>
+                                <button class="btn btn-success submit pull-right">UPDATE</button>
                             </div>
                         </div>
                     </div> {{-- end .form-horizontal --}}

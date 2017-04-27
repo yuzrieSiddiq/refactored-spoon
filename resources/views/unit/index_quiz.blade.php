@@ -15,28 +15,33 @@
                             <thead>
                                 <tr>
                                     <th>Quiz No</th>
-                                    <th class="col-md-7">Quiz Title</th>
+                                    <th class="col-md-5">Quiz Title</th>
                                     <th>Quiz Type</th>
                                     <th>Quiz Status</th>
                                     <th></th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($quizzes as $quiz)
-                                    <tr>
-                                        <td>{{ $quiz->id }}</td>
-                                        <td>{{ $quiz->title }}</td>
-                                        <td>{{ $quiz->type }}</td>
-                                        <td>{{ $quiz->status }}</td>
-                                        <td><a href="{{ route('quizzes.edit', $quiz->id) }}" class="btn btn-primary">Edit Quiz</a></td>
-                                    </tr>
-                                @endforeach
+                                @if (isset($quizzes))
+                                    @foreach ($quizzes as $quiz)
+                                        <tr>
+                                            <td>{{ $quiz->id }}</td>
+                                            <td>{{ $quiz->title }}</td>
+                                            <td>{{ $quiz->type }}</td>
+                                            <td>{{ $quiz->status }}</td>
+                                            <td>
+                                                <a href="{{ route('quizzes.edit', $quiz->id) }}" class="btn btn-primary">Edit Quiz</a>
+                                                <a class="btn btn-info manage" href="{{ route('quizzes.questions.index', $quiz->id)}}">Manage Questions</a>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                @endif
                             </tbody>
                         </table>
                     </div>
                 </div> {{-- end .panel-body --}}
                 <div class="panel-footer">
-                    <a class="btn btn-info" href="{{ route('quizzes.index') }}">BACK TO PREVIOUS PAGE</a>
+                    <a class="btn btn-info" href="{{ route('units.lecturer') }}">BACK TO PREVIOUS PAGE</a>
                     <a class="btn btn-success pull-right" href="{{ route('units.quizzes.create', $unit->id) }}">
                         CREATE NEW QUIZ
                     </a>

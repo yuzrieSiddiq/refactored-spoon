@@ -138,4 +138,45 @@ class QuestionController extends Controller
 
         return 'deleted';
     }
+
+    public function uploadQuestions(Request $request, $quiz_id)
+    {
+        $input = $request->only([ 'file' ]);
+        $questions = json_decode($input['file']);
+
+        $quiz = Quiz::find($quiz_id);
+        foreach ($questions as $row) {
+            if ($row[0] == '') {
+                break;
+            }
+            // add entry for each column
+            $all_is_set = true;
+            for ($i=1; $i < 8; $i++) {
+                // if unit found, then add the students to that unit
+                if (!isset($row[6])) {
+                    $row[6] = '-';
+                }
+                if (!isset($row[$i])) {
+                    $all_is_set = false;
+                }
+            }
+            if ($all_is_set) {
+                Question::create([
+                    'quiz_id' => $quiz->id,
+                    'answer_type' => '',
+                    'question'=> $row[1],
+                    'answer1' => $row[2],
+                    'answer2' => $row[3],
+                    'answer3' => $row[4],
+                    'answer4' => $row[5],
+                    'answer5' => $row[6],
+                    'correct_answer' => $row[7],
+                ]);
+            } else {
+                return '2';
+            }
+        }
+
+        return 'ok';
+    }
 }

@@ -49,9 +49,9 @@ Route::get('/test', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
-Route::post('/csv/lecturers', 'HomeController@uploadLecturers')->name('csv.lecturers');
-Route::post('/csv/students',  'HomeController@uploadStudents')->name('csv.students');
-Route::post('/csv/questions', 'HomeController@uploadQuestions')->name('csv.questions');
+Route::post('/csv/lecturers', 'LecturerUnitController@uploadLecturers')->name('csv.lecturers');
+Route::post('/csv/students',  'StudentController@uploadStudents')->name('csv.students');
+Route::post('/csv/questions/{quiz_id}', 'QuestionController@uploadQuestions')->name('csv.questions');
 Route::resource('users', 'UserController');
 Route::resource('quizzes', 'QuizController');
 

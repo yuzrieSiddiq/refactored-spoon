@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Model\LecturerUnit;
-use App\Model\User;
 use App\Model\Unit;
+use App\User;
 
 class LecturerUnitController extends Controller
 {
@@ -103,5 +103,32 @@ class LecturerUnitController extends Controller
         $unit->delete();
 
         return 'deleted';
+    }
+
+    public function uploadLecturers(Request $request)
+    {
+        $input = $request->only([ 'file' ]);
+        $lecturers = json_decode($input['file']);
+
+        foreach ($lecturers as $row) {
+            // at the end of the file, it always append an empty line
+            if ($row[0] == '') {
+                break;
+            }
+
+            // add user entry
+            $check_user_exist = User::where('email', $row[2])->first();
+            if (!$check_user_exist) {
+                $user = User::create([
+                    'firstname' => $row[0],
+                    'lastname'  => $row[1],
+                    'email'     => $row[2],
+                    'password'  => bcrypt($row[3]),
+                ]);
+                $user->assignRole('Lecturer');
+            }
+        }
+
+        return 'ok';
     }
 }

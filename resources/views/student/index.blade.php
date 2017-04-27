@@ -34,6 +34,9 @@
                     <button class="btn btn-success" data-target="#modal-add-student" data-toggle="modal">
                         ADD NEW STUDENT
                     </button>
+                    <label class="btn btn-primary btn-file">
+                        UPLOAD STUDENT LIST (.CSV) <input class="file-upload" type="file" style="display: none;">
+                    </label>
                 </div> {{-- end .panel-footer --}}
             </div>
         </div>
@@ -107,6 +110,7 @@
 <script src="{{ asset('js/jquery.min.js') }}"></script>
 <script src="//cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
 <script src="{{ asset('js/bootstrap.min.js') }}"></script>
+<script src="{{ asset('js/papaparse.min.js') }}"></script>
 <script>
 (function() {
     // Get CSRF token
@@ -214,6 +218,29 @@
             'data': { '_token': getToken() }
         }).done(function(response) {
             window.location.reload()
+        })
+    })
+
+    $('.file-upload').change(function() {
+        // do the csv file parsing
+        Papa.parse($(this).prop('files')[0], {
+            complete: function(results) {
+                let jsonstring = JSON.stringify(results.data)
+                // after complete parsing, send to controller via ajax
+                let data = {
+                    '_token': getToken(),
+                    'file': jsonstring
+                }
+
+                $.ajax({
+                    'url': '{{ route('csv.students') }}',
+                    'method': 'POST',
+                    'data': data,
+                    'enctype': 'multipart/form-data'
+                }).done(function(response) {
+                    window.location.reload()
+                })
+            }
         })
     })
 }) ()

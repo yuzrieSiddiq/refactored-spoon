@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Model\Unit;
 use App\Model\Student;
+use App\Model\StudentInfo;
 use App\User;
 
 class StudentController extends Controller
@@ -134,5 +135,57 @@ class StudentController extends Controller
         $student->delete();
 
         return 'deleted';
+    }
+
+    public function uploadStudents(Request $request)
+    {
+        $input = $request->only([ 'file' ]);
+        $students = json_decode($input['file']);
+
+        foreach ($students as $row) {
+            // at the end of the file, it always append an empty line
+            if ($row[1] == '') {
+                break;
+            }
+
+            // add user entry
+            $check_user_exist = User::where('email', $row[2])->first();
+            if (!$check_user_exist) {
+                $user = User::create([
+                    'firstname' => $row[0],
+                    'lastname'  => $row[1],
+                    'email'     => $row[2],
+                    'password'  => bcrypt($row[4]),
+                ]);
+                $user->assignRole('Student');
+
+                // add student information -> i.e: student id
+                $studentinfo = StudentInfo::create([
+                    'user_id'    => $user->id,
+                    'student_id' => $row[3],
+                    'locality'   => $row[5],
+                ]);
+
+                // find if the units specified exist
+                $units = [];
+                for ($i=0; $i < 5; $i++) {
+                    $units[$i] = Unit::where('code', $row[$i+6])->first();
+
+                    // if unit found, then add the students to that unit
+                    if (isset($units[$i])) {
+                        Student::create([
+                            'user_id' => $user->id,
+                            'unit_id' => $units[$i]->id,
+                            'semester'=> 'S1',
+                            'year'    => 2017,
+                            'team_number' => null,
+                            'is_group_leader' => false,
+                        ]);
+                    }
+                }
+            }
+        }
+
+        return 'ok';
     }
 }
