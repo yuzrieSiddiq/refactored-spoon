@@ -22,4 +22,9 @@ class Student extends Model
     {
         return $this->belongsTo('App\Model\Unit');
     }
+
+    public function ranking()
+    {
+        return $this->hasMany('App\Model\Ranking');
+    }
 }

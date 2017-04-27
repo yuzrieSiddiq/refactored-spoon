@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Model\Quiz;
 use App\Model\Unit;
+use App\Model\Question;
 use App\Model\Student;
 use App\Model\StudentInfo;
+use App\Model\StudentAnswer;
 use App\User;
 
 class StudentController extends Controller
@@ -75,7 +78,73 @@ class StudentController extends Controller
     public function show($unit_id, $student_id)
     {
         $data = [];
-        $data['student'] = Student::find($student_id);
+        $data['this_student'] = Student::with('user')->find($student_id);
+        $data['this_student_info'] = StudentInfo::where('user_id', $data['this_student']->user->id)->first();
+        $data['this_unit'] = Unit::find($unit_id);
+
+        $data['all_students'] = Student::where('unit_id', $unit_id)->get();
+        $data['quizzes'] = Quiz::where('unit_id', $unit_id)->get();
+
+        $data['ranking_asc'] = [];
+        $data['ranking'] = [];
+        foreach ($data['quizzes'] as $quiz) {
+            foreach ($data['all_students'] as $student) {
+                $answers = StudentAnswer::where('quiz_id', $quiz->id)
+                    ->where('student_id', $student->id)
+                    ->get();
+
+                if ($answers->count() > 0) {
+
+                    $correct_count = 0;
+                    foreach ($answers as $answer) {
+                        $question = Question::find($answer->question_id);
+                        if ($answer->answer == $question->correct_answer)
+                            $correct_count++;
+                    }
+
+                    // calculate score in 100%
+                    $score = ($correct_count * 100) / count($answers);
+
+                    $ranker = [];
+                    $ranker['student_id'] = $student->id;
+                    $ranker['quiz_id'] = $quiz->id;
+                    $ranker['score'] = $score;
+                    $ranker['rank_no'] = 0;
+
+                    array_push($data['ranking'], $ranker);
+
+                } else {
+
+                    $ranker = [];
+                    $ranker['student_id'] = $student->id;
+                    $ranker['quiz_id'] = $quiz->id;
+                    $ranker['score'] = 0;
+                    $ranker['rank_no'] = 0;
+
+                    array_push($data['ranking'], $ranker);
+                }
+            }
+
+            // sort the score in descending - big first --> smaller
+            $score = [];
+            foreach ($data['ranking'] as $key => $row) {
+                $score[$key] = $row['score'];
+            }
+            array_multisort($score, SORT_DESC, $data['ranking']);
+
+            // increment the rank no if already attempt the quiz
+            $current_rank = 0;
+            foreach ($data['ranking'] as $ranker) {
+                if ($ranker['score'] > 0 && $ranker['quiz_id'] == $quiz->id) {
+                    $current_rank++;
+                    $ranker['rank_no'] = $current_rank;
+
+                    array_push($data['ranking_asc'], $ranker);
+                }
+            }
+        }
+
+        return response()->json($data);
 
         return view ('student.show', $data);
     }

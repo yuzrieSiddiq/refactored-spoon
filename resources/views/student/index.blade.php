@@ -120,7 +120,8 @@
 
     let table_operations = '\
         <button class="btn btn-info make-teamleader">Make Team Leader</button>\
-        <button class="btn btn-danger modal-remove" data-toggle="modal">Remove</button>'
+        <button class="btn btn-danger modal-remove" data-toggle="modal">Remove</button>\
+        <button class="btn btn-success student-report">Report</button>'
 
     let table = $('#students-table').DataTable( {
         "ajax": "{{ route('get.students.datatable') }}",
@@ -184,7 +185,18 @@
         modal.on('hidden.bs.modal', function (e) {
             $(this).remove()
         })
-    } );
+    });
+
+    $('#students-table tbody').on( 'click', '.student-report', function () {
+        let data = table.row( $(this).parents('tr') ).data()
+        let student_id = data[0];
+
+        let url = '{{ route('units.students.show', ['unit' => 'unit_id', 'student' => 'student_id']) }}'
+        url = url.replace('unit_id', {{ $unit->id }})
+        url = url.replace('student_id', student_id)
+
+        window.location.href = url
+    });
 
     $('.add-student').click(function() {
         url = $(this).data('url')

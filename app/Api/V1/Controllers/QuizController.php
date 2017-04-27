@@ -10,6 +10,7 @@ use App\Model\Student;
 use App\Model\StudentAnswer;
 use App\Model\Quiz;
 use App\Model\Question;
+use App\Model\Ranking;
 use Dingo\Api\Routing\Helpers;
 
 class QuizController extends Controller
@@ -51,8 +52,15 @@ class QuizController extends Controller
             if ($data['answers_count'] > 0)
                 $data['has_been_attempted'] = true;
 
+            $data['rank'] = Ranking::where('student_id', $this_student->id)
+                ->where('quiz_id', $quiz->id)->first();
+
+            // todo: use semester and year filter too
+            $data['total_students'] = Student::where('unit_id', $quiz->unit_id)->count();
+
             array_push($quizzes_data, $data);
         }
+
 
         return response()->json($quizzes_data);
     }
@@ -95,6 +103,60 @@ class QuizController extends Controller
                     'question_id' => $answer['question_id'],
                     'quiz_id' => $quiz_id,
                     'answer' => $answer['answer'],
+                ]);
+            }
+        }
+
+        // all students later to add semester and year filter
+        $all_students = Student::where('unit_id', $quiz->unit_id)->get();
+        $ranking = [];
+        foreach ($all_students as $student) {
+            $student_answers = StudentAnswer::where('quiz_id', $quiz->id)
+                ->where('student_id', $student->id)
+                ->get();
+
+            if ($student_answers->count() > 0) {
+
+                $correct_count = 0;
+                foreach ($student_answers as $answer) {
+                    $question = Question::find($answer->question_id);
+                    if ($answer->answer == $question->correct_answer)
+                        $correct_count++;
+                }
+
+                // calculate score in 100%
+                $score = ($correct_count * 100) / count($student_answers);
+
+                $ranker = [];
+                $ranker['student_id'] = $student->id;
+                $ranker['quiz_id'] = $quiz->id;
+                $ranker['score'] = $score;
+                $ranker['rank_no'] = 0;
+
+                array_push($ranking, $ranker);
+
+            }
+        }
+
+        // sort the score in descending - big first --> smaller
+        $score = [];
+        foreach ($ranking as $key => $row) {
+            $score[$key] = $row['score'];
+        }
+        array_multisort($score, SORT_DESC, $ranking);
+
+        // increment the rank no if already attempt the quiz
+        $current_rank = 0;
+        foreach ($ranking as $ranker) {
+            if ($ranker['score'] > 0 && $ranker['quiz_id'] == $quiz->id) {
+                $current_rank++;
+                $ranker['rank_no'] = $current_rank;
+
+                Ranking::create([
+                    'student_id' => $ranker['student_id'],
+                    'quiz_id' => $ranker['quiz_id'],
+                    'rank_no' => $ranker['rank_no'],
+                    'score' => $ranker['score'],
                 ]);
             }
         }
