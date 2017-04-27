@@ -3,3 +3,11 @@
 
 // Bootstrap
 @import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
+
+html {
+    height: 100%;
+}
+
+.login_gradient {
+    background: radial-gradient(ellipse, rgba(255, 255, 255, 0.5), rgba(204, 204, 204, 0.5), rgba(169, 170, 172, 0.5));
+}

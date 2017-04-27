@@ -15,10 +15,10 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">Name</label>
                             <div class="col-sm-5">
-                                <input type="text" class="form-control" id="first_name" placeholder="First Name" value="{{ $user->first_name }}">
+                                <input type="text" class="form-control" id="first_name" placeholder="First Name" value="{{ $user->firstname }}">
                             </div>
                             <div class="col-sm-4">
-                                <input type="text" class="form-control" id="last_name" placeholder="Last Name" value="{{ $user->last_name }}">
+                                <input type="text" class="form-control" id="last_name" placeholder="Last Name" value="{{ $user->lastname }}">
                             </div>
                         </div>
 
