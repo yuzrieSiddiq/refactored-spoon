@@ -11,8 +11,10 @@
                     <div class="row">
                         <div class="col-md-offset-1 col-md-4">
                             <p class="text-center">
-                                <img class="hidden-sm hidden-xs" src="http://lorempixel.com/200/200" width="100%" style="margin-bottom:4px;">
-                                <a class="btn btn-primary form-control" href="{{ asset('android/test.apk') }}">Download apk here</a>
+                                <small>Are you a student? Click the button below to download the <i>apk</i>.</small>
+                            </p>
+                            <p class="text-center">
+                                <button class="btn btn-info" data-toggle="modal" data-target="#download-apk-modal">Download APK</button>
                             </p>
                         </div>
                         <div class="col-md-6">
@@ -64,13 +66,110 @@
                         </div>
                     </div>
 
-                    <p class="text-center">
-                        <br>
-                        <small>Are you a student? <span class="hidden-xs hidden-sm">Scan the QR Code above or</span> click the button to download the apk for android</small>
-                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="download-apk-modal" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="form-horizontal" style="margin-top: 50px; margin-bottom: 50px;">
+                                <div class="form-group">
+                                    <h4 class="col-md-12 text-center">Please enter your student credentials</h4>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">E-Mail</label>
+
+                                    <div class="col-md-9">
+                                        <input id="student-email" type="email" class="form-control">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label">Password</label>
+
+                                    <div class="col-md-9">
+                                        <input id="student-password" type="password" class="form-control">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-md-7 col-md-offset-4">
+                                        <button class="btn btn-primary col-md-6 col-md-offset-2" id="student-login">
+                                            Login
+                                        </button>
+                                        <div class="loader pull-right vcenter hidden" style="margin-top: 6px;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 col-qr" hidden>
+                            <p class="text-center qr-tag">
+                                <p class="text-center">
+                                    {!! QrCode::size(150)->generate(asset('android/test.apk')) !!}
+                                </p>
+                                <p class="text-center"><small>Please scan the QR Code</small></p>
+
+                                <hr>
+                                <a class="btn btn-primary form-control" href="{{ asset('android/test.apk') }}">Download apk here</a>
+                                <p class="text-center"><small>Cannot scan? Click the button above</small></p>
+                            </p>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
     </div>
 </div>
+@endsection
+
+@section('extra_js')
+<script type="text/javascript">
+(function() {
+    let getToken = function() {
+        return $('meta[name=csrf-token]').attr('content')
+    }
+
+    $('#student-login').click(function() {
+        let url = "{{ route('login') }}"
+        let method = "POST"
+        let data = {
+            '_token': getToken(),
+            'email': $('#student-email').val(),
+            'password': $('#student-password').val(),
+        }
+
+        $.ajax({
+            'url': url,
+            'method': method,
+            'data': data
+        }).done(function(response) {
+            if (response == 'logged in') {
+                $('.col-qr').show(450).delay(5000)
+
+                // logout
+                let next_url = "{{ route('logout') }}"
+                let next_method = "POST"
+                let next_data = { '_token': getToken() }
+
+                $.ajax({
+                    'url': next_url,
+                    'method': next_method,
+                    'data': next_data
+                }).done(function() {
+                    if (response == 'logged out') {
+                        console.log('good')
+                    }
+                })
+            }
+        })
+    })
+})()
+</script>
 @endsection

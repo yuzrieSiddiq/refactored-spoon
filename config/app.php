@@ -180,6 +180,7 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        SimpleSoftwareIO\QrCode\QrCodeServiceProvider::class,
 
     ],
 
@@ -235,6 +236,7 @@ return [
         'JWTAuth' => Tymon\JWTAuth\Facades\JWTAuth::class,
         'Excel' => Maatwebsite\Excel\Facades\Excel::class,
         'Datatables' => Yajra\Datatables\Facades\Datatables::class,
+        'QrCode' => SimpleSoftwareIO\QrCode\Facades\QrCode::class,
     ],
 
 ];

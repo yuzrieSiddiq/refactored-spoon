@@ -4,6 +4,10 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\HTTP\Request;
+use Auth;
+
+use QRCode;
 
 class LoginController extends Controller
 {
@@ -37,11 +41,27 @@ class LoginController extends Controller
         $this->middleware('guest', ['except' => 'logout']);
     }
 
-    // /**
-    //  * Overide protected  method username from AuthenticatesUsers Traits
-    //  */
-    // public function username()
-    // {
-    //     return 'username';
-    // }
+    public function authenticated(Request $request, $user)
+    {
+        if ($user->hasRole('Student')) {
+            return 'logged in';
+        }
+    }
+
+    public function logout(Request $request)
+    {
+        if (Auth::user()->hasRole('Student')) {
+            $this->guard()->logout();
+            $request->session()->flush();
+            $request->session()->regenerate();
+
+            return 'logged out';
+        } else if (Auth::user()->hasRole('Lecturer')) {
+            $this->guard()->logout();
+            $request->session()->flush();
+            $request->session()->regenerate();
+
+            return redirect('/');
+        }
+    }
 }
