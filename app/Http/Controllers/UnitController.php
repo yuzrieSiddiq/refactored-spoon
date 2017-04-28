@@ -49,7 +49,23 @@ class UnitController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $input = $request->only([
+            'code', 'name', 'description'
+        ]);
+
+        $check_unit_exist_code = Unit::where('code', $input['code'])->first();
+        if (isset($check_unit_exist_code)) return '1';
+
+        $check_unit_exist_name = Unit::where('name', $input['name'])->first();
+        if (isset($check_unit_exist_name)) return '2';
+
+        Unit::create([
+            'code' => $input['code'],
+            'name' => $input['name'],
+            'description' => $input['description'],
+        ]);
+
+        return 'created';
     }
 
     /**

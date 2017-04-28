@@ -69,7 +69,6 @@
 
     $('.submit').click(function() {
         let url = $(this).data('url')
-        let role = selectRole.val()
 
         let data = {
             '_token': getToken(),

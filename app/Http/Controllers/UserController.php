@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\User;
 
+use Spatie\Permission\Models\Role;
+
 class UserController extends Controller
 {
     /**
@@ -24,7 +26,9 @@ class UserController extends Controller
      */
     public function create()
     {
-        return view ('user.create');
+        $data['availableroles'] = Role::with('permissions')->get();
+
+        return view ('user.create', $data);
     }
 
     /**
@@ -35,7 +39,22 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $input = $request->only([
+            'role', 'first_name', 'last_name', 'password','email'
+        ]);
+
+        // if check the email - if exist, return '2'
+        $check_user_exist_email = User::where('email', $input['email'])->first();
+        if (isset($check_user_exist_email)) return '2';
+
+        // if no error, create students and assign role
+        $user = User::create([
+            'firstname' => $input['first_name'],
+            'lastname' => $input['last_name'],
+            'password' => bcrypt($input['password']),
+            'email' => $input['email']
+        ]);
+        $user->assignRole($input['role']);
     }
 
     /**
@@ -76,13 +95,20 @@ class UserController extends Controller
     public function update(Request $request, $id)
     {
         $input = $request->only([
-            'name', 'email'
+            'role', 'username', 'first_name', 'last_name', 'email'
         ]);
+
+        // find the user based on the parameter id
+        $check_user_exist_email = User::where('email', $input['email'])->first();
+        if (isset($check_user_exist_email)) return '2';
+
         $user = User::find($id);
         $user->update([
-            'name' => $input['name'],
+            'firstname' => $input['first_name'],
+            'lastname' => $input['last_name'],
             'email' => $input['email']
         ]);
+        $user->syncRoles([ $input['role'] ]);
 
         return 'updated';
     }

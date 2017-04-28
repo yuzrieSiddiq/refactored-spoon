@@ -37,6 +37,18 @@
                             </div>
                         </div>
 
+                        {{-- Roles --}}
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Role</label>
+                            <div class="col-sm-9">
+                                <select class="form-control text-capitalize" id="role">
+                                    @foreach ($availableroles as $role)
+                                        <option value="{{ $role->name }}">{{ $role->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
                         <div class="form-group">
                             <div class="col-sm-9 col-sm-offset-2">
                                 <div class="alert alert-danger" role="alert"></div>
@@ -73,11 +85,26 @@
         $('.alert').show(450).delay(8000).slideUp(450)
     }
 
+    let selectRole = $('#role')
+    selectRole.data('prev', selectRole.val())
+    $('#' + selectRole.data('prev')).removeClass('hidden')
+
+    selectRole.change(function() {
+        let previousOption = $(this)
+        $('#' + previousOption.data('prev')).addClass('hidden')
+        previousOption.data('prev', previousOption.val())
+
+        let option = $(this).find('option:selected').val()
+        $('#' + option).removeClass('hidden')
+    })
+
     $('.submit').click(function() {
         let url = $(this).data('url')
+        let role = selectRole.val()
 
         let data = {
             '_token': getToken(),
+            'role': role,
             'first_name': $('#first_name').val(),
             'last_name' : $('#last_name').val(),
             'password'  : $('#password').val(),
