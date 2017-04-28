@@ -51,6 +51,8 @@ Route::post('/csv/lecturers', 'LecturerUnitController@uploadLecturers')->name('c
 Route::post('/csv/students',  'StudentController@uploadStudents')->name('csv.students');
 Route::post('/csv/questions/{quiz_id}', 'QuestionController@uploadQuestions')->name('csv.questions');
 Route::resource('users', 'UserController');
+Route::get('quizzes/upload', 'QuizController@create_upload')->name('quizzes.create.upload');
+Route::post('quizzes/upload', 'QuizController@store_upload')->name('quizzes.store.upload');
 Route::resource('quizzes', 'QuizController');
 
 // QUIZ QUESTION

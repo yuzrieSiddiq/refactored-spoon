@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Carbon\Carbon;
 use App\Model\Unit;
 use App\Model\Quiz;
+use App\Model\Question;
 
 class QuizController extends Controller
 {
@@ -140,5 +141,88 @@ class QuizController extends Controller
         $quiz->delete();
 
         return 'deleted';
+    }
+
+    public function create_upload()
+    {
+        return view ('quiz.create_upload');
+    }
+
+    public function store_upload(Request $request)
+    {
+        $input = $request->only([
+            'file', 'title', 'semester',
+            'year', 'type', 'status'
+        ]);
+        $questions = json_decode($input['file']);
+
+        foreach ($questions as $row) {
+            if ($row[0] == '') {
+                break;
+            }
+
+            // find the unit and make sure it exist
+            $unit = Unit::where('code', $row[0])->first();
+            if (isset($unit)) {
+
+                $quiz = Quiz::where('unit_id', $unit->id)
+                    ->where('title', $input['title'])
+                    ->where('semester', $input['semester'])
+                    ->where('year', $input['year'])
+                    ->where('type', $input['type'])
+                    ->first();
+
+                if (!isset($quiz)) {
+                    $quiz = Quiz::create([
+                        'unit_id' => $unit->id,
+                        'semester' => $input['semester'],
+                        'year' => $input['year'],
+                        'title' => $input['title'],
+                        'type' => $input['type'],
+                        'status' => $input['status']
+                    ]);
+                }
+
+                // add entry for each column
+                $all_is_set = true;
+                for ($i=1; $i < 8; $i++) {
+                    // if answer 5 is empty, keep it -
+                    if (!isset($row[6])) {
+                        $row[6] = '-';
+                    }
+                    if (!isset($row[$i])) {
+                        $all_is_set = false;
+                    }
+                }
+                if ($all_is_set) {
+
+                    $question = Question::where('quiz_id', $quiz->id)
+                        ->where('question', $row[1])
+                        ->first();
+
+                    if (!isset($question)) {
+                        Question::create([
+                            'quiz_id' => $quiz->id,
+                            'answer_type' => '',
+                            'question'=> $row[1],
+                            'answer1' => $row[2],
+                            'answer2' => $row[3],
+                            'answer3' => $row[4],
+                            'answer4' => $row[5],
+                            'answer5' => $row[6],
+                            'correct_answer' => $row[7],
+                        ]);
+                    }
+                } else {
+                    return '2';
+                }
+
+            } else {
+                // if unit is not exist
+                // skip, todo: add to a list to show as error
+            }
+        }
+
+        return 'ok';
     }
 }

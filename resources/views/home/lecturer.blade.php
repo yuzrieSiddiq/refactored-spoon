@@ -3,8 +3,12 @@
 @section('content')
 <div class="container">
     <div class="row">
+        <div class="col-md-3">
+            @include('layouts.menu_side')
+        </div>
         {{-- MAIN PANEL --}}
-        <div class="col-md-10 col-md-offset-1">
+        <div class="col-md-9">
+
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <div class="panel-title">REPORT</div>
@@ -14,10 +18,11 @@
                         <table class="table table-striped">
                             <thead>
                                 <tr>
-                                    <th class="col-md-2">Unit Code</th>
-                                    <th class="col-md-6">Unit Name</th>
-                                    <th class="col-md-2">Student Count</th>
-                                    <th class="col-md-2">Quizzes Count</th>
+                                    <th class="col-md-1">Unit Code</th>
+                                    <th class="col-md-4">Unit Name</th>
+                                    <th class="text-center">Student Count</th>
+                                    <th class="text-center">Quizzes Count</th>
+                                    <th></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -26,16 +31,25 @@
                                         <tr>
                                             <td>{{ $unit->code }}</td>
                                             <td>{{ $unit->name }}</td>
-                                            <td>{{ $unit->students->count() }}</td>
-                                            <td>{{ $unit->quizzes->count() }}</td>
+                                            <td class="text-center">{{ $unit->students->count() }}</td>
+                                            <td class="text-center">{{ $unit->quizzes->count() }}</td>
+                                            <td>
+                                                <div class="pull-right">
+                                                    <a class="btn btn-success form-control" href="{{ route('units.show', $unit->id) }}">VIEW UNIT</a>
+                                                    {{-- <a href="{{ route('units.students.index', $unit->id) }}" class="btn btn-info">Student List</a>
+                                                    <a href="{{ route('units.quizzes.index', $unit->id) }}" class="btn btn-primary">Quizzes</a> --}}
+                                                </div>
+                                            </td>
                                         </tr>
                                     @endforeach
                                 @endif
                             </tbody>
                         </table>
                     </div>
+
                 </div>
             </div>
+
         </div>
     </div>
 </div>

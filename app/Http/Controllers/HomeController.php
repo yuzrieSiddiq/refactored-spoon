@@ -8,6 +8,7 @@ use Auth;
 
 use App\Model\Unit;
 use App\Model\Quiz;
+use App\Model\LecturerUnit;
 
 class HomeController extends Controller
 {
@@ -49,11 +50,25 @@ class HomeController extends Controller
     public function lecturer($user)
     {
         $data = [];
-        $data['units'] = Unit::with('students','quizzes')->get();
+        $data['units'] = [];
+
+        // get all of the lecturer's units
+        $my_units = LecturerUnit::where('user_id', $user->id)->get();
+
+        // get all units
+        $units = Unit::with('students','quizzes')->get();
+        foreach ($units as $unit) {
+            foreach ($my_units as $my_unit) {
+                // get only the units assigned to this lecturer
+                if ($unit->id == $my_unit->id) {
+                    array_push($data['units'], $unit);
+                }
+            }
+        }
 
         return $data;
     }
-    
+
     /**
      * The csv file does not include headers, simply starts from real data, headers works as follows:
      * 1) importLecturer: firstname, lastname, email, password

@@ -7,7 +7,7 @@
 
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    UNIT LISTING
+                    <h4>QUIZZES <small>{{ $unit->code }} {{ $unit->name }}</small></h4>
                 </div>
                 <div class="panel-body">
                     <div class="table-responsive">
@@ -42,9 +42,15 @@
                 </div> {{-- end .panel-body --}}
                 <div class="panel-footer">
                     <a class="btn btn-info" href="{{ route('units.lecturer') }}">BACK TO PREVIOUS PAGE</a>
-                    <a class="btn btn-success pull-right" href="{{ route('units.quizzes.create', $unit->id) }}">
-                        CREATE NEW QUIZ
-                    </a>
+
+                    <div class="pull-right">
+                        <a class="btn btn-primary" href="{{ route('units.quizzes.create', $unit->id) }}">
+                            UPLOAD NEW QUIZ
+                        </a>
+                        <a class="btn btn-success" href="{{ route('units.quizzes.create', $unit->id) }}">
+                            CREATE NEW QUIZ
+                        </a>
+                    </div>
                 </div> {{-- end .panel-footer --}}
             </div>
 
