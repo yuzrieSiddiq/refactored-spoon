@@ -66,6 +66,8 @@ Route::resource('quizzes', 'QuizController');
                 ->name('quizzes.questions.show');
 /** edit   **/  Route::get('quizzes/{quiz}/questions/{question}/edit', 'QuestionController@edit')
                 ->name('quizzes.questions.edit');
+/** update **/  Route::put('quizzes/{quiz}/questions/answer_types', 'QuestionController@update_answer_type')
+                ->name('quizzes.questions.update.answer_types');
 /** update **/  Route::put('quizzes/{quiz}/questions/{question}', 'QuestionController@update')
                 ->name('quizzes.questions.update');
 /** delete **/  Route::delete('quizzes/{quiz}/questions/{question}', 'QuestionController@destroy')

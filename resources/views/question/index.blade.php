@@ -12,7 +12,7 @@
                     <table class="table table-striped table-bordered" id="questions-table">
                         <thead>
                             <tr>
-                                <th>ID</th>
+                                <th>No</th>
                                 <th class="col-md-4">Question</th>
                                 <th class="col-md-2">Answer Type</th>
                                 <th class="col-md-3">Correct Answer</th>
@@ -21,11 +21,26 @@
                         </thead>
                         <tbody>
                             @if (isset($questions))
-                                @foreach ($questions as $question)
+                                @foreach ($questions as $count => $question)
                                     <tr>
-                                        <td>{{ $question->id }}</td>
+                                        <td class="text-center">{{ $count+1 }}</td>
                                         <td>{{ $question->question }}</td>
-                                        <td class="text-uppercase">{{ $question->answer_type }}</td>
+                                        <td class="text-uppercase">
+                                            @if (!empty($question->answer_type))
+                                                {{ $question->answer_type }}
+                                            @else
+                                                <label class="custom-control custom-radio">
+                                                    <input name="question-{{ $question->id }}-answer-type" type="radio" class="custom-control-input" data-id="{{ $question->id }}" checked>
+                                                    <span class="custom-control-indicator"></span>
+                                                    <span class="custom-control-description radio-value">MCQ</span>
+                                                </label>
+                                                <label class="custom-control custom-radio">
+                                                    <input name="question-{{ $question->id }}-answer-type" type="radio" class="custom-control-input" data-id="{{ $question->id }}">
+                                                    <span class="custom-control-indicator"></span>
+                                                    <span class="custom-control-description radio-value">RANKING</span>
+                                                </label>
+                                            @endif
+                                        </td>
                                         <td>{{ $question->correct_answer }}</td>
                                         <td>
                                             <a class="btn btn-primary" href="{{ route('quizzes.questions.show', ['quiz' => $quiz->id, 'question' => $question->id]) }}">
@@ -40,10 +55,15 @@
                     </table>
                 </div> {{-- end .table-responsive --}}
                 <div class="panel-footer">
-                    <a class="btn btn-info" href="{{ route('units.quizzes.index', $quiz->unit_id) }}">BACK TO PREVIOUS PAGE</a>
+                    @if ($has_empty_answer_type)
+                        <button class="btn btn-success update">UPDATE</button>
+                    @else
+                        <a class="btn btn-info" href="{{ route('units.quizzes.index', $quiz->unit_id) }}">BACK TO PREVIOUS PAGE</a>
+                    @endif
+
                     <div class="pull-right">
                         <label class="btn btn-primary btn-file">
-                            UPLOAD STUDENT LIST (.CSV) <input class="file-upload" type="file" style="display: none;">
+                            UPLOAD QUESTIONS (.CSV) <input class="file-upload" type="file" style="display: none;">
                         </label>
                         <a class="btn btn-success" href="{{ route('quizzes.questions.create', $quiz->id) }}">
                             CREATE NEW QUESTION
@@ -133,6 +153,31 @@
             }
         })
     })
+
+    $('.update').click(function() {
+        let answer_types = []
+
+        $('input[name*=answer-type]:checked').each(function() {
+            let answer_type = {}
+            answer_type['question_id'] = $(this).data('id')
+            answer_type['answer_type'] = $(this).siblings('.radio-value').text()
+            answer_types.push(answer_type)
+        })
+
+        let data = {
+            '_token': getToken(),
+            'answer_types': answer_types
+        }
+
+        $.ajax({
+            'url': '{{ route('quizzes.questions.update.answer_types', $quiz->id) }}',
+            'method': 'PUT',
+            'data': data
+        }).done(function(response) {
+            window.location.reload()
+        })
+    })
+
 }) ()
 </script>
 @endsection

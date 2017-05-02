@@ -22,6 +22,14 @@ class QuestionController extends Controller
         $data['quiz'] = $quiz;
         $data['questions'] = $questions;
 
+        $data['has_empty_answer_type'] = false;
+        foreach ($questions as $question) {
+            if (empty($question->answer_type)) {
+                $data['has_empty_answer_type'] = true;
+                break;
+            }
+        }
+
         return view ('question.index', $data);
     }
 
@@ -121,6 +129,24 @@ class QuestionController extends Controller
             'answer5' => $input['answer5'],
             'correct_answer' => $input['correct_answer']
         ]);
+
+        return 'updated';
+    }
+
+    public function update_answer_type(Request $request, $quiz_id)
+    {
+        $input = $request->only([ 'answer_types' ]);
+
+        $quiz = Quiz::with('questions')->find($quiz_id);
+        foreach ($quiz->questions as $question) {
+            foreach ($input['answer_types'] as $answer_type) {
+                if ($question->id == $answer_type['question_id']) {
+                    $question->update([
+                        'answer_type' => $answer_type['answer_type']
+                    ]);
+                }
+            }
+        }
 
         return 'updated';
     }
