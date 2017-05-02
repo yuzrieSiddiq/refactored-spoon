@@ -144,7 +144,7 @@ class StudentController extends Controller
             }
         }
 
-        return response()->json($data);
+        // return response()->json($data);
 
         return view ('student.show', $data);
     }

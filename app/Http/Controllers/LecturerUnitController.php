@@ -37,7 +37,22 @@ class LecturerUnitController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $input = $request->only(['user_id', 'unit_id']);
+
+        $existing_units = LecturerUnit::where('user_id', $input['user_id'])->get();
+        foreach ($existing_units as $unit) {
+            if ($unit->id == $input['unit_id']) {
+                return '2';
+            }
+        }
+
+        // if loop runs fine, create
+        LecturerUnit::create([
+            'user_id' => $input['user_id'],
+            'unit_id' => $input['unit_id'],
+        ]);
+
+        return 'ok';
     }
 
     /**
