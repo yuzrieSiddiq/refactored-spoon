@@ -30,17 +30,6 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
-    /**
-     * Automatically creates hash for the user password.
-     *
-     * @param  string  $value
-     * @return void
-     */
-    public function setPasswordAttribute($value)
-    {
-        $this->attributes['password'] = Hash::make($value);
-    }
-
     // TODO: remove this -> unrelated to this project
     public function books()
     {
