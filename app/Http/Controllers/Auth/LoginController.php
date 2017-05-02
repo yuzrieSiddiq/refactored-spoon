@@ -56,7 +56,7 @@ class LoginController extends Controller
             $request->session()->regenerate();
 
             return 'logged out';
-        } else if (Auth::user()->hasRole('Lecturer')) {
+        } else {
             $this->guard()->logout();
             $request->session()->flush();
             $request->session()->regenerate();
