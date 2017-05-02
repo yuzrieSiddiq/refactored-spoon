@@ -15,15 +15,15 @@
                 <div class="panel-body">
                     <div> {{-- tabs --}}
                         <ul class="nav nav-tabs" role="tablist">
-                            <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Student List</a></li>
-                            <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">Quizzes</a></li>
-                            <li role="presentation"><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">Unit Info</a></li>
+                            <li role="presentation" class="active"><a href="#student-list" role="tab" data-toggle="tab">Student List</a></li>
+                            <li role="presentation"><a href="#quiz-list" role="tab" data-toggle="tab">Quizzes</a></li>
+                            <li role="presentation"><a href="#unit-info" role="tab" data-toggle="tab">Unit Info</a></li>
                          </ul>
                     </div>
 
                     <div class="tab-content">
                         {{-- Student List --}}
-                        <div role="tabpanel" class="tab-pane fade in active" id="home">
+                        <div role="tabpanel" class="tab-pane fade in active" id="student-list">
                             <div class="table-responsive">
                                 <table class="table table-striped" id="students-table">
                                     <thead>
@@ -112,7 +112,7 @@
 
                         </div>
                         {{-- Quizzes --}}
-                        <div role="tabpanel" class="tab-pane fade" id="profile">
+                        <div role="tabpanel" class="tab-pane fade" id="quiz-list">
                             <div class="table-responsive">
                                 <table class="table table-striped">
                                     <thead>
@@ -151,7 +151,7 @@
                         </div>
 
                         {{-- Unit Info --}}
-                        <div role="tabpanel" class="tab-pane fade" id="messages">
+                        <div role="tabpanel" class="tab-pane fade" id="unit-info">
                             <div class="form-horizontal">
                                 {{-- Code --}}
                                 <div class="form-group">

@@ -33,7 +33,7 @@ class HomeController extends Controller
 
         switch ($user->roles()->pluck('id')[0]) {
             case '1':
-                return view ('user.index');
+                return view ('home.admin');
 
             case '2':
                 $data = Self::lecturer($user);
