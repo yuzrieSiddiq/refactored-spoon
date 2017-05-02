@@ -26,7 +26,11 @@ class LecturerUnitController extends Controller
      */
     public function create()
     {
-        return view ('lecturer_unit.create');
+        $data = [];
+        $data['lecturers'] = User::role('Lecturer')->get();
+        $data['available_units'] = Unit::all();
+
+        return view ('lecturer_unit.create', $data);
     }
 
     /**
@@ -37,20 +41,26 @@ class LecturerUnitController extends Controller
      */
     public function store(Request $request)
     {
-        $input = $request->only(['user_id', 'unit_id']);
+        $input = $request->only(['user_id', 'units']);
+        $input_units = json_decode($input['units']);
 
         $existing_units = LecturerUnit::where('user_id', $input['user_id'])->get();
-        foreach ($existing_units as $unit) {
-            if ($unit->id == $input['unit_id']) {
-                return '2';
+        foreach ($input_units as $unit) {
+            $unit_is_exist = false;
+            foreach ($existing_units as $unitexist) {
+                if ($unitexist->unit_id == $unit['unit_id']) {
+                    $unit_is_exist = true;
+                    break;
+                }
+            }
+
+            if (!$unit_is_exist) {
+                LecturerUnit::create([
+                    'user_id' => $input['user_id'],
+                    'unit_id' => $unit->unit_id,
+                ]);
             }
         }
-
-        // if loop runs fine, create
-        LecturerUnit::create([
-            'user_id' => $input['user_id'],
-            'unit_id' => $input['unit_id'],
-        ]);
 
         return 'ok';
     }

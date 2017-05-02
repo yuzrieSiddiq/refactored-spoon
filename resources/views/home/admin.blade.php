@@ -109,6 +109,7 @@
 <script src="{{ asset('js/jquery.min.js') }}"></script>
 <script src="//cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
 <script src="{{ asset('js/bootstrap.min.js') }}"></script>
+<script src="{{ asset('js/papaparse.min.js') }}"></script>
 <script>
 (function() {
     $(function () {
