@@ -1,7 +1,7 @@
-@role('Lecturer')
+{{-- @role('Lecturer')
 <li><a href="{{ route('home') }}">HOME</a></li>
 <li><a href="{{ route('units.lecturer') }}">VIEW UNITS</a></li>
-@endrole
+@endrole --}}
 
 @role('Administrator')
 <li><a href="{{ route('home') }}">MANAGE USERS</a></li>

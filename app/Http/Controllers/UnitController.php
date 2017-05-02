@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Auth;
 
+use App\User;
 use App\Model\Quiz;
 use App\Model\Unit;
 use App\Model\LecturerUnit;
@@ -80,6 +81,9 @@ class UnitController extends Controller
         $data['unit'] = Unit::with('students','quizzes')->find($id);
         $data['quizzes'] = Quiz::where('unit_id', $data['unit']->id)
             ->where('semester', 'S1')->where('year', 2017)->get();
+
+        $students = User::role('Student')->with('student_info', 'students')->get();
+        $data['students'] = $students;
 
         return view ('unit.show', $data);
     }
