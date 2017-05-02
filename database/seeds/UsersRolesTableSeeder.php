@@ -21,27 +21,28 @@ class UsersRolesTableSeeder extends Seeder
                 // Administrator
                 'user_id'       => '1',
                 'role_id'       => '1',
-            ],[
-                // Lecturer
-                'user_id'       => '2',
-                'role_id'       => '2',
-            ],[
-                // Student 1
-                'user_id'       => '3',
-                'role_id'       => '3',
-            ],[
-                // Student 2
-                'user_id'       => '4',
-                'role_id'       => '3',
-            ],[
-                // Student 3
-                'user_id'       => '5',
-                'role_id'       => '3',
-            ],[
-                // Student 4
-                'user_id'       => '6',
-                'role_id'       => '3',
             ],
+            // [
+            //     // Lecturer
+            //     'user_id'       => '2',
+            //     'role_id'       => '2',
+            // ],[
+            //     // Student 1
+            //     'user_id'       => '3',
+            //     'role_id'       => '3',
+            // ],[
+            //     // Student 2
+            //     'user_id'       => '4',
+            //     'role_id'       => '3',
+            // ],[
+            //     // Student 3
+            //     'user_id'       => '5',
+            //     'role_id'       => '3',
+            // ],[
+            //     // Student 4
+            //     'user_id'       => '6',
+            //     'role_id'       => '3',
+            // ],
         ]);
 
         $assignedroles = DB::table('user_has_roles')->get();
