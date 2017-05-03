@@ -80,7 +80,8 @@ $api->version('v1', function (Router $api) {
         $api->get('students', 'App\\Api\\V1\\Controllers\\StudentController@index');
         $api->get('student_units', 'App\\Api\\V1\\Controllers\\StudentController@students_units');
         $api->get('team_info/{unit_id}', 'App\\Api\\V1\\Controllers\\StudentController@team_info');
-        $api->post('enlist/{student_id}', 'App\\Api\\V1\\Controllers\\StudentController@enlist_new_member');
+        $api->post('enlist/{student_id}/unit/{unit_id}', 'App\\Api\\V1\\Controllers\\StudentController@enlist_new_member');
+        $api->post('delist/{student_id}/unit/{unit_id}', 'App\\Api\\V1\\Controllers\\StudentController@delist_member');
     	// $api->get('books/{id}', 'App\\Api\\V1\Controllers\\BookController@show');
     	// $api->post('books', 'App\\Api\\V1\\Controllers\\BookController@store');
     	// $api->delete('books/{id}', 'App\\Api\\V1\Controllers\\BookController@destroy');

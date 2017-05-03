@@ -78,7 +78,7 @@ class StudentController extends Controller
         return response()->json($data);
     }
 
-    public function enlist_new_member($student_id)
+    public function enlist_new_member($student_id, $unit_id)
     {
         $auth_user = JWTAuth::parseToken()->authenticate();
 
@@ -90,6 +90,23 @@ class StudentController extends Controller
 
         $new_member = Student::find($student_id);
         $new_member->update([ 'team_number' => $this_student->team_number ]);
+
+        return 'new member added';
+    }
+
+    public function delist_member($student_id, $unit_id)
+    {
+        $auth_user = JWTAuth::parseToken()->authenticate();
+
+        $this_unit = Unit::find($unit_id);
+        $this_student = Student::with('unit', 'user')
+            ->where('user_id', $auth_user->id)
+            ->where('unit_id', $this_unit->id)
+            ->first();
+
+        // selected to be removed
+        $selected_member = Student::find($student_id);
+        $selected_member->update([ 'team_number' => null ]);
 
         return 'new member added';
     }
