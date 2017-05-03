@@ -22,3 +22,12 @@ mix.copy(jQueryPath + 'jquery.min.js', 'public/js/jquery.min.js');
 
 const bootstrapJSPath = './node_modules/bootstrap-sass/assets/javascripts/';
 mix.copy(bootstrapJSPath + 'bootstrap.min.js', 'public/js/bootstrap.min.js');
+
+const datatablesCoreJSPath = './node_modules/datatables.net/js/';
+mix.copy(datatablesCoreJSPath + 'jquery.dataTables.js', 'public/js/datatables.net.js');
+
+const datatablesCoreBootstrapJSPath = './node_modules/datatables.net-bs/js/';
+mix.copy(datatablesCoreBootstrapJSPath + 'dataTables.bootstrap.js', 'public/js/datatables.bootstrap.js');
+
+const datatablesCoreBootstrapCSSPath = './node_modules/datatables.net-bs/css/';
+mix.copy(datatablesCoreBootstrapCSSPath + 'dataTables.bootstrap.css', 'public/css/datatables.bootstrap.css');

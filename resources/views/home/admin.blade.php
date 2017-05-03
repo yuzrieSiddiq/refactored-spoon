@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('extra_head')
-    <link rel="stylesheet" href="//cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="{{ asset('css/datatables.bootstrap.css') }}">
 @endsection
 
 @section('content')
@@ -107,7 +107,8 @@
 
 @section('extra_js')
 <script src="{{ asset('js/jquery.min.js') }}"></script>
-<script src="//cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
+<script src="{{ asset('js/datatables.net.js') }}"></script>
+<script src="{{ asset('js/datatables.bootstrap.js') }}"></script>
 <script src="{{ asset('js/bootstrap.min.js') }}"></script>
 <script src="{{ asset('js/papaparse.min.js') }}"></script>
 <script>
