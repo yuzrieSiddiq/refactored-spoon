@@ -48,6 +48,7 @@
                 </div>
                 <div class="panel-footer">
                     <button class="btn btn-success submit">SUBMIT</button>
+                    <a class="btn btn-info pull-right" href="{{ route('home') }}">BACK TO PREVIOUS PAGE</a>
                 </div>
             </div>
         </div>
@@ -87,7 +88,7 @@
             'method': 'POST',
             'data': data
         }).done(function(response) {
-            // window.location.href = '{{ route('home') }}'
+            window.location.href = '{{ route('home') }}'
         })
     })
 })()

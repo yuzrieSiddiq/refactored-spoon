@@ -37,8 +37,8 @@
                         {{-- Update Button --}}
                         <div class="form-group">
                             <div class="col-sm-offset-2 col-sm-9">
-                                <button class="btn btn-success submit">Create</button>
-                                <a href="{{ route('units.index') }}" class="btn btn-primary pull-right">Back to Previous Page</a>
+                                <button class="btn btn-success submit">CREATE</button>
+                                <a href="{{ route('home') }}" class="btn btn-info pull-right">BACK TO PREVIOUS PAGE</a>
                             </div>
                         </div>
                     </div> {{-- end .form-horizontal --}}
@@ -77,7 +77,7 @@
                 let errormsg = 'A unit with that name already exist'
                 showErrorMessage(errormsg)
             } else {
-                window.location.href = "{{ route('units.index') }}"
+                window.location.href = "{{ route('home') }}"
             }
         })
     })

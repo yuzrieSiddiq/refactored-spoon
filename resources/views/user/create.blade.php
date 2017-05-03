@@ -59,7 +59,7 @@
                         <div class="form-group">
                             <div class="col-sm-offset-2 col-sm-9">
                                 <button class="btn btn-success submit" data-url="{{ route('users.store') }}">CREATE</button>
-                                <a class="btn btn-info pull-right" href="{{ route('users.index') }}">BACK TO PREVIOUS PAGE</a>
+                                <a class="btn btn-info pull-right" href="{{ route('home') }}">BACK TO PREVIOUS PAGE</a>
                             </div>
                         </div>
 
@@ -124,7 +124,7 @@
                 let errormsg = 'The user with that email already exist'
                 showErrorMessage(errormsg)
             } else {
-                window.location.href = "{{ route('users.index') }}"
+                window.location.href = "{{ route('home') }}"
             }
         })
     })
