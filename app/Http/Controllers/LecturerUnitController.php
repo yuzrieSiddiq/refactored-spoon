@@ -48,7 +48,7 @@ class LecturerUnitController extends Controller
         foreach ($input_units as $unit) {
             $unit_is_exist = false;
             foreach ($existing_units as $unitexist) {
-                if ($unitexist->unit_id == $unit['unit_id']) {
+                if ($unitexist->unit_id == $unit->unit_id) {
                     $unit_is_exist = true;
                     break;
                 }

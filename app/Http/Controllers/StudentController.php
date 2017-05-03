@@ -213,7 +213,7 @@ class StudentController extends Controller
 
         foreach ($students as $row) {
             // at the end of the file, it always append an empty line
-            if ($row[1] == '') {
+            if ($row[0] == '') {
                 break;
             }
 

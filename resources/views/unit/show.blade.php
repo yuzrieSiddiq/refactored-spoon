@@ -276,7 +276,6 @@
     });
 
     $('.add-student').click(function() {
-        url = $(this).data('url')
         data = {
             '_token': getToken(),
             'student_user_id': $('.select-student').val(),
@@ -285,7 +284,7 @@
         }
 
         $.ajax({
-            'url': url,
+            'url': '{{ route('units.students.store', $unit->id) }}',
             'method': 'POST',
             'data': data
         }).done(function(response) {

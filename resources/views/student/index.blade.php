@@ -124,7 +124,7 @@
         <button class="btn btn-success student-report">Report</button>'
 
     let table = $('#students-table').DataTable( {
-        "ajax": "{{ route('get.students.datatable') }}",
+        "ajax": "{{ route('get.students.datatable', $unit->id) }}",
         "columnDefs": [
             {
                 // hide student id
@@ -199,7 +199,6 @@
     });
 
     $('.add-student').click(function() {
-        url = $(this).data('url')
         data = {
             '_token': getToken(),
             'student_user_id': $('.select-student').val(),
@@ -208,7 +207,7 @@
         }
 
         $.ajax({
-            'url': url,
+            'url': '{{ route('units.students.store', $unit->id) }}',
             'method': 'POST',
             'data': data
         }).done(function(response) {
