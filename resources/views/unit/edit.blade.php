@@ -40,8 +40,8 @@
                         {{-- Update Button --}}
                         <div class="form-group">
                             <div class="col-sm-offset-2 col-sm-9">
-                                <button class="btn btn-success submit">Update</button>
-                                <a href="{{ route('units.index') }}" class="btn btn-primary pull-right">Back to Previous Page</a>
+                                <button class="btn btn-success submit">UPDATE</button>
+                                <a href="{{ route('units.index') }}" class="btn btn-info pull-right">BACK TO PREVIOUS PAGE</a>
                             </div>
                         </div>
                     </div> {{-- end .form-horizontal --}}

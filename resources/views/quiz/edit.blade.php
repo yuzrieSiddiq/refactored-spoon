@@ -69,7 +69,7 @@
                         {{-- Update Button --}}
                         <div class="form-group">
                             <div class="col-sm-offset-2 col-sm-9">
-                                <a class="btn btn-info" href="{{ route('units.quizzes.index', $quiz->unit_id) }}">BACK TO PREVIOUS PAGE</a>
+                                <a class="btn btn-info" href="{{ route('units.show', $quiz->unit_id) }}">BACK TO PREVIOUS PAGE</a>
                                 <button class="btn btn-success submit pull-right">UPDATE</button>
                             </div>
                         </div>

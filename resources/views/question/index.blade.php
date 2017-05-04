@@ -58,7 +58,7 @@
                     @if ($has_empty_answer_type)
                         <button class="btn btn-success update">UPDATE</button>
                     @else
-                        <a class="btn btn-info" href="{{ route('units.quizzes.index', $quiz->unit_id) }}">BACK TO PREVIOUS PAGE</a>
+                        <a class="btn btn-info" href="{{ route('units.show', $quiz->unit_id) }}">BACK TO PREVIOUS PAGE</a>
                     @endif
 
                     <div class="pull-right">

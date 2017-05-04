@@ -9,6 +9,9 @@
     <div class="row">
         <div class="col-md-12">
             <div class="panel panel-default">
+                <div class="panel-heading">
+                    <a class="btn btn-info" href="{{ route('home') }}">BACK TO PREVIOUS PAGE</a>
+                </div>
                 <div class="panel-body">
                     <div> {{-- tabs --}}
                         <ul class="nav nav-tabs" role="tablist">
@@ -139,9 +142,6 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <a class="btn btn-primary" href="{{ route('units.quizzes.create', $unit->id) }}">
-                                UPLOAD NEW QUIZ
-                            </a>
                             <a class="btn btn-success" href="{{ route('units.quizzes.create', $unit->id) }}">
                                 CREATE NEW QUIZ
                             </a>
@@ -169,11 +169,11 @@
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+                </div> {{-- end .panel-body --}}
+            </div> {{-- end .panel --}}
+        </div> {{-- end .col --}}
+    </div> {{-- end .row --}}
+</div> {{-- end .container  --}}
 @endsection
 
 @section('extra_js')
