@@ -7,6 +7,9 @@
 @section('content')
 <div class="container">
     <div class="panel panel-default">
+        <div class="panel-heading">
+            DASHBOARD
+        </div>
         <div class="panel-body">
             <div> {{-- tabs --}}
                 <ul class="nav nav-tabs" role="tablist">
