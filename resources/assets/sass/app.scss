@@ -35,3 +35,13 @@ html {
 .tab-content {
     margin-top:10px;
 }
+
+.custom-nav {
+    background-color: $main-theme;
+
+    .navbar-brand { color: #FFF; }
+    .navbar-brand:hover { color: #CCC; }
+
+    .navbar-nav>li>a { color: #FFF; }
+    .navbar-nav>li>a:hover { color: #CCC; }
+}

@@ -8,7 +8,7 @@
 
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <div class="panel-title">REPORT</div>
+                    <div class="panel-title">DASHBOARD</div>
                 </div>
                 <div class="panel-body">
                     <div class="table-responsive">

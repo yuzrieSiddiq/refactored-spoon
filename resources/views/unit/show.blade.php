@@ -132,7 +132,7 @@
                                                     <td>{{ $quiz->title }}</td>
                                                     <td>{{ $quiz->type }}</td>
                                                     <td>{{ $quiz->status }}</td>
-                                                    <td class="text-center">
+                                                    <td class="pull-right">
                                                         <a href="{{ route('quizzes.edit', $quiz->id) }}" class="btn btn-primary">Edit Quiz</a>
                                                         <a class="btn btn-info manage" href="{{ route('quizzes.questions.index', $quiz->id)}}">Manage Questions</a>
                                                     </td>
@@ -195,7 +195,7 @@
     }
 
     let table_operations = '\
-        <div class="text-center">\
+        <div class="pull-right">\
             <button class="btn btn-info make-teamleader" data-toggle="tooltip" data-placement="top" title="Make Team Leader"><span class="glyphicon glyphicon-user"></span></button>\
             <button class="btn btn-success student-report" data-toggle="tooltip" data-placement="top" title="Student Report"><span class="glyphicon glyphicon-book"></span></button>\
             <button class="btn btn-danger modal-remove" data-toggle="tooltip" data-placement="top" title="Remove Student"><span class="glyphicon glyphicon-remove" data-toggle="modal"></span></button>\
@@ -299,7 +299,6 @@
         let url = '{{ route('units.students.destroy', ['unit' => 'unit_id', 'student' => 'student_id']) }}'
         url = url.replace('unit_id', {{ $unit->id }})
         url = url.replace('student_id', data[0])
-        console.log(url)
 
         $.ajax({
             'url': url,
