@@ -43,12 +43,12 @@
                         <table class="table table-striped" id="users-table" width="100%">
                             <thead>
                                 <tr>
-                                    <th>ID</th>
-                                    <th>First Name</th>
-                                    <th>Last Name</th>
-                                    <th>Email</th>
-                                    <th>Role</th>
-                                    <th></th>
+                                    <th class="hidden">ID</th>
+                                    <th class="col-md-2">First Name</th>
+                                    <th class="col-md-2">Last Name</th>
+                                    <th class="col-md-5">Email</th>
+                                    <th class="col-md-1">Role</th>
+                                    <th class="col-md-2"></th>
                                 </tr>
                             </thead>
                         </table>
@@ -131,7 +131,13 @@
 
     let table1 = $('#units-table').DataTable( {
         "ajax": "{{ route('get.units.datatable') }}",
-        "columnDefs": [ {
+        "columnDefs": [
+            {
+                // hide id
+                "targets": 0,
+                "visible": false,
+            },
+            {
             "targets": -1,
             "data": null,
             "defaultContent": table_operations1
@@ -205,7 +211,13 @@
 
     let table2 = $('#users-table').DataTable( {
         "ajax": "{{ route('get.users.datatable') }}",
-        "columnDefs": [ {
+        "columnDefs": [
+            {
+                // hide id
+                "targets": 0,
+                "visible": false,
+            },
+            {
             "targets": -1,
             "data": null,
             "defaultContent": table_operations2
@@ -290,7 +302,13 @@
 
     let table3 = $('#l_units-table').DataTable( {
         "ajax": "{{ route('get.l_units.datatable') }}",
-        "columnDefs": [ {
+        "columnDefs": [
+            {
+                // hide id
+                "targets": 0,
+                "visible": false,
+            },
+            {
             "targets": -1,
             "data": null,
             "defaultContent": table_operations3
