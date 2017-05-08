@@ -95,7 +95,6 @@ class QuizController extends Controller
         $answers = json_decode($input['answers'], true);
 
         // return response()->json($answers);
-
         if (isset($answers)) {
             foreach ($answers as $answer) {
                 StudentAnswer::create([
@@ -158,6 +157,130 @@ class QuizController extends Controller
                     'rank_no' => $ranker['rank_no'],
                     'score' => $ranker['score'],
                 ]);
+            }
+        }
+    }
+
+    public function submit_group_answers(Request $request, $quiz_id)
+    {
+        $auth_user = JWTAuth::parseToken()->authenticate();
+        $quiz = Quiz::find($quiz_id);
+        $this_student = Student::with('unit', 'user')
+            ->where('user_id', $auth_user->id)
+            ->where('unit_id', $quiz->unit_id)
+            ->first();
+
+        $this_team = Student::->with('unit', 'user')
+            ->where('unit_id', $quiz->unit_id)
+            ->where('team_number', $this_student->team_number)
+            ->get();
+
+        $input = $request->only(['answers']);
+        $answers = json_decode($input['answers'], true);
+
+        // save answers for all students
+        if (isset($answers)) {
+            foreach ($answers as $answer) {
+                foreach ($this_team as $team_member) {
+                    StudentAnswer::create([
+                        'student_id' => $team_member->id,
+                        'question_id' => $answer['question_id'],
+                        'quiz_id' => $quiz_id,
+                        'answer' => $answer['answer'],
+                    ]);
+                }
+            }
+        }
+
+        // all students later to add semester and year filter
+        $all_students = Student::where('unit_id', $quiz->unit_id)->get();
+
+        // find how many total groups in a unit
+        $number_of_groups = 0;
+        foreach ($all_students as $student) {
+            if (isset($student->team_number)) {
+                if ($student->team_number > $number_of_groups) {
+                    $number_of_groups = $student->team_number;
+                }
+            }
+        }
+
+        // add to rank if attempted quiz
+        $ranking = [];
+        foreach ($all_students as $student) {
+            $student_answers = StudentAnswer::where('quiz_id', $quiz->id)
+                ->where('student_id', $student->id)
+                ->orderBy('team_no');
+                ->get();
+
+            if ($student_answers->count() > 0) {
+
+                $correct_count = 0;
+                foreach ($student_answers as $answer) {
+                    $question = Question::find($answer->question_id);
+                    if ($answer->answer == $question->correct_answer)
+                        $correct_count++;
+                }
+
+                // calculate score in 100%
+                $score = ($correct_count * 100) / count($student_answers);
+
+                $ranker = [];
+                $ranker['student_id'] = $student->id;
+                $ranker['quiz_id'] = $quiz->id;
+                $ranker['score'] = $score;
+                $ranker['rank_no'] = 0;
+
+                if (isset($student->team_number)) {
+                    $ranker['team_no'] = $student->team_number
+                } else {
+                    $ranker['team_no'] = 0;
+                }
+
+                array_push($ranking, $ranker);
+
+            }
+        }
+
+        // sort the score in descending - big first --> smaller
+        $score = [];
+        foreach ($ranking as $key => $row) {
+            $score[$key] = $row['score'];
+        }
+        array_multisort($score, SORT_DESC, $ranking);
+
+        // increment the rank no if already attempt the quiz
+        $current_rank = 0;
+        $checked_team = [];
+        for ($i=0; $i < $number_of_groups; $i++) {
+            foreach ($ranking as $ranker) {
+                // if found the team
+                if ($ranker['team_no'] == $i) {
+                    // if found the right quiz is attempted
+                    if ($ranker['score'] > 0 && $ranker['quiz_id'] == $quiz->id) {
+                        // check if the team is already checked before incrementing rank
+                        $checked_team['team_no'] = $ranker['team_no'];
+                        $checked_team['rank_no'] = $current_rank;
+
+                        if ($ranker['team_no'] != $checked_team['team_no']) {
+                            $current_rank++;
+                        }
+
+                        // get team members based on checked team no
+                        $student_team = Student::where('unit_id', $quiz->unit_id)
+                            ->where('team_number', $ranker['team_no'])->get();
+
+                        // create rank for the team members only
+                        foreach ($student_team as $team_member) {
+                            Ranking::create([
+                                'student_id' => $team_member->id,
+                                'quiz_id' => $ranker['quiz_id'],
+                                'rank_no' => $checked_team['rank_no'],
+                                'score' => $ranker['score'],
+                            ]);
+                        }
+                    }
+                }
             }
         }
     }
