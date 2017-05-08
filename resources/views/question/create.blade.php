@@ -22,7 +22,10 @@
                         <div class="form-group">
                             <label class="col-sm-3 control-label">ANSWER TYPE</label>
                             <div class="col-sm-9">
-                                <input class="form-control" id="answer-type" placeholder="MCQ / RANKING">
+                                <select class="form-control" id="answer-type">
+                                    <option value="MCQ">MCQ</option>
+                                    <option value="RANKING">RANKING</option>
+                                </select>
                             </div>
                         </div>
 
@@ -123,7 +126,8 @@
                 let errormsg = 'Something is wrong with this question please review and make sure the answers are all correct (no typos)'
                 showErrorMessage(errormsg)
             } else {
-                window.location.href = '{{ route('quizzes.show', $quiz->id) }}'
+                console.log(response['question_id'])
+                console.log(response['correct_answer'])
             }
         })
     })

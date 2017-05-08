@@ -59,7 +59,16 @@ class QuestionController extends Controller
             'answer1', 'answer2', 'answer3', 'answer4', 'answer5'
         ]);
 
-        Question::create([
+        if ($input['answer_type'] == 'MCQ' || $input['answer_type'] == 'mcq') {
+            if ($input['correct_answer'] != $input['answer1'] || $input['correct_answer'] != $input['answer2'] ||
+                $input['correct_answer'] != $input['answer3'] || $input['correct_answer'] != $input['answer4'] ||
+                $input['correct_answer'] != $input['answer5'])
+            {
+                return '1';
+            }
+        }
+
+        $question = Question::create([
             'quiz_id' => $quiz_id,
             'question' => $input['question'],
             'answer_type' => $input['answer_type'],
@@ -71,7 +80,7 @@ class QuestionController extends Controller
             'correct_answer' => $input['correct_answer'],
         ]);
 
-        return 'ok';
+        return $question;
     }
 
     /**
@@ -118,7 +127,16 @@ class QuestionController extends Controller
             'answer4', 'answer5', 'correct_answer'
         ]);
 
-        $question = Question::find($id);
+        if ($input['answer_type'] == 'MCQ' || $input['answer_type'] == 'mcq') {
+            if ($input['correct_answer'] != $input['answer1'] && $input['correct_answer'] != $input['answer2'] &&
+                $input['correct_answer'] != $input['answer3'] && $input['correct_answer'] != $input['answer4'] &&
+                $input['correct_answer'] != $input['answer5'])
+            {
+                return '1';
+            }
+        }
+
+        $question = Question::find($question_id);
         $question->update([
             'question' => $input['question'],
             'answer_type' => $input['answer_type'],

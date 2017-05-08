@@ -76,8 +76,7 @@
                     </div>
                 </div>
                 <div class="panel-footer">
-                    <button class="btn btn-success" data-url="{{ route('quizzes.questions.update', ['quiz' => $quiz->id, 'question' => $question->id]) }}"
-                        data-redirect="{{ route('quizzes.questions.show', ['quiz' => $quiz->id, 'question' => $question->id]) }}">
+                    <button class="btn btn-success submit" data-url="{{ route('quizzes.questions.update', ['quiz' => $quiz->id, 'question' => $question->id]) }}">
                         UPDATE QUESTION DETAILS
                     </button>
                     <a class="btn btn-info pull-right" href="{{ route('quizzes.questions.show', ['quiz' => $quiz->id, 'question' => $question->id]) }}">CANCEL</a>
@@ -126,7 +125,7 @@
                 let errormsg = 'Something is wrong with this question please review and make sure the answers are all correct (no typos)'
                 showErrorMessage(errormsg)
             } else {
-                window.location.href = $(this).data('redirect')
+                window.location.href = '{{ route('quizzes.questions.show', ['quiz' => $quiz->id, 'question' => $question->id]) }}'
             }
         })
     })

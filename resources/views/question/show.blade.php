@@ -79,6 +79,7 @@
                     <a class="btn btn-success" href="{{ route('quizzes.questions.edit', ['quiz' => $quiz->id, 'question' => $question->id]) }}">
                         EDIT QUESTION/ANSWER
                     </a>
+                    <a class="btn btn-info pull-right" href="{{ route('quizzes.questions.index', $quiz->id) }}">CANCEL</a>
                 </div>
             </div>
         </div>
