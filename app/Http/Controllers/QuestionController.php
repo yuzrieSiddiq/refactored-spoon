@@ -177,7 +177,7 @@ class QuestionController extends Controller
      */
     public function destroy($quiz_id, $question_id)
     {
-        $question = Question::find($id);
+        $question = Question::find($question_id);
         $question->delete();
 
         return 'deleted';
