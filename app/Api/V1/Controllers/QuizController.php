@@ -75,6 +75,7 @@ class QuizController extends Controller
             // todo: use semester and year filter too
             $data['total_students'] = Student::where('unit_id', $quiz->unit_id)->count();
             $data['total_teams'] = $number_of_groups;
+            $data['this_student'] = $this_student;
 
             array_push($quizzes_data, $data);
         }
