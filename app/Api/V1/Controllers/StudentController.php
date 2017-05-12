@@ -55,8 +55,8 @@ class StudentController extends Controller
         foreach ($this_team as $team_member) {
             $detail = [];
             $detail['student_id'] = $team_member->id;
-            $detail['team_number'] = $team_member->id;
-            $detail['is_group_leader'] = $team_member->id;
+            $detail['team_number'] = $team_member->team_number;
+            $detail['is_group_leader'] = $team_member->is_group_leader;
             $detail['user_name'] = $team_member->user->firstname . " " . $team_member->user->lastname;
             $detail['user_id'] = $team_member->user_id;
             $detail['student_std_id'] = StudentInfo::where('user_id',$detail['user_id'])->first()->student_id;
