@@ -189,8 +189,7 @@ class QuizController extends Controller
                 ->get();
 
             // all students later to add semester and year filter
-            $all_students = Student::with('ranking')
-                ->where('unit_id', $quiz->unit_id)
+            $all_students = Student::where('unit_id', $quiz->unit_id)
                 ->whereNotNull('team_number')
                 ->orderBy('team_number', 'asc')->get();
 
@@ -264,43 +263,44 @@ class QuizController extends Controller
             }
 
             // rearrange the rank based on the score (sorted ranks)
-            $current_groupleader_ranks = Ranking::with(['student' => function($query) {
-                    $query->where('is_group_leader', true)->get();
-                }])
+            $current_ranks = Ranking::with('student')
                 ->where('quiz_id', $quiz->id)
                 ->orderBy('score', 'desc')->get();
 
             // first update the group leaders rank
-            foreach ($current_groupleader_ranks as $count => $ranks) {
-                $ranks->update([
-                    'rank_no' => $count+1
-                ]);
+            $count_ranks = 0;
+            foreach ($current_ranks as $ranker) {
+                if ($ranker->student->is_group_leader) {
+                    $count_ranks++;
+                    $ranker->update([
+                        'rank_no' => $count_ranks
+                    ]);
+                }
             }
 
-            // then update the group members rank to be the same as the leader
-            foreach ($all_students as $group_leader) {
-                if (isset($group_leader->team_number) && $group_leader->is_group_leader) {
+            foreach ($current_ranks as $current_ranker) {
+                if ($current_ranker->student->is_group_leader) {
+                    foreach ($all_students as $student) {
+                        // if the student is from the same team
+                        if ($student->team_number == $current_ranker->student->team_number) {
 
-                    $group_members = Student::where('unit_id', $quiz->unit_id)
-                        ->where('team_number', $group_leader->team_number)
-                        ->get();
-
-                    foreach ($group_members as $member) {
-                        $check_exist_ranking = Ranking::where('student_id', $member->id)
+                            // find if the rank already exist for that student
+                            $member_ranking = Ranking::where('student_id', $student->id)
                             ->where('quiz_id', $quiz->id)->first();
 
-                        if (!isset($check_exist_ranking)) {
-                            Ranking::create([
-                                'student_id' => $member->id,
-                                'quiz_id' => $quiz->id,
-                                'score' => $group_leader->ranking->score,
-                                'rank_no' => $group_leader->ranking->rank_no
-                            ]);
-                        } else {
-                            $check_exist_ranking->update([
-                                'score' => $group_leader->ranking->score,
-                                'rank_no' => $group_leader->ranking->rank_no
-                            ]);
+                            if (!isset($member_ranking)) {
+                                Ranking::create([
+                                    'student_id' => $student->id,
+                                    'quiz_id' => $quiz->id,
+                                    'score' => $current_ranker->score,
+                                    'rank_no' => $current_ranker->rank_no
+                                ]);
+                            } else {
+                                $member_ranking->update([
+                                    'score' => $current_ranker->score,
+                                    'rank_no' => $current_ranker->rank_no
+                                ]);
+                            }
                         }
                     }
                 }
