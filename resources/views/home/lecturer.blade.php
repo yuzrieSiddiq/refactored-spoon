@@ -33,7 +33,7 @@
                                             <td>
                                                 <div class="pull-right">
                                                     <a class="btn btn-success" href="{{ route('units.show', $unit->id) }}">VIEW UNIT</a>
-                                                    <a class="btn btn-primary" href="{{ route('units.report', $unit->id) }}">REPORT</a>
+                                                    {{-- <a class="btn btn-primary" href="{{ route('units.report', $unit->id) }}">REPORT</a> --}}
                                                     {{-- <a href="{{ route('units.students.index', $unit->id) }}" class="btn btn-info">Student List</a>
                                                     <a href="{{ route('units.quizzes.index', $unit->id) }}" class="btn btn-primary">Quizzes</a> --}}
                                                 </div>
