@@ -45,3 +45,13 @@ html {
     .navbar-nav>li>a { color: #FFF; }
     .navbar-nav>li>a:hover { color: #CCC; }
 }
+
+#student-report-chart {
+    .list-group {
+        .list-group-item {
+            display: block;
+            padding: 10px 15px;
+            border: 0;
+        }
+    }
+}

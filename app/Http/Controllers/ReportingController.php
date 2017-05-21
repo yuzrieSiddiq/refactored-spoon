@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+use App\Model\Unit;
+use App\Model\Quiz;
+use App\Model\Student;
+
 class ReportingController extends Controller
 {
     /**
@@ -12,16 +16,22 @@ class ReportingController extends Controller
      */
     public function unit_report($unit_id)
     {
-        return 'overall_unit_report';
+        $data = [];
+        $data['unit'] = Unit::find($unit_id);
+
+        return view('report.unit', $data);
     }
 
     /**
-     * GET quiz report
+     * GET quiz report + ranking
      * return view()
      */
     public function quiz_report($quiz_id)
     {
-        return 'quiz_report';
+        $data = [];
+        $data['quiz'] = Quiz::find($quiz_id);
+
+        return view('report.quiz', $data);
     }
 
     /**
@@ -30,15 +40,11 @@ class ReportingController extends Controller
      */
     public function student_report($student_id)
     {
-        return 'student_report';
-    }
+        $data = [];
+        $data['student'] = Student::with(['user' => function($query) {
+            $query->with('student_info')->get();
+        }])->find($student_id);
 
-    /**
-     * GET ranking table
-     * return view()
-     */
-    public function ranking_report()
-    {
-        return 'ranking_report';
+        return view('report.student', $data);
     }
 }

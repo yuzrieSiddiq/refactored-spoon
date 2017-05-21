@@ -31,3 +31,9 @@ mix.copy(datatablesCoreBootstrapJSPath + 'dataTables.bootstrap.js', 'public/js/d
 
 const datatablesCoreBootstrapCSSPath = './node_modules/datatables.net-bs/css/';
 mix.copy(datatablesCoreBootstrapCSSPath + 'dataTables.bootstrap.css', 'public/css/datatables.bootstrap.css');
+
+const chartJSPath = './node_modules/chart.js/dist/';
+mix.copy(chartJSPath + 'Chart.min.js', 'public/js/Chart.min.js');
+
+const momentJSPath = './node_modules/moment/min/';
+mix.copy(momentJSPath + 'moment.min.js', 'public/js/moment.min.js');
