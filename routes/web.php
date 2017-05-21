@@ -40,6 +40,8 @@ Route::group(['middleware' => 'auth'], function () {
                     ->name('quizzes.questions.update');
     /** delete **/  Route::delete('quizzes/{quiz}/questions/{question}', 'QuestionController@destroy')
                     ->name('quizzes.questions.destroy');
+    /** report **/  Route::get('quizzes/{quiz}/report', 'ReportingController@quiz_report')
+                    ->name('quizzes.report');
 
     Route::resource('units', 'UnitController');
     // UNTIS
@@ -63,6 +65,10 @@ Route::group(['middleware' => 'auth'], function () {
                     ->name('units.students.update');
     /** delete **/  Route::delete('units/{unit}/students/{student}', 'StudentController@destroy')
                     ->name('units.students.destroy');
+    /** report **/  Route::get('units/{unit}/report', 'ReportingController@overall_unit_report')
+                    ->name('units.report');
+    /** report **/  Route::get('student/{student_id}/report', 'ReportingController@student_report')
+                    ->name('units.students.report');
 
     Route::resource('l_units', 'LecturerUnitController');
 
@@ -71,5 +77,4 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('l_unitsdatatable', 'DatatablesController@getLUnitsDatatable')->name('get.l_units.datatable');
     Route::get('studentsdatatable/{unit_id}', 'DatatablesController@getStudentsDatatable')->name('get.students.datatable');
     Route::get('quizzesdatatable', 'DatatablesController@getQuizzesDatatable')->name('get.quizzes.datatable');
-
 });
