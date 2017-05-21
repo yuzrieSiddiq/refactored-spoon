@@ -133,7 +133,7 @@
                                                     <td>{{ $quiz->type }}</td>
                                                     <td>{{ $quiz->status }}</td>
                                                     <td class="pull-right">
-                                                        <a href="{{ route('quizzes.report', $quiz->id) }}" class="btn btn-primary">Report</a>
+                                                        {{-- <a href="{{ route('quizzes.report', $quiz->id) }}" class="btn btn-primary">Report</a> --}}
                                                         <a href="{{ route('quizzes.edit', $quiz->id) }}" class="btn btn-success">Edit Quiz</a>
                                                         <a class="btn btn-info manage" href="{{ route('quizzes.questions.index', $quiz->id)}}">Manage Questions</a>
                                                     </td>
