@@ -36,10 +36,10 @@
                                 <tr>
                                     <td>
                                         <div class="list-group">
-                                            <a href="#" class="list-group-item active">4300000</a>
-                                            <a href="#" class="list-group-item">4300001</a>
-                                            <a href="#" class="list-group-item">4300002</a>
-                                            <a href="#" class="list-group-item">4300003</a>
+                                            <a href="#" class="list-group-item active student">4300000</a>
+                                            <a href="#" class="list-group-item student">4300001</a>
+                                            <a href="#" class="list-group-item student">4300002</a>
+                                            <a href="#" class="list-group-item student">4300003</a>
                                         </div>
                                     </td>
                                     <td>
@@ -91,12 +91,12 @@
 <script>
 (function() {
     // Search
-    $("#search-criteria").keyup(function() {
+    $("#search-student").keyup(function() {
        // when something is typed in the box, it will hide all
        let searchvalue = $(this).val().toLowerCase()
-       $('.eva').hide()
+       $('.student').hide()
        // if the text from the tr matches any part of the search value (indexOf), show
-       $('.eva').each(function() {
+       $('.student').each(function() {
            let text = $(this).text().toLowerCase()
            if (text.indexOf(searchvalue) != -1)
                $(this).show()
