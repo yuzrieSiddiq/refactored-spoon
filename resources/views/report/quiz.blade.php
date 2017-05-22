@@ -174,7 +174,8 @@
             'data': { '_token': getToken()}
         }).done(function(response) {
             $('.chart-canvas').find('#studentChart').remove()
-            $('.chart-canvas').find('iframe').remove()
+            $('.chart-canvas').find('iframe, h4').remove()
+            $('.chart-canvas').append('<h4 class="text-center">'+ response['student_std_id'] + " " + response['student_name'] +'</h4>')
             $('.chart-canvas').append('<canvas class="hidden" id="studentChart" width="fill" height="175"></canvas>')
 
             let studentChart = new Chart($('#studentChart'), {

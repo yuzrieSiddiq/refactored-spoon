@@ -130,6 +130,7 @@ class ReportingController extends Controller
         $data = [];
         $data['student_id'] = $student->id;
         $data['student_std_id'] = $student->user->student_info->student_id;
+        $data['student_name'] = $student->user->firstname . " " . $student->user->lastname;
         $data['attempted'] = false;
         $data['pass'] = null;
         $data['correct'] = 0;
