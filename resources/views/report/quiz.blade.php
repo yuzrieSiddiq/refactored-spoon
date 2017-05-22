@@ -3,18 +3,18 @@
 @section('content')
 <div class="container">
     <div class="row">
-        <div class="col-md-offset-1 col-md-10">
+        <div class="col-md-12">
 
             <div class="panel">
                 <div class="panel-body">
-                    <h4 class="text-center">Student Attempts Quiz Report</h4>
+                    <h4 class="text-center">Student Attempts Quiz Report <small>Overall Students</small></h4>
                     <canvas id="attemptChart" width="fill" height="150"></canvas>
                 </div>
             </div>
 
             <div class="panel">
                 <div class="panel-body">
-                    <h4 class="text-center">Student Status Report</h4>
+                    <h4 class="text-center">Student Status Report <small>Overall Questions</small></h4>
                     <div class="table-responsive">
                         <table class="table table-bordered" id="student-report-chart">
                             <thead>
@@ -36,14 +36,17 @@
                                 <tr>
                                     <td>
                                         <div class="list-group">
-                                            <a href="#" class="list-group-item active student">4300000</a>
-                                            <a href="#" class="list-group-item student">4300001</a>
-                                            <a href="#" class="list-group-item student">4300002</a>
-                                            <a href="#" class="list-group-item student">4300003</a>
+                                            @foreach ($attempts as $attempt)
+                                                @if ($attempt['attempted'])
+                                                    <a class="list-group-item clickable student" data-student-id="{{ $attempt['student_id'] }}" data-quiz-id="{{ $quiz->id }}">
+                                                        {{ $attempt['student_std_id'] }}
+                                                    </a>
+                                                @endif
+                                            @endforeach
                                         </div>
                                     </td>
-                                    <td>
-                                        <canvas id="studentChart" width="fill" height="150"></canvas>
+                                    <td class="chart-canvas">
+                                        <canvas class="hidden" id="studentChart" width="fill" height="175"></canvas>
                                     </td>
                                 </tr>
                             </tbody>
@@ -67,13 +70,15 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>4300000</td>
-                                    <td>1</td>
-                                    <td>Uevuvuveuve Ossas</td>
-                                    <td>100/100</td>
-                                    <td>100%</td>
-                                </tr>
+                                @foreach ($rankings as $ranking)
+                                    <tr>
+                                        <td>{{ $ranking->student->user->student_info->student_id }}</td>
+                                        <td>{{ $ranking->student->team_number }}</td>
+                                        <td>{{ $ranking->student->user->firstname }} {{ $ranking->student->user->lastname }}</td>
+                                        <td>{{ $ranking->rank_no }}/{{ $rankings->last()->rank_no }}</td>
+                                        <td>{{ $ranking->score }}%</td>
+                                    </tr>
+                                @endforeach
                             </tbody>
                         </table>
                     </div>
@@ -90,6 +95,11 @@
 <script src="{{ asset('js/Chart.min.js') }}"></script>
 <script>
 (function() {
+    // Get CSRF token
+    let getToken = function() {
+        return $('meta[name=csrf-token]').attr('content')
+    }
+
     // Search
     $("#search-student").keyup(function() {
        // when something is typed in the box, it will hide all
@@ -108,7 +118,7 @@
         data: {
             labels: ["Attempted", "Unattempted", "Pass", "Fail"],
             datasets: [{
-                data: [12, 19, 3, 5],
+                data: [{{ $attempted_count }}, {{ $unattempted_count }}, {{ $pass_count }}, {{ $fail_count }}],
                 backgroundColor: [
                     'rgba(54, 162, 235, 0.2)',
                     'rgba(99, 107, 111, 0.2)',
@@ -146,43 +156,64 @@
         }
     })
 
-    let studentChart = new Chart($('#studentChart'), {
-        type: 'bar',
-        data: {
-            labels: ["Correct", "Wrong"],
-            datasets: [{
-                data: [12, 19],
-                backgroundColor: [
-                    'rgba(42, 178, 123, 0.2)',
-                    'rgba(255, 99, 132, 0.2)',
-                ],
-                borderColor: [
-                    'rgba(42, 178, 123, 1)',
-                    'rgba(255,99,132,1)',
-                ],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            legend: {
-                display: false
-            },
-            scales: {
-                xAxes: [{
-                    gridLines: {
-                        color: "rgba(0, 0, 0, 0)",
-                    }
-                }],
-                yAxes: [{
-                    gridLines: {
-                        color: "rgba(0, 0, 0, 0)",
+    $('.student').click(function() {
+        let student_id = $(this).data('student-id')
+        let quiz_id = $(this).data('quiz-id')
+        let url = '{{ route('units.students.report', ['student' => 'student_id', 'quiz' => 'quiz_id']) }}'
+        url = url.replace('student_id', student_id)
+        url = url.replace('quiz_id', quiz_id)
+
+        // console.log(url)
+        $.ajax({
+            'url': url,
+            'method': 'POST',
+            'data': { '_token': getToken()}
+        }).done(function(response) {
+            $('.chart-canvas').find('#studentChart').remove()
+            $('.chart-canvas').find('iframe').remove()
+            $('.chart-canvas').append('<canvas class="hidden" id="studentChart" width="fill" height="175"></canvas>')
+
+            let studentChart = new Chart($('#studentChart'), {
+                type: 'bar',
+                data: {
+                    labels: ["Correct", "Wrong"],
+                    datasets: [{
+                        data: [response['correct'], response['wrong']],
+                        backgroundColor: [
+                            'rgba(42, 178, 123, 0.2)',
+                            'rgba(255, 99, 132, 0.2)',
+                        ],
+                        borderColor: [
+                            'rgba(42, 178, 123, 1)',
+                            'rgba(255,99,132,1)',
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    legend: {
+                        display: false
                     },
-                    ticks: {
-                        beginAtZero:true
+                    scales: {
+                        xAxes: [{
+                            gridLines: {
+                                color: "rgba(0, 0, 0, 0)",
+                            }
+                        }],
+                        yAxes: [{
+                            gridLines: {
+                                color: "rgba(0, 0, 0, 0)",
+                            },
+                            ticks: {
+                                max: response['total_questions'],
+                                beginAtZero:true
+                            }
+                        }]
                     }
-                }]
-            }
-        }
+                }
+            })
+            $('#studentChart').removeClass('hidden')
+        })
     })
 }) ()
 </script>

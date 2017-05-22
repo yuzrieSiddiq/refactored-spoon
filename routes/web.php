@@ -67,7 +67,7 @@ Route::group(['middleware' => 'auth'], function () {
                     ->name('units.students.destroy');
     /** report **/  Route::get('units/{unit}/report', 'ReportingController@unit_report')
                     ->name('units.report');
-    /** report **/  Route::get('student/{student_id}/report', 'ReportingController@student_report')
+    /** report **/  Route::post('student/{student_id}/quiz/{quiz}/report', 'ReportingController@student_report')
                     ->name('units.students.report');
 
     Route::resource('l_units', 'LecturerUnitController');
