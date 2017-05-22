@@ -6,20 +6,17 @@
         <div class="col-md-12">
 
             <div class="panel">
-                <div class="panel-body">
-                    <h4 class="text-center">Student Attempts Quiz Report <small>Overall Students</small></h4>
-                    <canvas id="attemptChart" width="fill" height="150"></canvas>
+                <div class="panel-heading">
+                    <a class="btn btn-info" href="{{ route('units.show', $quiz->unit_id) }}">BACK TO PREVIOUS PAGE</a>
                 </div>
-            </div>
 
-            <div class="panel">
                 <div class="panel-body">
                     <h4 class="text-center">Student Status Report <small>Overall Questions</small></h4>
                     <div class="table-responsive">
                         <table class="table table-bordered" id="student-report-chart">
                             <thead>
                                 <tr>
-                                    <th class="col-sm-2">Student ID</th>
+                                    <th class="col-sm-4">Student</th>
                                     <th>
                                         <div class="input-group col-sm-4 pull-right">
                                             <input class="form-control" id="search-student" placeholder="SEARCH">
@@ -39,19 +36,26 @@
                                             @foreach ($attempts as $attempt)
                                                 @if ($attempt['attempted'])
                                                     <a class="list-group-item clickable student" data-student-id="{{ $attempt['student_id'] }}" data-quiz-id="{{ $quiz->id }}">
-                                                        {{ $attempt['student_std_id'] }}
+                                                        {{ $attempt['student_std_id'] }} {{ $attempt['student_name'] }}
                                                     </a>
                                                 @endif
                                             @endforeach
                                         </div>
                                     </td>
                                     <td class="chart-canvas">
-                                        <canvas class="hidden" id="studentChart" width="fill" height="175"></canvas>
+                                        <canvas class="hidden" id="studentChart" width="fill" height="150"></canvas>
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-body">
+                    <h4 class="text-center">Student Attempts Quiz Report <small>Overall Students</small></h4>
+                    <canvas id="attemptChart" width="fill" height="150"></canvas>
                 </div>
             </div>
 
