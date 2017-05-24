@@ -17,7 +17,7 @@
                             <thead>
                                 <tr>
                                     <th class="col-sm-4">Student</th>
-                                    <th>
+                                    <th colspan="3">
                                         <div class="input-group col-sm-4 pull-right">
                                             <input class="form-control" id="search-student" placeholder="SEARCH">
                                             <span class="input-group-btn">
@@ -42,8 +42,14 @@
                                             @endforeach
                                         </div>
                                     </td>
-                                    <td class="chart-canvas">
-                                        <canvas class="hidden" id="studentChart" width="fill" height="150"></canvas>
+                                    <td class="chart-canvas chart-individual">
+                                        <canvas class="hidden" id="studentChart"></canvas>
+                                    </td>
+                                    <td class="chart-canvas chart-group">
+                                        <canvas class="hidden" id="groupChart"></canvas>
+                                    </td>
+                                    <td class="chart-canvas chart-team-members">
+                                        <canvas class="hidden" id="teamChart"></canvas>
                                     </td>
                                 </tr>
                             </tbody>
@@ -175,8 +181,15 @@
         }).done(function(response) {
             $('.chart-canvas').find('#studentChart').remove()
             $('.chart-canvas').find('iframe, h4').remove()
-            $('.chart-canvas').append('<h4 class="text-center">'+ response['student_std_id'] + " " + response['student_name'] +'</h4>')
-            $('.chart-canvas').append('<canvas class="hidden" id="studentChart" width="fill" height="175"></canvas>')
+            $('.chart-canvas').prop('width', 200)
+
+            $('.chart-individual').append('<h4 class="text-center">INDIVIDUAL</h4>')
+            $('.chart-group').append('<h4 class="text-center">GROUP</h4>')
+            $('.chart-team-members').append('<h4 class="text-center">TEAM MEMBERS</h4>')
+
+            $('.chart-canvas').append('<canvas class="hidden" id="studentChart" width="200" height="200"></canvas>')
+            $('.chart-canvas').append('<canvas class="hidden" id="groupChart" width="200" height="200"></canvas>')
+            $('.chart-canvas').append('<canvas class="hidden" id="teamChart" width="200" height="200"></canvas>')
 
             let studentChart = new Chart($('#studentChart'), {
                 type: 'bar',
@@ -196,6 +209,8 @@
                     }]
                 },
                 options: {
+                    responsive: false,
+                    maintainAspectRatio: true,
                     legend: {
                         display: false
                     },
