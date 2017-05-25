@@ -50,7 +50,6 @@ class ReportingController extends Controller
             ->where('quiz_id', $quiz_id)
             ->orderBy('rank_no')->get();
 
-        // return response()->json($rankings);
         $attempts = [];
 
         $page_count = 0;
@@ -63,7 +62,7 @@ class ReportingController extends Controller
             $this_data = [];
 
             $this_data['count'] = $count;
-            if ($this_data['count'] % 8 == 0) {
+            if ($this_data['count'] % 5 == 0) {
                 $page_count++;
             }
             $this_data['page_count'] = $page_count;
@@ -113,6 +112,16 @@ class ReportingController extends Controller
         $group_quiz = Quiz::where('title', $quiz->title)
             ->where('semester', $quiz->semester)->where('year', $quiz->year)
             ->where('type', 'group')->first();
+
+        $group_leaders = Student::with(['user' => function($query) {
+                $query->with('student_info')->get();
+            }])
+            ->where('unit_id', $group_quiz->unit_id)
+            ->where('year', $group_quiz->year)
+            ->where('semester', $group_quiz->semester)
+            ->where('is_group_leader', true)
+            ->get();
+
         $group_rankings = Ranking::with(['student' => function($query) {
                 $query->with(['user' => function($next_query) {
                     $next_query->with('student_info')->get();
@@ -121,6 +130,54 @@ class ReportingController extends Controller
             ->where('quiz_id', $group_quiz->id)
             ->orderBy('rank_no')->get();
 
+        $group_attempted_count = 0;
+        $group_unattempted_count = 0;
+        $group_pass_count = 0;
+        $group_fail_count = 0;
+
+        $group_attempts = [];
+        foreach ($group_leaders as $student) {
+            $this_data = [];
+            $this_data['team_number'] = $student->team_number;
+            $this_data['attempted'] = false;
+            $this_data['pass'] = null;
+            $this_data['correct'] = 0;
+            $this_data['wrong'] = 0;
+
+            // check if student has already attempted the quiz
+            $student_answers = StudentAnswer::where('student_id', $student->id)
+                ->where('quiz_id', $quiz->id)->get();
+            if ($student_answers->count() > 0) {
+                $this_data['attempted'] = true;
+                $group_attempted_count++;
+
+                // if already attempted, find how many correct, wrong and pass status
+                foreach ($student_answers as $answer) {
+                    $correct_answer = Question::find($answer->question_id)->correct_answer;
+                    if ($answer->answer == $correct_answer) {
+                        $this_data['correct']++;
+                    } else {
+                        $this_data['wrong']++;
+                    }
+                }
+            } else {
+                $group_unattempted_count++;
+            }
+
+            if ($this_data['attempted']) {
+                if ($this_data['correct'] >= $student_answers->count() / 2) {
+                    $this_data['pass'] = true;
+                    $group_pass_count++;
+                } else {
+                    $this_data['pass'] = false;
+                    $group_fail_count++;
+                }
+            }
+
+            array_push($group_attempts, $this_data);
+        }
+
+        $data['page_count'] = $page_count;
 
         $data['quiz'] = $quiz;
         $data['students'] = $students;
@@ -130,11 +187,15 @@ class ReportingController extends Controller
         $data['group_quiz'] = $group_quiz;
         $data['group_rankings'] = $group_rankings;
 
-        $data['page_count'] = $page_count;
         $data['attempted_count'] = $attempted_count;
         $data['unattempted_count'] = $unattempted_count;
         $data['pass_count'] = $pass_count;
         $data['fail_count'] = $fail_count;
+
+        $data['group_attempted_count'] = $group_attempted_count;
+        $data['group_unattempted_count'] = $group_unattempted_count;
+        $data['group_pass_count'] = $group_pass_count;
+        $data['group_fail_count'] = $group_fail_count;
 
         // return response()->json($data);
         return view('report.quiz', $data);

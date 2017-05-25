@@ -41,6 +41,9 @@
                                                             {{ $attempt['student_std_id'] }} {{ $attempt['student_name'] }}
                                                         </a>
                                                     @endif
+                                                    <a class="list-group-item clickable student hidden" data-student-id="{{ $attempt['student_id'] }}" data-quiz-id="{{ $quiz->id }}">
+                                                        {{ $attempt['student_std_id'] }} {{ $attempt['student_name'] }}
+                                                    </a>
                                                 @endforeach
                                                 </div>
                                             @endfor
@@ -95,12 +98,17 @@
                     </div>
 
                     <div class="row">
-                        <div class="col-md-6">
-                            <h4 class="text-center">Student Attempts Quiz Report <small>Overall Students</small></h4>
-                            <canvas id="attemptChart" width="fill" height="150"></canvas>
+                        <div class="col-md-4">
+                            <h4 class="text-center">Number of Individual Quiz Attempt</h4>
+                            <canvas id="individualAttemptChart" width="fill" height="150"></canvas>
                         </div>
 
-                        <div class="col-md-6">
+                        <div class="col-md-4">
+                            <h4 class="text-center">Number of Group Quiz Attempt</h4>
+                            <canvas id="groupAttemptChart" width="fill" height="150"></canvas>
+                        </div>
+
+                        <div class="col-md-4">
                             <h4 class="text-center">Quiz Passing Rate</h4>
                             <canvas id="passingRateChart" width="fill" height="150"></canvas>
                         </div>
@@ -180,19 +188,6 @@
         return $('meta[name=csrf-token]').attr('content')
     }
 
-    // Search
-    $("#search-student").keyup(function() {
-       // when something is typed in the box, it will hide all
-       let searchvalue = $(this).val().toLowerCase()
-       $('.student').hide()
-       // if the text from the tr matches any part of the search value (indexOf), show
-       $('.student').each(function() {
-           let text = $(this).text().toLowerCase()
-           if (text.indexOf(searchvalue) != -1)
-               $(this).show()
-       })
-    })
-
     let currentPage = $('#pagination-links').twbsPagination('getCurrentPage')
     $('.custom-pagination-' + currentPage).removeClass('hidden')
 
@@ -204,6 +199,20 @@
         $('.custom-pagination-' + page).removeClass('hidden')
         $('.custom-pagination-' + currentPage).addClass('hidden')
         currentPage = page
+    })
+
+    // Search
+    $("#search-student").keyup(function() {
+       // when something is typed in the box, it will hide all
+       let searchvalue = $(this).val().toLowerCase()
+       $('.student').hide()
+       // if the text from the tr matches any part of the search value (indexOf), show
+       $('.student').each(function() {
+           let text = $(this).text().toLowerCase()
+           if (text.indexOf(searchvalue) != -1) {
+               $(this).show()
+           }
+       })
     })
 
     // set the chart pluginservice for the doughnuts
@@ -268,6 +277,10 @@
         },
     })
 
+    let pie_attemptsbackgroundColor = ['rgba(99, 107, 111, 0.5)', 'rgba(42, 178, 123, 0.5)', 'rgba(255, 99, 132, 0.5)']
+    let pie_attemptsborderColor = ['rgba(99, 107, 111, 1)', 'rgba(42, 178, 123, 1)', 'rgba(255, 99, 132, 1)']
+    let pie_attemptsborderWidth = 1
+
     let pie_backgroundColor = ['rgba(42, 178, 123, 0.4)', 'rgba(255, 99, 132, 0.4)']
     let pie_borderColor = ['rgba(42, 178, 123, 1)', 'rgba(255,99,132,1)']
     let pie_borderWidth = 1
@@ -276,38 +289,55 @@
     let doughnut_borderColor = [ 'rgba(66, 139, 202, 1)', 'rgba(66, 139, 202, 1)']
     let doughnut_borderWidth = 1
 
-    let attemptChart = new Chart($('#attemptChart'), {
+    let individualAttemptChart = new Chart($('#individualAttemptChart'), {
         type: 'pie',
         data: {
             labels: ["Unattempted", "Pass", "Fail"],
             datasets: [{
                 data: [{{ $unattempted_count }}, {{ $pass_count }}, {{ $fail_count }}],
-                backgroundColor: [
-                    'rgba(99, 107, 111, 0.5)',
-                    'rgba(42, 178, 123, 0.5)',
-                    'rgba(255, 99, 132, 0.5)',
-                ],
-                borderColor: [
-                    'rgba(99, 107, 111, 1)',
-                    'rgba(42, 178, 123, 1)',
-                    'rgba(255,99,132,1)',
-                ],
-                borderWidth: 1
+                backgroundColor: pie_attemptsbackgroundColor,
+                borderColor: pie_attemptsborderColor,
+                borderWidth: pie_attemptsborderWidth
             }]
         },
         options: {
-            legend: {
-                display: true
-            },
+            legend: { display: false },
             pieceLabel: {
-                mode: 'percentage',
+                mode: 'value',
                 fontSize: 14,
             }
         },
     })
 
-    let passingRate = {{ $pass_count * 100 / ($pass_count + $fail_count) }}
-    let failingRate = 100 - passingRate;
+    let groupAttempt = new Chart($('#groupAttemptChart'), {
+        type: 'pie',
+        data: {
+            labels: ["Unattempted", "Pass", "Fail"],
+            datasets: [{
+                data: [{{ $group_unattempted_count }}, {{ $group_pass_count }}, {{ $group_fail_count }}],
+                backgroundColor: pie_attemptsbackgroundColor,
+                borderColor: pie_attemptsborderColor,
+                borderWidth: pie_attemptsborderWidth
+            }]
+        },
+        options: {
+            legend: { display: false },
+            pieceLabel: {
+                mode: 'value',
+                fontSize: 14,
+            }
+        },
+    })
+
+    let individualPassingRate = {{ $pass_count * 100 / ($pass_count + $fail_count) }}
+    let individualFailingRate = 100 - individualPassingRate;
+
+    let groupPassingRate = {{ $group_pass_count * 100 / ($group_pass_count + $group_fail_count) }}
+    let groupFailingRate = 100 - groupPassingRate;
+
+    let passingRate = (individualPassingRate + groupPassingRate) / 2
+    let failingRate = (individualFailingRate + groupFailingRate) / 2
+
     let passingRateChart = new Chart($('#passingRateChart'), {
         type: 'doughnut',
         data: {
@@ -320,9 +350,7 @@
             }]
         },
         options: {
-            legend: {
-                display: false
-            },
+            legend: { display: false },
             rotation: 1 * Math.PI,
             elements: {
                 center: {
@@ -388,9 +416,7 @@
                     options: {
                         responsive: false,
                         maintainAspectRatio: true,
-                        legend: {
-                            display: true,
-                        },
+                        legend: { display: true, },
                     }
                 })
                 $('#studentChart').removeClass('hidden')
@@ -409,9 +435,7 @@
                     options: {
                         responsive: false,
                         maintainAspectRatio: true,
-                        legend: {
-                            display: false
-                        },
+                        legend: { display: false },
                         rotation: 1 * Math.PI,
                         elements: {
                             center: {
@@ -482,9 +506,7 @@
                     options: {
                         responsive: false,
                         maintainAspectRatio: true,
-                        legend: {
-                            display: true
-                        },
+                        legend: { display: true },
                     }
                 })
 
@@ -503,9 +525,7 @@
                     options: {
                         responsive: false,
                         maintainAspectRatio: true,
-                        legend: {
-                            display: false
-                        },
+                        legend: { display: false },
                         rotation: 1 * Math.PI,
                         elements: {
                             center: {
