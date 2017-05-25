@@ -40,3 +40,6 @@ mix.copy(chartJSPieceLabelPath + 'Chart.PieceLabel.min.js', 'public/js/chart.pie
 
 const momentJSPath = './node_modules/moment/min/';
 mix.copy(momentJSPath + 'moment.min.js', 'public/js/moment.min.js');
+
+const twbsPaginationJSPath = './node_modules/twbs-pagination/';
+mix.copy(twbsPaginationJSPath + 'jquery.twbsPagination.min.js', 'public/js/twbs-pagination.min.js');

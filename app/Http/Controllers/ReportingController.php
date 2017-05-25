@@ -53,13 +53,21 @@ class ReportingController extends Controller
         // return response()->json($rankings);
         $attempts = [];
 
+        $page_count = 0;
         $attempted_count = 0;
         $unattempted_count = 0;
         $pass_count = 0;
         $fail_count = 0;
 
-        foreach ($students as $student) {
+        foreach ($students as $count => $student) {
             $this_data = [];
+
+            $this_data['count'] = $count;
+            if ($this_data['count'] % 8 == 0) {
+                $page_count++;
+            }
+            $this_data['page_count'] = $page_count;
+
             $this_data['student_id'] = $student->id;
             $this_data['student_std_id'] = $student->user->student_info->student_id;
             $this_data['student_name'] = $student->user->firstname . " " . $student->user->lastname;
@@ -122,6 +130,7 @@ class ReportingController extends Controller
         $data['group_quiz'] = $group_quiz;
         $data['group_rankings'] = $group_rankings;
 
+        $data['page_count'] = $page_count;
         $data['attempted_count'] = $attempted_count;
         $data['unattempted_count'] = $unattempted_count;
         $data['pass_count'] = $pass_count;
@@ -157,10 +166,6 @@ class ReportingController extends Controller
         $data['individual']['wrong'] = 0;
         $data['individual']['wrong_questions'] = [];
         $data['individual']['total_questions'] = $questions->count();
-        $data['individual']['last_rank'] = $last_rank->rank_no;
-        $data['individual']['rank'] = $ranking->rank_no;
-        $data['individual']['score'] = $ranking->score;
-        $data['individual']['remaining_score'] = 100 - $ranking->score;
 
         // check if student has already attempted the quiz
         $student_answers = StudentAnswer::where('student_id', $student->id)
@@ -189,6 +194,14 @@ class ReportingController extends Controller
             }
         }
 
+        // if attempted, add the remaining info
+        if (isset($data['individual']['attempted']) && $data['individual']['attempted'] == true) {
+            $data['individual']['last_rank'] = $last_rank->rank_no;
+            $data['individual']['rank'] = $ranking->rank_no;
+            $data['individual']['score'] = $ranking->score;
+            $data['individual']['remaining_score'] = 100 - $ranking->score;
+        }
+
         // group part starts here
         $student_group = $student->team_number;
         $group_leader = Student::with(['user' => function($query) {
@@ -203,38 +216,47 @@ class ReportingController extends Controller
         $group_ranking = Ranking::where('quiz_id', $group_quiz->id)->where('student_id', $student_id)->first();
         $group_last_rank = Ranking::where('quiz_id', $group_quiz->id)->orderBy('rank_no', 'desc')->first();
 
-        $data['group'] = [];
-        $data['group']['student_id'] = $group_leader->id;
-        $data['group']['student_std_id'] = $group_leader->user->student_info->student_id;
-        $data['group']['student_name'] = $group_leader->user->firstname . " " . $group_leader->user->lastname;
-        $data['group']['attempted'] = false;
-        $data['group']['pass'] = null;
-        $data['group']['correct'] = 0;
-        $data['group']['wrong'] = 0;
-        $data['group']['wrong_questions'] = [];
-        $data['group']['total_questions'] = $group_questions->count();
-        $data['group']['last_rank'] = $group_last_rank->rank_no;
-        $data['group']['rank'] = $group_ranking->rank_no;
-        $data['group']['score'] = $group_ranking->score;
-        $data['group']['remaining_score'] = 100 - $group_ranking->score;
-        $data['group']['group_no'] = $group_leader->team_number;
+        // if no group
+        if (!isset($group_leader)) {
+            $data['group'] = null;
+        } else {
+            $data['group'] = [];
+            $data['group']['student_id'] = $group_leader->id;
+            $data['group']['student_std_id'] = $group_leader->user->student_info->student_id;
+            $data['group']['student_name'] = $group_leader->user->firstname . " " . $group_leader->user->lastname;
+            $data['group']['attempted'] = false;
+            $data['group']['pass'] = null;
+            $data['group']['correct'] = 0;
+            $data['group']['wrong'] = 0;
+            $data['group']['wrong_questions'] = [];
+            $data['group']['total_questions'] = $group_questions->count();
 
-        // check if student has already attempted the quiz
-        $student_answers = StudentAnswer::where('student_id', $group_leader->id)
-            ->where('quiz_id', $group_quiz->id)->get();
-        if ($student_answers->count() > 0) {
-            $data['group']['attempted'] = true;
+            // check if student has already attempted the quiz
+            $student_answers = StudentAnswer::where('student_id', $group_leader->id)
+                ->where('quiz_id', $group_quiz->id)->get();
+            if ($student_answers->count() > 0) {
+                $data['group']['attempted'] = true;
 
-            // if already attempted, find how many correct, wrong and pass status
-            foreach ($student_answers as $answer) {
-                $correct_answer = Question::find($answer->question_id)->correct_answer;
-                $question = Question::find($answer->question_id)->question;
-                if ($answer->answer == $correct_answer) {
-                    $data['group']['correct']++;
-                } else {
-                    $data['group']['wrong']++;
-                    array_push($data['group']['wrong_questions'], $question);
+                // if already attempted, find how many correct, wrong and pass status
+                foreach ($student_answers as $answer) {
+                    $correct_answer = Question::find($answer->question_id)->correct_answer;
+                    $question = Question::find($answer->question_id)->question;
+                    if ($answer->answer == $correct_answer) {
+                        $data['group']['correct']++;
+                    } else {
+                        $data['group']['wrong']++;
+                        array_push($data['group']['wrong_questions'], $question);
+                    }
                 }
+            }
+
+            // if already attempted, add the remaining info
+            if (isset($data['group']['attempted']) && $data['group']['attempted'] == true) {
+                $data['group']['last_rank'] = $group_last_rank->rank_no;
+                $data['group']['rank'] = $group_ranking->rank_no;
+                $data['group']['score'] = $group_ranking->score;
+                $data['group']['remaining_score'] = 100 - $group_ranking->score;
+                $data['group']['group_no'] = $group_leader->team_number;
             }
         }
 

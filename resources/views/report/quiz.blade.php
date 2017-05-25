@@ -32,15 +32,21 @@
                             <tbody>
                                 <tr>
                                     <td>
-                                        <div class="list-group">
-                                            @foreach ($attempts as $attempt)
-                                                @if ($attempt['attempted'])
-                                                    <a class="list-group-item clickable student" data-student-id="{{ $attempt['student_id'] }}" data-quiz-id="{{ $quiz->id }}">
-                                                        {{ $attempt['student_std_id'] }} {{ $attempt['student_name'] }}
-                                                    </a>
-                                                @endif
-                                            @endforeach
+                                        <div class="list-group" style="margin-bottom: 0;">
+                                            @for ($i=1; $i < $page_count+1; $i++)
+                                                <div class="custom-pagination-{{ $i }} hidden">
+                                                @foreach ($attempts as $attempt)
+                                                    @if ($attempt['page_count'] == $i)
+                                                        <a class="list-group-item clickable student" data-student-id="{{ $attempt['student_id'] }}" data-quiz-id="{{ $quiz->id }}">
+                                                            {{ $attempt['student_std_id'] }} {{ $attempt['student_name'] }}
+                                                        </a>
+                                                    @endif
+                                                @endforeach
+                                                </div>
+                                            @endfor
                                         </div>
+                                        <ul id="pagination-links" class="pagination"></ul>
+
                                     </td>
                                     <td class="chart-canvas chart-individual">
                                         <div class="row">
@@ -52,15 +58,17 @@
                                                 <canvas class="hidden" id="studentChart"></canvas>
                                             </div>
                                             <div class="col-md-5 chart-individual-score">
-                                                <h4 class="text-success hidden passed-status">PASS</h4>
+                                                <h4 class="text-success text-center hidden passed-status">PASS</h4>
 
-                                                <h4>RANK</h4>
-                                                <h3 id="studentRank"></h3>
+                                                <h4 class="text-center">RANK</h4>
+                                                <h3  class="text-center" id="studentRank" style="margin-top: 0;"></h3>
 
-                                                <h4>SCORE</h4>
+                                                <h4 class="text-center">SCORE</h4>
                                                 <canvas class="hidden" id="studentScore"></canvas>
                                             </div>
                                         </div>
+
+                                        <h4 class="text-center hidden quiz-not-attempted">QUIZ NOT ATTEMPTED</h4>
                                     </td>
                                     <td class="chart-canvas chart-group">
                                         <div class="row">
@@ -69,15 +77,17 @@
                                                 <canvas class="hidden" id="groupChart"></canvas>
                                             </div>
                                             <div class="col-md-5 chart-group-score">
-                                                <h4 class="text-success hidden passed-status">PASS</h4>
+                                                <h4 class="text-success text-center hidden passed-status">PASS</h4>
 
-                                                <h4>RANK</h4>
-                                                <h3 id="groupRank"></h3>
+                                                <h4 class="text-center">RANK</h4>
+                                                <h3 class="text-center" id="groupRank" style="margin-top: 0;"></h3>
 
-                                                <h4>SCORE</h4>
+                                                <h4 class="text-center">SCORE</h4>
                                                 <canvas class="hidden" id="groupScore"></canvas>
                                             </div>
                                         </div>
+
+                                        <h4 class="text-center hidden quiz-not-attempted">QUIZ NOT ATTEMPTED</h4>
                                     </td>
                                 </tr>
                             </tbody>
@@ -103,21 +113,19 @@
                                 <table class="table table-bordered table-hover">
                                     <thead>
                                         <tr>
-                                            <th class="col-sm-2">STD ID</th>
-                                            <th class="col-sm-1">GROUP</th>
-                                            <th class="col-sm-7">NAME</th>
                                             <th class="col-sm-1">RANK</th>
+                                            <th class="col-sm-2">STD ID</th>
+                                            <th class="col-sm-7">NAME</th>
                                             <th class="col-sm-1">SCORE</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @foreach ($rankings as $ranking)
                                             <tr>
+                                                <td class="text-center">{{ $ranking->rank_no }}</td>
                                                 <td>{{ $ranking->student->user->student_info->student_id }}</td>
-                                                <td>{{ $ranking->student->team_number }}</td>
                                                 <td>{{ $ranking->student->user->firstname }} {{ $ranking->student->user->lastname }}</td>
-                                                <td>{{ $ranking->rank_no }}/{{ $rankings->last()->rank_no }}</td>
-                                                <td>{{ $ranking->score }}%</td>
+                                                <td class="text-center">{{ $ranking->score }}%</td>
                                             </tr>
                                         @endforeach
                                     </tbody>
@@ -130,20 +138,22 @@
                                 <table class="table table-bordered table-hover">
                                     <thead>
                                         <tr>
-                                            <th class="col-sm-1">GROUP</th>
-                                            <th class="col-sm-7">NAME</th>
                                             <th class="col-sm-1">RANK</th>
+                                            <th class="col-sm-1">GROUP</th>
+                                            <th class="col-sm-7">GROUP LEADER NAME</th>
                                             <th class="col-sm-1">SCORE</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($rankings as $ranking)
-                                            <tr>
-                                                <td>{{ $ranking->student->team_number }}</td>
-                                                <td>{{ $ranking->student->user->firstname }} {{ $ranking->student->user->lastname }}</td>
-                                                <td>{{ $ranking->rank_no }}/{{ $rankings->last()->rank_no }}</td>
-                                                <td>{{ $ranking->score }}%</td>
-                                            </tr>
+                                        @foreach ($group_rankings as $ranking)
+                                            @if ($ranking->student->is_group_leader)
+                                                <tr>
+                                                    <td class="text-center">{{ $ranking->rank_no }}</td>
+                                                    <td class="text-center">{{ $ranking->student->team_number }}</td>
+                                                    <td>{{ $ranking->student->user->firstname }} {{ $ranking->student->user->lastname }}</td>
+                                                    <td class="text-center">{{ $ranking->score }}%</td>
+                                                </tr>
+                                            @endif
                                         @endforeach
                                     </tbody>
                                 </table>
@@ -162,6 +172,7 @@
 <script src="{{ asset('js/moment.min.js') }}"></script>
 <script src="{{ asset('js/Chart.min.js') }}"></script>
 <script src="{{ asset('js/chart.piecelabel.min.js') }}"></script>
+<script src="{{ asset('js/twbs-pagination.min.js') }}"></script>
 <script>
 (function() {
     // Get CSRF token
@@ -182,6 +193,20 @@
        })
     })
 
+    let currentPage = $('#pagination-links').twbsPagination('getCurrentPage')
+    $('.custom-pagination-' + currentPage).removeClass('hidden')
+
+    $('#pagination-links').twbsPagination('destroy');
+    $('#pagination-links').twbsPagination({
+        totalPages: {{ $page_count }},
+        visiblePages: 2,
+    }).on('page', function(event, page) {
+        $('.custom-pagination-' + page).removeClass('hidden')
+        $('.custom-pagination-' + currentPage).addClass('hidden')
+        currentPage = page
+    })
+
+    // set the chart pluginservice for the doughnuts
     Chart.pluginService.register({
         afterUpdate: function (chart) {
             if (chart.config.options.elements.center) {
@@ -243,6 +268,14 @@
         },
     })
 
+    let pie_backgroundColor = ['rgba(42, 178, 123, 0.4)', 'rgba(255, 99, 132, 0.4)']
+    let pie_borderColor = ['rgba(42, 178, 123, 1)', 'rgba(255,99,132,1)']
+    let pie_borderWidth = 1
+
+    let doughnut_backgroundColor = ['rgba(66, 139, 202, 0.8)', 'rgba(66, 139, 202, 0.2)']
+    let doughnut_borderColor = [ 'rgba(66, 139, 202, 1)', 'rgba(66, 139, 202, 1)']
+    let doughnut_borderWidth = 1
+
     let attemptChart = new Chart($('#attemptChart'), {
         type: 'pie',
         data: {
@@ -281,15 +314,9 @@
             labels: ["Pass", "Fail"],
             datasets: [{
                 data: [passingRate, failingRate,],
-                backgroundColor: [
-                    'rgba(66, 139, 202, 0.8)',
-                    'rgba(66, 139, 202, 0.2)',
-                ],
-                borderColor: [
-                    'rgba(66, 139, 202, 1)',
-                    'rgba(66, 139, 202, 1)',
-                ],
-                borderWidth: 1
+                backgroundColor: doughnut_backgroundColor,
+                borderColor: doughnut_borderColor,
+                borderWidth: doughnut_borderWidth
             }]
         },
         options: {
@@ -299,12 +326,8 @@
             rotation: 1 * Math.PI,
             elements: {
                 center: {
-                    maxText: '100%',
                     text: Math.round(passingRate) + "%",
                     fontColor: '#36A2EB',
-                    fontFamily: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
-                    fontStyle: 'normal',
-                    minFontSize: 1,
                     maxFontSize: 32,
                 }
             }
@@ -326,184 +349,188 @@
         }).done(function(response) {
 
             //* INDIVIDUAL *//
-            $('.chart-individual-questions').find('#studentChart').remove()
-            $('.chart-individual-score').find('#studentScore').remove()
-            $('.chart-canvas').find('iframe').remove()
-            $('.chart-canvas').prop('width', 200)
+            if (response['individual']['attempted'] == false) {
+                $('.chart-individual').find('.quiz-not-attempted').removeClass('hidden')
+                $('.chart-individual').find('.row').addClass('hidden')
 
-            $('.chart-individual-questions').append('<canvas class="hidden" id="studentChart" width="200" height="200"></canvas>')
-            $('.chart-individual-score').append('<canvas class="hidden" id="studentScore" width="100" height="100"></canvas>')
+                $('#student-id').addClass('hidden')
+                $('.chart-individual-questions').find('#studentChart').remove()
+                $('.chart-individual-score').find('#studentScore').remove()
+                $('.chart-individual-score').find('#studentRank').addClass('hidden')
+                $('.chart-individual-score').find('.passed-status').addClass('hidden')
 
-            let studentChart = new Chart($('#studentChart'), {
-                type: 'pie',
-                data: {
-                    labels: ["Correct", "Wrong"],
-                    datasets: [{
-                        data: [response['individual']['correct'], response['individual']['wrong']],
-                        backgroundColor: [
-                            'rgba(42, 178, 123, 0.4)',
-                            'rgba(255, 99, 132, 0.4)',
-                        ],
-                        borderColor: [
-                            'rgba(42, 178, 123, 1)',
-                            'rgba(255,99,132,1)',
-                        ],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: false,
-                    maintainAspectRatio: true,
-                    legend: {
-                        display: true,
+            } else {
+                $('.chart-canvas').find('.row').removeClass('hidden')
+                $('.chart-canvas').find('.quiz-not-attempted').addClass('hidden')
+
+                $('#student-id').removeClass('hidden')
+                $('.chart-individual-questions').find('#studentChart').remove()
+                $('.chart-individual-score').find('#studentScore').remove()
+                $('.chart-individual-score').find('#studentRank').removeClass('hidden')
+                $('.chart-individual-score').find('.passed-status').removeClass('hidden')
+                $('.chart-canvas').find('iframe').remove()
+                $('.chart-canvas').prop('width', 200)
+
+                $('.chart-individual-questions').append('<canvas class="hidden" id="studentChart" width="200" height="200"></canvas>')
+                $('.chart-individual-score').append('<canvas class="hidden" id="studentScore" width="100" height="100"></canvas>')
+
+                let studentChart = new Chart($('#studentChart'), {
+                    type: 'pie',
+                    data: {
+                        labels: ["Correct", "Wrong"],
+                        datasets: [{
+                            data: [response['individual']['correct'], response['individual']['wrong']],
+                            backgroundColor: pie_backgroundColor,
+                            borderColor: pie_borderColor,
+                            borderWidth: pie_borderWidth
+                        }]
                     },
-                }
-            })
-            $('#studentChart').removeClass('hidden')
+                    options: {
+                        responsive: false,
+                        maintainAspectRatio: true,
+                        legend: {
+                            display: true,
+                        },
+                    }
+                })
+                $('#studentChart').removeClass('hidden')
 
-            let studentScore = new Chart($('#studentScore'), {
-                type: 'doughnut',
-                data: {
-                    labels: ["Score", "100%"],
-                    datasets: [{
-                        data: [response['individual']['score'], response['individual']['remaining_score']],
-                        backgroundColor: [
-                            'rgba(66, 139, 202, 0.8)',
-                            'rgba(66, 139, 202, 0.2)',
-                        ],
-                        borderColor: [
-                            'rgba(66, 139, 202, 1)',
-                            'rgba(66, 139, 202, 1)',
-                        ],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: false,
-                    maintainAspectRatio: true,
-                    legend: {
-                        display: false
+                let studentScore = new Chart($('#studentScore'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: ["Score", "100%"],
+                        datasets: [{
+                            data: [response['individual']['score'], response['individual']['remaining_score']],
+                            backgroundColor: doughnut_backgroundColor,
+                            borderColor: doughnut_borderColor,
+                            borderWidth: doughnut_borderWidth
+                        }]
                     },
-                    rotation: 1 * Math.PI,
-                    elements: {
-                        center: {
-                            maxText: '100%',
-                            text: Math.round(response['individual']['score']) + "%",
-                            fontColor: '#36A2EB',
-                            fontFamily: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
-                            fontStyle: 'normal',
-                            minFontSize: 1,
-                            maxFontSize: 256,
+                    options: {
+                        responsive: false,
+                        maintainAspectRatio: true,
+                        legend: {
+                            display: false
+                        },
+                        rotation: 1 * Math.PI,
+                        elements: {
+                            center: {
+                                text: Math.round(response['individual']['score']) + "%",
+                                fontColor: '#36A2EB',
+                                maxFontSize: 16,
+                            }
                         }
                     }
+                })
+                $('#studentScore').removeClass('hidden')
+                $('#studentRank').text(response['individual']['rank'] + '/' + response['individual']['last_rank'])
+                $('#student-id').text(response['individual']['student_std_id'])
+
+                if (response['individual']['pass'] == false) {
+                    $('.chart-individual-score').find('.passed-status').text('FAIL')
+                    $('.chart-individual-score').find('.passed-status').removeClass('text-success')
+                    $('.chart-individual-score').find('.passed-status').addClass('text-danger')
+                } else {
+                    $('.chart-individual-score').find('.passed-status').text('PASS')
+                    $('.chart-individual-score').find('.passed-status').removeClass('text-danger')
+                    $('.chart-individual-score').find('.passed-status').addClass('text-success')
                 }
-            })
-            $('#studentScore').removeClass('hidden')
-            $('#studentRank').text(response['individual']['rank'] + '/' + response['individual']['last_rank'])
-            $('#student-id').text(response['individual']['student_std_id'])
-
-            if (response['individual']['pass'] == false) {
-                $('.chart-individual-score').find('.passed-status').text('FAIL')
-                $('.chart-individual-score').find('.passed-status').removeClass('text-success')
-                $('.chart-individual-score').find('.passed-status').addClass('text-danger')
-            } else {
-                $('.chart-individual-score').find('.passed-status').text('PASS')
-                $('.chart-individual-score').find('.passed-status').removeClass('text-danger')
-                $('.chart-individual-score').find('.passed-status').addClass('text-success')
-            }
-            $('.chart-individual-score').find('.passed-status').removeClass('hidden')
-
-            //* END INDIVIDUAL *//
+                $('.chart-individual-score').find('.passed-status').removeClass('hidden')
+            } //* END INDIVIDUAL *//
 
             //* GROUP *//
-            $('.chart-group-questions').find('#groupChart').remove()
-            $('.chart-group-score').find('#groupScore').remove()
-            $('.chart-canvas').find('iframe').remove()
-            $('.chart-canvas').prop('width', 200)
+            if (response['group'] == null) {
+                $('.chart-group').find('.row').addClass('hidden')
+                $('.chart-group').find('.quiz-not-attempted').removeClass('hidden')
 
-            $('.chart-group-questions').append('<canvas class="hidden" id="groupChart" width="200" height="200"></canvas>')
-            $('.chart-group-score').append('<canvas class="hidden" id="groupScore" width="100" height="100"></canvas>')
+                $('.chart-group-questions').find('#studentChart').remove()
+                $('.chart-group-score').find('#studentScore').remove()
+                $('.chart-group-score').find('#studentRank').addClass('hidden')
+                $('.chart-group-score').find('.passed-status').addClass('hidden')
+            }
+            else if (response['group']['attempted'] == false) {
+                $('.chart-group-questions').find('#groupChart').remove()
+                $('.chart-group-score').find('#groupScore').remove()
+                $('.chart-group-score').find('#groupRank').addClass('hidden')
 
-            let groupChart = new Chart($('#groupChart'), {
-                type: 'pie',
-                data: {
-                    labels: ["Correct", "Wrong"],
-                    datasets: [{
-                        data: [response['group']['correct'], response['group']['wrong']],
-                        backgroundColor: [
-                            'rgba(42, 178, 123, 0.4)',
-                            'rgba(255, 99, 132, 0.4)',
-                        ],
-                        borderColor: [
-                            'rgba(42, 178, 123, 1)',
-                            'rgba(255,99,132,1)',
-                        ],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: false,
-                    maintainAspectRatio: true,
-                    legend: {
-                        display: true
+                $('.chart-group').find('.row').addClass('hidden')
+                $('.chart-group').find('.quiz-not-attempted').removeClass('hidden')
+            } else {
+                $('.chart-group').find('.row').removeClass('hidden')
+                $('.chart-group').find('.quiz-not-attempted').addClass('hidden')
+
+                $('.chart-group-score').find('#groupRank').removeClass('hidden')
+                $('.chart-group-questions').find('#groupChart').remove()
+                $('.chart-group-score').find('#groupScore').remove()
+                $('.chart-canvas').find('iframe').remove()
+                $('.chart-canvas').prop('width', 200)
+
+                $('.chart-group-questions').append('<canvas class="hidden" id="groupChart" width="200" height="200"></canvas>')
+                $('.chart-group-score').append('<canvas class="hidden" id="groupScore" width="100" height="100"></canvas>')
+
+                let groupChart = new Chart($('#groupChart'), {
+                    type: 'pie',
+                    data: {
+                        labels: ["Correct", "Wrong"],
+                        datasets: [{
+                            data: [response['group']['correct'], response['group']['wrong']],
+                            backgroundColor: pie_backgroundColor,
+                            borderColor: pie_borderColor,
+                            borderWidth: pie_borderWidth
+                        }]
                     },
-                }
-            })
+                    options: {
+                        responsive: false,
+                        maintainAspectRatio: true,
+                        legend: {
+                            display: true
+                        },
+                    }
+                })
 
-            $('#groupChart').removeClass('hidden')
-            let groupScore = new Chart($('#groupScore'), {
-                type: 'doughnut',
-                data: {
-                    labels: ["Score", "100%"],
-                    datasets: [{
-                        data: [response['group']['score'], response['group']['remaining_score']],
-                        backgroundColor: [
-                            'rgba(66, 139, 202, 0.8)',
-                            'rgba(66, 139, 202, 0.2)',
-                        ],
-                        borderColor: [
-                            'rgba(66, 139, 202, 1)',
-                            'rgba(66, 139, 202, 1)',
-                        ],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: false,
-                    maintainAspectRatio: true,
-                    legend: {
-                        display: false
+                $('#groupChart').removeClass('hidden')
+                let groupScore = new Chart($('#groupScore'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: ["Score", "100%"],
+                        datasets: [{
+                            data: [response['group']['score'], response['group']['remaining_score']],
+                            backgroundColor: doughnut_backgroundColor,
+                            borderColor: doughnut_borderColor,
+                            borderWidth: doughnut_borderWidth
+                        }]
                     },
-                    rotation: 1 * Math.PI,
-                    elements: {
-                        center: {
-                            maxText: '100%',
-                            text: Math.round(response['group']['score']) + "%",
-                            fontColor: '#36A2EB',
-                            fontFamily: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
-                            fontStyle: 'normal',
-                            minFontSize: 1,
-                            maxFontSize: 256,
+                    options: {
+                        responsive: false,
+                        maintainAspectRatio: true,
+                        legend: {
+                            display: false
+                        },
+                        rotation: 1 * Math.PI,
+                        elements: {
+                            center: {
+                                text: Math.round(response['group']['score']) + "%",
+                                fontColor: '#36A2EB',
+                                maxFontSize: 16,
+                            }
                         }
                     }
+                })
+                $('#groupScore').removeClass('hidden')
+                $('#groupRank').text(response['group']['rank'] + '/' + response['group']['last_rank'])
+
+                if (response['group']['pass'] == false) {
+                    $('.chart-group-score').find('.passed-status').text('FAIL')
+                    $('.chart-group-score').find('.passed-status').removeClass('text-success')
+                    $('.chart-group-score').find('.passed-status').addClass('text-danger')
+                } else {
+                    $('.chart-group-score').find('.passed-status').text('PASS')
+                    $('.chart-group-score').find('.passed-status').removeClass('text-danger')
+                    $('.chart-group-score').find('.passed-status').addClass('text-success')
                 }
-            })
-            $('#groupScore').removeClass('hidden')
-            $('#groupRank').text(response['group']['rank'] + '/' + response['group']['last_rank'])
-
-            if (response['group']['pass'] == false) {
-                $('.chart-group-score').find('.passed-status').text('FAIL')
-                $('.chart-group-score').find('.passed-status').removeClass('text-success')
-                $('.chart-group-score').find('.passed-status').addClass('text-danger')
-            } else {
-                $('.chart-group-score').find('.passed-status').text('PASS')
-                $('.chart-group-score').find('.passed-status').removeClass('text-danger')
-                $('.chart-group-score').find('.passed-status').addClass('text-success')
-            }
-            $('.chart-group-score').find('.passed-status').removeClass('hidden')
-            $('.chart-group-questions').find('.group-no').text(response['group']['group_no'])
-
-            //* END GROUP *//
+                $('.chart-group-score').find('.passed-status').removeClass('hidden')
+                $('.chart-group-questions').find('.group-no').text(response['group']['group_no'])
+            } //* END GROUP *//
         })
     })
 }) ()
