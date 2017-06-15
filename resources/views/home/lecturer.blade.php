@@ -8,7 +8,7 @@
 
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <div class="panel-title">DASHBOARD</div>
+                    <h4>Welcome, {{ Auth::user()->firstname }} {{ Auth::user()->lastname }}</h4>
                 </div>
                 <div class="panel-body">
                     <div class="table-responsive">
