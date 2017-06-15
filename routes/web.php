@@ -44,7 +44,9 @@ Route::group(['middleware' => 'auth'], function () {
                     ->name('quizzes.report');
 
     Route::resource('units', 'UnitController');
-    // UNTIS
+    // UNITS
+                    Route::get('units/{unit}', 'UnitController@show')
+                    ->name('units.show')->middleware('assigned');
     /** index  **/  Route::get('units/lecturer/index', 'UnitController@index_lecturer')
                     ->name('units.lecturer');
     /** index  **/  Route::get('units/{unit}/students', 'StudentController@index')
