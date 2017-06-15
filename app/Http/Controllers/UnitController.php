@@ -80,7 +80,8 @@ class UnitController extends Controller
         $data = [];
         $data['unit'] = Unit::with('students','quizzes')->find($id);
         $data['quizzes'] = Quiz::where('unit_id', $data['unit']->id)
-            ->where('semester', 'S1')->where('year', 2017)->get();
+            ->where('semester', 'S1')->where('year', 2017)
+            ->where('type', 'individual')->get();
 
         $students = User::role('Student')->with('student_info', 'students')->get();
         $data['students'] = $students;
