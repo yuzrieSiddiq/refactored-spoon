@@ -62,7 +62,7 @@
             '_token': getToken(),
             'code'  : $('#code').val(),
             'name'  : $('#name').val(),
-            'description' : $('#description').text(),
+            'description' : $('#description').val(),
         }
 
         $.ajax({
