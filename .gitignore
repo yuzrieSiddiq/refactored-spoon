@@ -1,8 +1,11 @@
 /node_modules
+/bower_components
 /public/storage
+/public/hot
+/public/css**
 /public/js*
-/public/css*
-/public/fonts*
+/public/fonts**
+/public/mix**
 /storage/*.key
 /vendor
 /.idea
