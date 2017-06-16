@@ -116,15 +116,20 @@
             'url': url,
             'method': 'POST',
             'data': data
-        }).done(function(error) {
-            if (error == '1') {
+        }).done(function(response) {
+            if (response == 'Error 1') {
                 let errormsg = 'The user with that username already exist'
                 showErrorMessage(errormsg)
-            } else if (error == '2') {
+            } else if (response == 'Error 2') {
                 let errormsg = 'The user with that email already exist'
                 showErrorMessage(errormsg)
             } else {
-                window.location.href = "{{ route('home') }}"
+                // check if student, add additional info
+                if (role == 'Student') {
+                    window.location.href = response
+                } else {
+                    window.location.href = "{{ route('home') }}"
+                }
             }
         })
     })

@@ -46,7 +46,7 @@ class UserController extends Controller
 
         // if check the email - if exist, return '2'
         $check_user_exist_email = User::where('email', $input['email'])->first();
-        if (isset($check_user_exist_email)) return '2';
+        if (isset($check_user_exist_email)) return 'Error 2';
 
         // if no error, create students and assign role
         $user = User::create([
@@ -56,6 +56,8 @@ class UserController extends Controller
             'email' => $input['email']
         ]);
         $user->assignRole($input['role']);
+
+        return route('users.create.studentinfo', $user->id);
     }
 
     /**

@@ -18,7 +18,17 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/csv/lecturers', 'LecturerUnitController@uploadLecturers')->name('csv.lecturers');
     Route::post('/csv/students',  'StudentController@uploadStudents')->name('csv.students');
     Route::post('/csv/questions/{quiz_id}', 'QuestionController@uploadQuestions')->name('csv.questions');
+
+    Route::get('users/{user}/create/studentinfo', 'StudentInfoController@create')
+        ->name('users.create.studentinfo');
+    Route::get('users/{user}/edit/studentinfo', 'StudentInfoController@edit')
+        ->name('users.edit.studentinfo');
+    Route::post('users/{user}/store/studentinfo', 'StudentInfoController@store')
+        ->name('users.store.studentinfo');
+    Route::put('users/{user}/update/studentinfo', 'StudentInfoController@update')
+        ->name('users.update.studentinfo');
     Route::resource('users', 'UserController');
+
     Route::get('quizzes/upload', 'QuizController@create_upload')->name('quizzes.create.upload');
     Route::post('quizzes/upload', 'QuizController@store_upload')->name('quizzes.store.upload');
     Route::resource('quizzes', 'QuizController');
