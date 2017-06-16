@@ -70,7 +70,10 @@
                         <div class="form-group">
                             <div class="col-sm-offset-2 col-sm-9">
                                 <a class="btn btn-info" href="{{ route('units.show', $quiz->unit_id) }}">BACK TO PREVIOUS PAGE</a>
-                                <button class="btn btn-success submit pull-right">UPDATE</button>
+                                <div class="pull-right">
+                                    <button class="btn btn-success submit">UPDATE</button>
+                                    <button class="btn btn-danger remove">DELETE</button>
+                                </div>
                             </div>
                         </div>
                     </div> {{-- end .form-horizontal --}}
@@ -116,7 +119,7 @@
                 let errormsg = 'A quiz with that title already exist'
                 showErrorMessage(errormsg)
             } else {
-                window.location.href = "{{ route('quizzes.index') }}"
+                window.location.href = "{{ route('units.show', $quiz->unit_id) }}"
             }
         })
     })
@@ -129,7 +132,7 @@
             'method': 'DELETE',
             'data': data
         }).done(function(data) {
-            window.location.href = "{{ route('quizzes.index') }}"
+            window.location.href = "{{ route('units.show', $quiz->unit_id) }}"
         })
     })
 }) ()
