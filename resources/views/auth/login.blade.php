@@ -111,7 +111,7 @@
                         <div class="col-md-4 col-qr" hidden>
                             <p class="text-center qr-tag">
                                 <p class="text-center">
-                                    {!! QrCode::size(150)->generate(asset('android/test.apk')) !!}
+                                    {!! QrCode::size(150)->generate(asset('android/TBL.apk')) !!}
                                 </p>
                                 <p class="text-center"><small>Please scan the QR Code</small></p>
 
