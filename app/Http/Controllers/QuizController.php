@@ -65,13 +65,24 @@ class QuizController extends Controller
 
         $unit = Unit::where('code', $input['unit_code'])->first();
 
+        // create individual quiz
         Quiz::create([
             'unit_id' => $unit->id,
             'semester' => $input['semester'],
             'year' => $input['year'],
             'title' => $input['title'],
-            'type' => $input['type'],
-            'status' => $input['status']
+            'type' => 'individual',
+            'status' => 'open',
+        ]);
+
+        // create group quiz
+        Quiz::create([
+            'unit_id' => $unit->id,
+            'semester' => $input['semester'],
+            'year' => $input['year'],
+            'title' => $input['title'],
+            'type' => 'group',
+            'status' => 'open',
         ]);
 
         return 'ok';

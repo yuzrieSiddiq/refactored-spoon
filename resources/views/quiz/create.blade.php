@@ -51,28 +51,6 @@
                             </div>
                         </div>
 
-                        {{-- Type --}}
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">Type</label>
-                            <div class="col-sm-9">
-                                <select class="form-control type">
-                                    <option value="individual">Individual</option>
-                                    <option value="group">Group</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        {{-- Status --}}
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">Status</label>
-                            <div class="col-sm-9">
-                                <select class="form-control status">
-                                    <option value="open">Open</option>
-                                    <option value="close">Close</option>
-                                </select>
-                            </div>
-                        </div>
-
                         {{-- Update Button --}}
                         <div class="form-group">
                             <div class="col-sm-offset-2 col-sm-9">
@@ -102,8 +80,6 @@
             'semester': $('.semester').val(),
             'year': $('.year').val(),
             'title': $('.title').val(),
-            'type': $('.type').val(),
-            'status': $('.status').val(),
         }
         $.ajax({
             'url': $(this).data('url'),

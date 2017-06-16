@@ -9,6 +9,7 @@ use App\User;
 use App\Model\Quiz;
 use App\Model\Unit;
 use App\Model\LecturerUnit;
+use Carbon\Carbon;
 
 class UnitController extends Controller
 {
@@ -79,9 +80,13 @@ class UnitController extends Controller
     {
         $data = [];
         $data['unit'] = Unit::with('students','quizzes')->find($id);
+
+        // show only for current year
         $data['quizzes'] = Quiz::where('unit_id', $data['unit']->id)
-            ->where('semester', 'S1')->where('year', 2017)
-            ->where('type', 'individual')->get();
+            ->where('semester', 'S1')->where('year', Carbon::now()->year)
+            ->where('type', 'group')
+            ->where('status', 'open')
+            ->get();
 
         $students = User::role('Student')->with('student_info', 'students')->get();
         $data['students'] = $students;
