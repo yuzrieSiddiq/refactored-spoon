@@ -27,6 +27,12 @@ Route::group(['middleware' => 'auth'], function () {
         ->name('users.store.studentinfo');
     Route::put('users/{user}/update/studentinfo', 'StudentInfoController@update')
         ->name('users.update.studentinfo');
+
+    Route::get('users/{user}/edit/password', 'UserController@edit_password')
+        ->name('users.edit.password');
+    Route::put('users/{user}/update/password', 'UserController@update_password')
+        ->name('users.update.password');
+
     Route::resource('users', 'UserController');
 
     Route::get('quizzes/upload', 'QuizController@create_upload')->name('quizzes.create.upload');

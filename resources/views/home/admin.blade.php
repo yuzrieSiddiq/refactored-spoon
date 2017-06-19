@@ -47,11 +47,11 @@
                             <thead>
                                 <tr>
                                     <th class="hidden">ID</th>
-                                    <th class="col-md-2">First Name</th>
-                                    <th class="col-md-2">Last Name</th>
-                                    <th class="col-md-5">Email</th>
-                                    <th class="col-md-1">Role</th>
-                                    <th class="col-md-2"></th>
+                                    <th>First Name</th>
+                                    <th>Last Name</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th></th>
                                 </tr>
                             </thead>
                         </table>
@@ -208,6 +208,7 @@
     // Tab 2: User List
     let table_operations2 = '\
         <div class="pull-right">\
+        <button class="btn btn-info change-password" data-url="{{ route('users.edit.password', "id")}}" data-toggle="tooltip" data-placement="top" title="Change Password"><span class="glyphicon glyphicon-lock"></span></button>\
         <button class="btn btn-success manage" data-url="{{ route('users.edit', "id")}}" data-toggle="tooltip" data-placement="top" title="Manage User"><span class="glyphicon glyphicon-user"></span></button>\
         <button class="btn btn-danger modal-remove" data-toggle="tooltip" data-placement="top" title="Remove"><span class="glyphicon glyphicon-remove" data-toggle="modal"></span></button>\
         </div>'
@@ -221,13 +222,33 @@
                 "visible": false,
             },
             {
-            "targets": -1,
-            "data": null,
-            "defaultContent": table_operations2
-        } ]
+                "targets": -1,
+                "data": null,
+                "defaultContent": table_operations2
+            }
+        ],
+        "columns": [
+            null,
+            { "width": "20%" },
+            { "width": "20%" },
+            { "width": "25%" },
+            { "width": "15%" },
+            { "width": "20%" },
+        ]
     })
 
     $('#users-table tbody').on( 'click', '.manage', function () {
+        // get the row data
+        let data = table2.row( $(this).parents('tr') ).data()
+
+        // get the url
+        let url = $(this).data('url').replace('id', data[0])
+
+        // redirect using href
+        window.location.href = url;
+    } );
+
+    $('#users-table tbody').on( 'click', '.change-password', function () {
         // get the row data
         let data = table2.row( $(this).parents('tr') ).data()
 

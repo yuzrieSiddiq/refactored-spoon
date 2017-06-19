@@ -131,4 +131,23 @@ class UserController extends Controller
 
         return 'deleted';
     }
+
+    public function edit_password($id)
+    {
+        $data = [];
+        $data['user'] = User::find($id);
+
+        return view ('user.edit_password', $data);
+    }
+
+    public function update_password(Request $request, $id)
+    {
+        $input = $request->only(['password']);
+        $user = User::find($id);
+        $user->update([
+            'password' => bcrypt($input['password'])
+        ]);
+
+        return 'ok';
+    }
 }
