@@ -34,7 +34,7 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">Role</label>
                             <div class="col-sm-9">
-                                <p class="form-control-static text-capitalize">{{ $user->roles->pluck('name')[0] }}</p>
+                                <p class="form-control-static text-capitalize" id="role">{{ $user->roles->pluck('name')[0] }}</p>
                             </div>
                         </div>
 
@@ -131,7 +131,7 @@
 
         let data = {
             '_token': getToken(),
-            'username'  : $('#username').val(),
+            'role'  : $('#role').text(),
             'first_name': $('#first_name').val(),
             'last_name' : $('#last_name').val(),
             'password'  : $('#password').val(),

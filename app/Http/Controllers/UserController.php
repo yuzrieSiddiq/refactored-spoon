@@ -100,14 +100,18 @@ class UserController extends Controller
     public function update(Request $request, $id)
     {
         $input = $request->only([
-            'role', 'username', 'first_name', 'last_name', 'email'
+            'role', 'first_name', 'last_name', 'email'
         ]);
+
+        // get user based on the selected id
+        $user = User::find($id);
 
         // find the user based on the parameter id
         $check_user_exist_email = User::where('email', $input['email'])->first();
-        if (isset($check_user_exist_email)) return '2';
 
-        $user = User::find($id);
+        if (isset($check_user_exist_email) && $check_user_exist_email->id != $user->id)
+            return '2';
+
         $user->update([
             'firstname' => $input['first_name'],
             'lastname' => $input['last_name'],
