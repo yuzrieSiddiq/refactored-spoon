@@ -23,7 +23,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @if (isset($units))
+                                @if (!empty($units))
                                     @foreach ($units as $unit)
                                         <tr>
                                             <td>{{ $unit->code }}</td>
@@ -40,6 +40,10 @@
                                             </td>
                                         </tr>
                                     @endforeach
+                                @else
+                                    <tr>
+                                        <td colspan="5" class="text-center">No units assigned to this lecturer</td>
+                                    </tr>
                                 @endif
                             </tbody>
                         </table>
