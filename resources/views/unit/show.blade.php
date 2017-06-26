@@ -319,6 +319,8 @@
                     'file': jsonstring
                 }
 
+                // TODO: add the loading button gif + attribute hidden/un-hidden
+
                 $.ajax({
                     'url': '{{ route('csv.students') }}',
                     'method': 'POST',

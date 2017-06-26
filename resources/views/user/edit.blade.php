@@ -30,6 +30,14 @@
                             </div>
                         </div>
 
+                        {{-- Roles --}}
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Role</label>
+                            <div class="col-sm-9">
+                                <p class="form-control-static text-capitalize">{{ $user->roles->pluck('name')[0] }}</p>
+                            </div>
+                        </div>
+
                         <div class="form-group">
                             <div class="col-sm-9 col-sm-offset-2">
                                 <div class="alert alert-danger" role="alert"></div>
@@ -40,7 +48,7 @@
                         <div class="form-group">
                             <div class="col-sm-offset-2 col-sm-9">
                                 <button class="btn btn-success submit">Update</button>
-                                <a href="{{ route('users.index') }}" class="btn btn-primary pull-right">Back to Previous Page</a>
+                                <a href="{{ route('home') }}" class="btn btn-primary pull-right">Back to Previous Page</a>
                             </div>
                         </div>
                     </div> {{-- end .form-horizontal --}}
@@ -142,7 +150,7 @@
                 let errormsg = 'A user with that email already exist'
                 showErrorMessage(errormsg)
             } else {
-                window.location.href = "{{ route('users.index') }}"
+                window.location.href = "{{ route('home') }}"
             }
         })
     })
@@ -155,7 +163,7 @@
             'method': 'DELETE',
             'data': data
         }).done(function(data) {
-            window.location.href = "{{ route('users.index') }}"
+            window.location.href = "{{ route('home') }}"
         })
     })
 

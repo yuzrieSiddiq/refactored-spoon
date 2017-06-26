@@ -211,6 +211,12 @@ class StudentController extends Controller
         $input = $request->only([ 'file' ]);
         $students = json_decode($input['file']);
 
+        // headers error checking - return Error_H01
+        if (count($students[0]) != 11) {
+            return response()->json("Error_H01");
+        }
+
+        // start appending
         foreach ($students as $row) {
             // at the end of the file, it always append an empty line
             if ($row[0] == '') {
