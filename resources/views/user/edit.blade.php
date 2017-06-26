@@ -38,9 +38,36 @@
                             </div>
                         </div>
 
+                        {{-- this section only for Student --}}
+                        @if ($user->hasRole('Student'))
+                            {{-- Student ID --}}
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">Student ID</label>
+                                <div class="col-sm-9">
+                                    @if (isset($student_info->student_id))
+                                        <input type="text" class="form-control" id="student-std-id" value="{{ $student_info->student_id }}">
+                                    @else
+                                        <input type="text" class="form-control" id="student-std-id" placeholder="Student ID">
+                                    @endif
+                                </div>
+                            </div>
+
+                            {{-- Locality --}}
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">Locality</label>
+                                <div class="col-sm-9">
+                                    @if (isset($student_info->locality))
+                                        <input type="text" class="form-control" id="locality" value="{{ $student_info->locality }}">
+                                    @else
+                                        <input type="text" class="form-control" id="locality" placeholder="LOCAL/INTERNATIONAL">
+                                    @endif
+                                </div>
+                            </div>
+                        @endif
+
                         <div class="form-group">
                             <div class="col-sm-9 col-sm-offset-2">
-                                <div class="alert alert-danger" role="alert"></div>
+                                <div class="alert alert-danger alert-no-bottom-margin" role="alert" hidden></div>
                             </div>
                         </div>
 
@@ -135,19 +162,24 @@
             'first_name': $('#first_name').val(),
             'last_name' : $('#last_name').val(),
             'password'  : $('#password').val(),
-            'email': $('#email').val()
+            'email': $('#email').val(),
+            'student_std_id': $('#student-std-id').val(),
+            'locality' : $('#locality').val(),
         }
 
         $.ajax({
             'url': '{{ route('users.update', $user->id) }}',
             'method': 'PUT',
             'data': data
-        }).done(function(error) {
-            if (error == '1') {
+        }).done(function(response) {
+            if (response == '1') {
                 let errormsg = 'A user with that username already exist'
                 showErrorMessage(errormsg)
-            } else if (error == '2') {
+            } else if (response == '2') {
                 let errormsg = 'A user with that email already exist'
+                showErrorMessage(errormsg)
+            } else if (response == 'Error_E01') {
+                let errormsg = 'Please fill in all the fields to update'
                 showErrorMessage(errormsg)
             } else {
                 window.location.href = "{{ route('home') }}"

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\User;
 use App\Model\Unit;
+use App\Model\StudentInfo;
 use App\Model\LecturerUnit;
 use Spatie\Permission\Models\Role;
 
@@ -87,6 +88,10 @@ class UserController extends Controller
         $data['lecturerunits'] = LecturerUnit::with('unit')->where('user_id', $data['user']->id)->get();
         $data['availableunits'] = Unit::all();
 
+        if ($data['user']->roles()->pluck('name')[0] == 'Student') {
+            $data['student_info'] = StudentInfo::where('user_id', $id)->first();
+        }
+
         return view ('user.edit', $data);
     }
 
@@ -100,24 +105,48 @@ class UserController extends Controller
     public function update(Request $request, $id)
     {
         $input = $request->only([
-            'role', 'first_name', 'last_name', 'email'
+            'role', 'first_name', 'last_name', 'email', 'student_std_id', 'locality'
         ]);
+
+        // check if any fields is empty and return error if true
+        foreach ($input as $data) {
+            if (empty($data)) {
+                // empty parameters
+                return 'Error_E01';
+            }
+        }
 
         // get user based on the selected id
         $user = User::find($id);
 
         // find the user based on the parameter id
         $check_user_exist_email = User::where('email', $input['email'])->first();
-
         if (isset($check_user_exist_email) && $check_user_exist_email->id != $user->id)
             return '2';
 
+        // student - basic user info
         $user->update([
             'firstname' => $input['first_name'],
             'lastname' => $input['last_name'],
             'email' => $input['email']
         ]);
         $user->syncRoles([ $input['role'] ]);
+
+        // student info
+        $check_studentinfo_exist = StudentInfo::where('user_id', $user->id)->first();
+        if (isset($check_studentinfo_exist)) {
+            $check_studentinfo_exist->update([
+                'user_id' => $user->id,
+                'student_id' => $input['student_std_id'],
+                'locality' => $input['locality']
+            ]);
+        } else {
+            $studentinfo = StudentInfo::create([
+                'user_id' => $user->id,
+                'student_id' => $input['student_std_id'],
+                'locality' => $input['locality']
+            ]);
+        }
 
         return 'updated';
     }

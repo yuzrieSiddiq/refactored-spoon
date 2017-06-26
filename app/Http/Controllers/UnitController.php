@@ -90,6 +90,7 @@ class UnitController extends Controller
         $students = User::role('Student')->with('student_info', 'students')->get();
         $data['students'] = $students;
 
+        // return response()->json($data);
         return view ('unit.show', $data);
     }
 
