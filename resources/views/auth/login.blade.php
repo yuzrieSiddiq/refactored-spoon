@@ -9,16 +9,17 @@
                     <h3 class="text-center">Welcome to Semester Quiz</h3>
                     <br>
                     <div class="row">
-                        <div class="col-md-offset-1 col-md-4">
-                            <p class="text-center">
-                                <small>Are you a student? Click the button below to download the <i>apk</i>.</small>
-                            </p>
-                            <p class="text-center">
-                                <button class="btn btn-info" data-toggle="modal" data-target="#download-apk-modal">Download APK</button>
+                        <div class="col-md-4 col-md-offset-1">
+                            <p class="text-center qr-tag">
+                                <p class="text-center">
+                                    {!! QrCode::size(150)->generate(asset('android/TBL.apk')) !!}
+                                </p>
+                                <p class="text-center">Download the student app by scanning the QR code above</p>
+                                <p class="text-center"><small>Cannot scan? <a href="{{ asset('android/TBL.apk') }}">Download here</a></small></p>
                             </p>
                         </div>
                         <div class="col-md-6">
-                            <br>
+                            <br><br>
                             <form class="form-horizontal" role="form" method="POST" action="{{ route('login') }}">
                                 {{ csrf_field() }}
 
@@ -71,6 +72,7 @@
         </div>
     </div>
 
+    {{--
     <div class="modal fade" id="download-apk-modal" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -126,6 +128,7 @@
             </div>
         </div>
     </div>
+     --}}
 </div>
 @endsection
 
