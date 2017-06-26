@@ -135,6 +135,11 @@ class LecturerUnitController extends Controller
         $input = $request->only([ 'file' ]);
         $lecturers = json_decode($input['file']);
 
+        // headers error checking - return Error_H01
+        if (count($lecturers[0]) != 4) {
+            return response()->json("Error_H01");
+        }
+
         foreach ($lecturers as $row) {
             // at the end of the file, it always append an empty line
             if ($row[0] == '') {

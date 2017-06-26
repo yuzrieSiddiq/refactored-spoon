@@ -208,7 +208,7 @@ class StudentController extends Controller
 
     public function uploadStudents(Request $request)
     {
-        $input = $request->only([ 'file' ]);
+        $input = $request->only([ 'file', 'unit_code' ]);
         $students = json_decode($input['file']);
 
         // headers error checking - return Error_H01
@@ -240,17 +240,24 @@ class StudentController extends Controller
                     'student_id' => $row[3],
                     'locality'   => $row[5],
                 ]);
+            }
 
-                // find if the units specified exist
-                $units = [];
-                for ($i=0; $i < 5; $i++) {
-                    $units[$i] = Unit::where('code', $row[$i+6])->first();
+            // find if the units specified exist
+            $units = [];
+            for ($i=0; $i < 5; $i++) {
+                $units[$i] = Unit::where('code', $row[$i+6])->first();
 
-                    // if unit found, then add the students to that unit
-                    if (isset($units[$i])) {
+                // check unit - only add those with the assigned unit
+                if ($units[$i]['code'] == $input['unit_code']) {
+
+                    $check_student_exist = Student::where('user_id', $check_user_exist->id)
+                        ->where('unit_id', $units[$i]['id'])->where('semester', 'S1')
+                        ->where('year', 2017)->first();
+
+                    if (!isset($check_student_exist)) {
                         Student::create([
-                            'user_id' => $user->id,
-                            'unit_id' => $units[$i]->id,
+                            'user_id' => $check_user_exist->id,
+                            'unit_id' => $units[$i]['id'],
                             'semester'=> 'S1',
                             'year'    => 2017,
                             'team_number' => null,

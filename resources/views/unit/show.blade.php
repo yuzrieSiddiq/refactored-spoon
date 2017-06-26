@@ -41,12 +41,19 @@
                                 </table>
                             </div> {{-- end .table-responsive --}}
 
-                            <button class="btn btn-success" data-target="#modal-add-student" data-toggle="modal">
-                                ADD NEW STUDENT
-                            </button>
-                            <label class="btn btn-primary btn-file">
-                                UPLOAD STUDENT LIST (.CSV) <input class="file-upload" type="file" style="display: none;">
-                            </label>
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        <div class="alert alert-danger alert-no-bottom-margin" role="alert" hidden></div>
+                                    </div>
+                                </div>
+                                <button class="btn btn-success" data-target="#modal-add-student" data-toggle="modal">
+                                    ADD NEW STUDENT
+                                </button>
+                                <label class="btn btn-primary btn-file">
+                                    UPLOAD STUDENT LIST (.CSV) <input class="file-upload" type="file" style="display: none;">
+                                </label>
+                            </div>
 
                             {{-- New Student Modal --}}
                             <div class="modal fade" id="modal-add-student" tabindex="-1" role="dialog">
@@ -308,6 +315,12 @@
         })
     })
 
+    // show alert if error
+    let showErrorMessage = function(errormsg)  {
+        $('.alert').text(errormsg)
+        $('.alert').show(450).delay(8000).slideUp(450)
+    }
+
     $('.file-upload').change(function() {
         // do the csv file parsing
         Papa.parse($(this).prop('files')[0], {
@@ -316,7 +329,8 @@
                 // after complete parsing, send to controller via ajax
                 let data = {
                     '_token': getToken(),
-                    'file': jsonstring
+                    'file': jsonstring,
+                    'unit_code': '{{ $unit->code }}'
                 }
 
                 // TODO: add the loading button gif + attribute hidden/un-hidden
@@ -327,7 +341,12 @@
                     'data': data,
                     'enctype': 'multipart/form-data'
                 }).done(function(response) {
-                    window.location.reload()
+                    if (response == "Error_H01") {
+                        let errormsg = 'The file has wrong format/headers please ensure .csv file has the correct format'
+                        showErrorMessage(errormsg)
+                    } else {
+                        window.location.reload()
+                    }
                 })
             }
         })
