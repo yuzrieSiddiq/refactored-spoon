@@ -128,12 +128,25 @@ class QuizController extends Controller
         $input = $request->only([
             'semester', 'year', 'title', 'type', 'status'
         ]);
-        $quiz = Quiz::find($id);
-        $quiz->update([
+        $quiz_group = Quiz::find($id);
+        $quiz_individual = Quiz::where('unit_id', $quiz_group->unit_id)
+            ->where('semester', $quiz_group->semester)
+            ->where('year', $quiz_group->year)
+            ->where('title', $quiz_group->title)
+            ->where('type', 'individual')
+            ->first();
+
+        $quiz_group->update([
             'semester' => $input['semester'],
             'year' => $input['year'],
             'title' => $input['title'],
-            'type' => $input['type'],
+            'status' => $input['status']
+        ]);
+
+        $quiz_individual->update([
+            'semester' => $input['semester'],
+            'year' => $input['year'],
+            'title' => $input['title'],
             'status' => $input['status']
         ]);
 
@@ -148,8 +161,16 @@ class QuizController extends Controller
      */
     public function destroy($id)
     {
-        $quiz = Quiz::find($id);
-        $quiz->delete();
+        $quiz_group = Quiz::find($id);
+        $quiz_group->delete();
+
+        $quiz_individual = Quiz::where('unit_id', $quiz_group->unit_id)
+            ->where('semester', $quiz_group->semester)
+            ->where('year', $quiz_group->year)
+            ->where('title', $quiz_group->title)
+            ->where('type', 'individual')
+            ->first();
+        $quiz_individual->delete();
 
         return 'deleted';
     }

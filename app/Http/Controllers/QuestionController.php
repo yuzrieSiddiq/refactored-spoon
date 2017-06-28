@@ -194,7 +194,7 @@ class QuestionController extends Controller
             'answer5' => $input['answer5'],
             'correct_answer' => $input['correct_answer'],
         ]);
-        
+
         return 'updated';
     }
 
@@ -224,8 +224,13 @@ class QuestionController extends Controller
      */
     public function destroy($quiz_id, $question_id)
     {
-        $question = Question::find($question_id);
-        $question->delete();
+        $question_group = Question::find($question_id);
+        $question_group->delete();
+
+        $questions_individual = Question::where('question', $question_group->question)
+            ->where('question', $question_group->question)
+            ->first();
+        $questions_individual->delete();
 
         return 'deleted';
     }

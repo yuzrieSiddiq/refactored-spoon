@@ -34,22 +34,6 @@
                             </div>
                         </div>
 
-                        {{-- Type --}}
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">Type</label>
-                            <div class="col-sm-9">
-                                <select class="form-control" id="type">
-                                    @if ($quiz->type == 'individual')
-                                        <option value="individual">Individual</option>
-                                        <option value="group">Group</option>
-                                    @else
-                                        <option value="group">Group</option>
-                                        <option value="individual">Individual</option>
-                                    @endif
-                                </select>
-                            </div>
-                        </div>
-
                         {{-- Status --}}
                         <div class="form-group">
                             <label class="col-sm-2 control-label">Status</label>
