@@ -126,8 +126,7 @@
                                         <tr>
                                             <th>Quiz No</th>
                                             <th class="col-md-6">Quiz Title</th>
-                                            <th>Quiz Status</th>
-                                            <th></th>
+                                            <th class="col-md-5"></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -136,7 +135,6 @@
                                                 <tr>
                                                     <td class="text-center">{{ $count+1 }}</td>
                                                     <td>{{ $quiz->title }}</td>
-                                                    <td>{{ $quiz->status }}</td>
                                                     <td class="pull-right">
                                                         <a href="{{ route('quizzes.report', $quiz->id) }}" class="btn btn-primary">Report</a>
                                                         <a href="{{ route('quizzes.edit', $quiz->id) }}" class="btn btn-success">Edit Quiz</a>
