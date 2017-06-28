@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use JWTAuth;
 
 use App\Http\Controllers\Controller;
+use App\User;
 use App\Model\Student;
 use App\Model\StudentInfo;
 use App\Model\Unit;
@@ -18,11 +19,14 @@ class StudentController extends Controller
     public function index()
     {
         $auth_user = JWTAuth::parseToken()->authenticate();
-        $this_student = Student::with('unit', 'user')
+
+        $data = [];
+        $data['user'] = User::with('student_info')->find($auth_user->id);
+        $data['this_student'] = Student::with('unit')
             ->where('user_id', $auth_user->id)
             ->get();
 
-        return response()->json($this_student);
+        return response()->json($data);
     }
 
     public function team_info($unit_id)
