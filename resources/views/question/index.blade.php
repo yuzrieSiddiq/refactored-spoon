@@ -30,12 +30,14 @@
                                                 {{ $question->answer_type }}
                                             @else
                                                 <label class="custom-control custom-radio">
-                                                    <input name="question-{{ $question->id }}-answer-type" type="radio" class="custom-control-input" data-id="{{ $question->id }}" checked>
+                                                    <input name="question-{{ $question->id }}-answer-type" type="radio" class="custom-control-input" data-id="{{ $question->id }}"
+                                                        data-question="{{ $question->question }}" checked>
                                                     <span class="custom-control-indicator"></span>
                                                     <span class="custom-control-description radio-value">MCQ</span>
                                                 </label>
                                                 <label class="custom-control custom-radio">
-                                                    <input name="question-{{ $question->id }}-answer-type" type="radio" class="custom-control-input" data-id="{{ $question->id }}">
+                                                    <input name="question-{{ $question->id }}-answer-type" type="radio" class="custom-control-input" data-id="{{ $question->id }}"
+                                                        data-question="{{ $question->question }}">
                                                     <span class="custom-control-indicator"></span>
                                                     <span class="custom-control-description radio-value">RANKING</span>
                                                 </label>
@@ -160,6 +162,7 @@
         $('input[name*=answer-type]:checked').each(function() {
             let answer_type = {}
             answer_type['question_id'] = $(this).data('id')
+            answer_type['question'] = $(this).data('question')
             answer_type['answer_type'] = $(this).siblings('.radio-value').text()
             answer_types.push(answer_type)
         })

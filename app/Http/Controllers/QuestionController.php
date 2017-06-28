@@ -202,10 +202,31 @@ class QuestionController extends Controller
     {
         $input = $request->only([ 'answer_types' ]);
 
-        $quiz = Quiz::with('questions')->find($quiz_id);
-        foreach ($quiz->questions as $question) {
+        $quiz_group = Quiz::with('questions')->find($quiz_id);
+
+        $quiz_individual = Quiz::with('questions')
+            ->where('unit_id', $quiz_group->unit_id)
+            ->where('semester', $quiz_group->semester)
+            ->where('year', $quiz_group->year)
+            ->where('title', $quiz_group->title)
+            ->where('type', 'individual')
+            ->first();
+
+        // update group quizzes
+        foreach ($quiz_group->questions as $question) {
             foreach ($input['answer_types'] as $answer_type) {
-                if ($question->id == $answer_type['question_id']) {
+                if ($question->question == $answer_type['question']) {
+                    $question->update([
+                        'answer_type' => $answer_type['answer_type']
+                    ]);
+                }
+            }
+        }
+
+        // update individual quizzes
+        foreach ($quiz_individual->questions as $question) {
+            foreach ($input['answer_types'] as $answer_type) {
+                if ($question->question == $answer_type['question']) {
                     $question->update([
                         'answer_type' => $answer_type['answer_type']
                     ]);
@@ -240,7 +261,15 @@ class QuestionController extends Controller
         $input = $request->only([ 'file' ]);
         $questions = json_decode($input['file']);
 
-        $quiz = Quiz::find($quiz_id);
+        $quiz_group = Quiz::find($quiz_id);
+
+        $quiz_individual = Quiz::where('unit_id', $quiz_group->unit_id)
+            ->where('semester', $quiz_group->semester)
+            ->where('year', $quiz_group->year)
+            ->where('title', $quiz_group->title)
+            ->where('type', 'individual')
+            ->first();
+
         foreach ($questions as $row) {
             if ($row[0] == '') {
                 break;
@@ -258,7 +287,19 @@ class QuestionController extends Controller
             }
             if ($all_is_set) {
                 Question::create([
-                    'quiz_id' => $quiz->id,
+                    'quiz_id' => $quiz_group->id,
+                    'answer_type' => '',
+                    'question'=> $row[1],
+                    'answer1' => $row[2],
+                    'answer2' => $row[3],
+                    'answer3' => $row[4],
+                    'answer4' => $row[5],
+                    'answer5' => $row[6],
+                    'correct_answer' => $row[7],
+                ]);
+
+                Question::create([
+                    'quiz_id' => $quiz_individual->id,
                     'answer_type' => '',
                     'question'=> $row[1],
                     'answer1' => $row[2],
