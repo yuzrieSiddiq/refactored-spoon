@@ -59,17 +59,27 @@ class QuestionController extends Controller
             'answer1', 'answer2', 'answer3', 'answer4', 'answer5'
         ]);
 
-        if ($input['answer_type'] == 'MCQ' || $input['answer_type'] == 'mcq') {
-            if ($input['correct_answer'] != $input['answer1'] || $input['correct_answer'] != $input['answer2'] ||
-                $input['correct_answer'] != $input['answer3'] || $input['correct_answer'] != $input['answer4'] ||
-                $input['correct_answer'] != $input['answer5'])
-            {
-                return '1';
-            }
-        }
+        $quiz_group = Quiz::find($quiz_id);
+        $quiz_individual = Quiz::where('unit_id', $quiz_group->unit_id)
+            ->where('semester', $quiz_group->semester)
+            ->where('year', $quiz_group->year)
+            ->where('title', $quiz_group->title)
+            ->where('type', 'individual')
+            ->first();
 
-        $question = Question::create([
-            'quiz_id' => $quiz_id,
+        // skip checking
+        // if ($input['answer_type'] == 'MCQ' || $input['answer_type'] == 'mcq') {
+        //     if ($input['correct_answer'] != $input['answer1'] || $input['correct_answer'] != $input['answer2'] ||
+        //         $input['correct_answer'] != $input['answer3'] || $input['correct_answer'] != $input['answer4'] ||
+        //         $input['correct_answer'] != $input['answer5'])
+        //     {
+        //         return '1';
+        //     }
+        // }
+
+        // create questions for group quiz
+        $questions_group = Question::create([
+            'quiz_id' => $quiz_group->id,
             'question' => $input['question'],
             'answer_type' => $input['answer_type'],
             'answer1' => $input['answer1'],
@@ -80,7 +90,18 @@ class QuestionController extends Controller
             'correct_answer' => $input['correct_answer'],
         ]);
 
-        return $question;
+        // create questions for individual quiz
+        $questions_individual = Question::create([
+            'quiz_id' => $quiz_individual->id,
+            'question' => $input['question'],
+            'answer_type' => $input['answer_type'],
+            'answer1' => $input['answer1'],
+            'answer2' => $input['answer2'],
+            'answer3' => $input['answer3'],
+            'answer4' => $input['answer4'],
+            'answer5' => $input['answer5'],
+            'correct_answer' => $input['correct_answer'],
+        ]);
     }
 
     /**
@@ -127,17 +148,27 @@ class QuestionController extends Controller
             'answer4', 'answer5', 'correct_answer'
         ]);
 
-        if ($input['answer_type'] == 'MCQ' || $input['answer_type'] == 'mcq') {
-            if ($input['correct_answer'] != $input['answer1'] && $input['correct_answer'] != $input['answer2'] &&
-                $input['correct_answer'] != $input['answer3'] && $input['correct_answer'] != $input['answer4'] &&
-                $input['correct_answer'] != $input['answer5'])
-            {
-                return '1';
-            }
-        }
+        $quiz_group = Quiz::find($quiz_id);
+        $quiz_individual = Quiz::where('unit_id', $quiz_group->unit_id)
+            ->where('semester', $quiz_group->semester)
+            ->where('year', $quiz_group->year)
+            ->where('title', $quiz_group->title)
+            ->where('type', 'individual')
+            ->first();
 
-        $question = Question::find($question_id);
-        $question->update([
+        // skip answer checking for now
+        // if ($input['answer_type'] == 'MCQ' || $input['answer_type'] == 'mcq') {
+        //     if ($input['correct_answer'] != $input['answer1'] || $input['correct_answer'] != $input['answer2'] ||
+        //         $input['correct_answer'] != $input['answer3'] || $input['correct_answer'] != $input['answer4'] ||
+        //         $input['correct_answer'] != $input['answer5'])
+        //     {
+        //         return '1';
+        //     }
+        // }
+
+        // create questions for group quiz
+        $question_group = Question::find($question_id);
+        $question_group->update([
             'question' => $input['question'],
             'answer_type' => $input['answer_type'],
             'answer1' => $input['answer1'],
@@ -145,9 +176,25 @@ class QuestionController extends Controller
             'answer3' => $input['answer3'],
             'answer4' => $input['answer4'],
             'answer5' => $input['answer5'],
-            'correct_answer' => $input['correct_answer']
+            'correct_answer' => $input['correct_answer'],
         ]);
 
+        // create questions for individual quiz
+        $questions_individual = Question::where('question', $question_group->question)
+            ->where('question', $question_group->question)
+            ->first();
+
+        $questions_individual->update([
+            'question' => $input['question'],
+            'answer_type' => $input['answer_type'],
+            'answer1' => $input['answer1'],
+            'answer2' => $input['answer2'],
+            'answer3' => $input['answer3'],
+            'answer4' => $input['answer4'],
+            'answer5' => $input['answer5'],
+            'correct_answer' => $input['correct_answer'],
+        ]);
+        
         return 'updated';
     }
 

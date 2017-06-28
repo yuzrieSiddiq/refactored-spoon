@@ -126,8 +126,9 @@
                 let errormsg = 'Something is wrong with this question please review and make sure the answers are all correct (no typos)'
                 showErrorMessage(errormsg)
             } else {
-                console.log(response['question_id'])
-                console.log(response['correct_answer'])
+                window.location.href = '{{ route('quizzes.questions.index', $quiz->id) }}'
+                // console.log(response['question_id'])
+                // console.log(response['correct_answer'])
             }
         })
     })
