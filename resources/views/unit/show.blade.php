@@ -203,13 +203,13 @@
      */
     let student_table_operations = '\
         <div class="pull-right">\
-            <button class="btn btn-info make-teamleader"><span class="glyphicon glyphicon-star"></span> SET LEADER</button>\
+            <button class="btn btn-info set-teamleader"><span class="glyphicon glyphicon-star"></span> SET LEADER</button>\
             <button class="btn btn-danger modal-remove" data-toggle="tooltip" data-placement="top" title="Remove Student"><span class="glyphicon glyphicon-remove" data-toggle="modal"></span></button>\
         </div>'
 
     let leader_table_operations = '\
         <div class="pull-right">\
-            <button class="btn btn-info revoke-teamleader"><span class="glyphicon glyphicon-star-empty"></span> UNSET LEADER</button>\
+            <button class="btn btn-info set-teamleader"><span class="glyphicon glyphicon-star-empty"></span> UNSET LEADER</button>\
             <button class="btn btn-danger modal-remove" data-toggle="tooltip" data-placement="top" title="Remove Student"><span class="glyphicon glyphicon-remove" data-toggle="modal"></span></button>\
         </div>'
 
@@ -323,17 +323,25 @@
         })
     })
 
-    $('#students-table tbody').on( 'click', '.make-teamleader', function () {
-        let data = table.row( $(this).parents('tr') ).data()
+    $('#students-table tbody').on( 'click', '.set-teamleader', function () {
+        let tr_data = table.row( $(this).parents('tr') ).data()
+
+        let unit_id = {{ $unit->id }}
+        let student_id = tr_data[0]
+        let leader_status = tr_data[5]
+        let data = {
+            '_token': getToken(),
+            'is_leader': leader_status
+        }
 
         let url = '{{ route('units.students.destroy', ['unit' => 'unit_id', 'student' => 'student_id']) }}'
-        url = url.replace('unit_id', {{ $unit->id }})
-        url = url.replace('student_id', data[0])
+        url = url.replace('unit_id', unit_id)
+        url = url.replace('student_id', student_id)
 
         $.ajax({
             'url': url,
             'method': 'PUT',
-            'data': { '_token': getToken() }
+            'data': data
         }).done(function(response) {
             window.location.reload()
         })

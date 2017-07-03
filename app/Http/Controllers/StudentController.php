@@ -172,22 +172,33 @@ class StudentController extends Controller
      */
     public function update(Request $request, $unit_id, $student_id)
     {
-        $newteam = 0;
-        $students = Student::where('unit_id', $unit_id)->where('is_group_leader', true)->get();
-        foreach ($students as $student) {
-            if ($student->team_number != null) {
-                if ($student->team_number > $newteam) {
-                    $newteam = $student->team_number;
+        $input = $request->only(['is_leader']); // 0 or 1
+
+        if ($input['is_leader'] == 0) {
+            // if not a group leader - set as leader
+            $newteam = 0;
+            $students = Student::where('unit_id', $unit_id)->where('is_group_leader', true)->get();
+            foreach ($students as $student) {
+                if ($student->team_number != null) {
+                    if ($student->team_number > $newteam) {
+                        $newteam = $student->team_number;
+                    }
                 }
             }
-        }
-        $newteam += 1;
+            $newteam += 1;
 
-        $student = Student::find($student_id);
-        $student->update([
-            'team_number' => $newteam,
-            'is_group_leader' => true
-        ]);
+            $student = Student::find($student_id);
+            $student->update([
+                'team_number' => $newteam,
+                'is_group_leader' => true
+            ]);
+        } else {
+            // if is a group leader - unset from a leader
+            $student = Student::find($student_id);
+            $student->update([
+                'is_group_leader' => false
+            ]);
+        }
 
         return 'updated';
     }
