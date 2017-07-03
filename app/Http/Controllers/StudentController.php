@@ -250,11 +250,11 @@ class StudentController extends Controller
                 // check unit - only add those with the assigned unit
                 if ($units[$i]['code'] == $input['unit_code']) {
 
+                    return $check_user_exist->id;
                     $check_student_exist = Student::where('user_id', $check_user_exist->id)
-                        ->where('unit_id', $units[$i]['id'])->where('semester', 'S1')
-                        ->where('year', 2017)->first();
+                        ->where('unit_id', $units[$i]['id'])->first();
 
-                    if (!isset($check_student_exist)) {
+                    if (!isset($check_student_exist)  || empty($check_student_exist)) {
                         Student::create([
                             'user_id' => $check_user_exist->id,
                             'unit_id' => $units[$i]['id'],

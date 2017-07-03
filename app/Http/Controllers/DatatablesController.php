@@ -37,10 +37,11 @@ class DatatablesController extends Controller
         // TODO: filter by Unit, only show students in the current unit, (e.g: where unit = 'HRM20016', S1, 2017)
         // NEXT: to filter by semester and year
         return Datatables::of(
-            Student::select('students.id', 'users.firstname', 'users.lastname',
-                'students.semester', 'students.year', 'students.team_number', 'students.is_group_leader')
+            Student::select('students.id', 'student_infos.student_id', 'users.firstname', 'users.lastname',
+                'students.team_number', 'students.is_group_leader')
             ->leftJoin('users', 'users.id', '=', 'students.user_id')
             ->leftJoin('units', 'units.id', '=', 'students.unit_id')
+            ->leftJoin('student_infos', 'student_infos.user_id', '=', 'students.user_id')
             ->where('units.id', $unit_id)
         )->make();
     }
