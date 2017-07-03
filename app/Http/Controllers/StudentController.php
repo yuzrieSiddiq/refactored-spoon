@@ -174,30 +174,63 @@ class StudentController extends Controller
     {
         $input = $request->only(['is_leader']); // 0 or 1
 
-        if ($input['is_leader'] == 0) {
-            // if not a group leader - set as leader
-            $newteam = 0;
-            $students = Student::where('unit_id', $unit_id)->where('is_group_leader', true)->get();
-            foreach ($students as $student) {
-                if ($student->team_number != null) {
-                    if ($student->team_number > $newteam) {
-                        $newteam = $student->team_number;
-                    }
+        // counting teams and assigning new team
+        $newteam = 0;
+        $teams = Student::where('unit_id', $unit_id)->where('is_group_leader', true)->get();
+        foreach ($teams as $team) {
+            if ($team->team_number != null) {
+                if ($team->team_number > $newteam) {
+                    $newteam = $team->team_number;
                 }
             }
-            $newteam += 1;
+        }
+        $newteam += 1;
 
-            $student = Student::find($student_id);
-            $student->update([
-                'team_number' => $newteam,
-                'is_group_leader' => true
-            ]);
+        $student = Student::find($student_id);
+        if ($input['is_leader']) {
+            // if is a leader, do: revoke as leader
+            $team_members = Student::where('unit_id', $student->unit_id)
+                ->where('team_number', $student->team_number)
+                ->where('is_group_leader', false)->get();
+
+            // if this team do not have members, cancel the team
+            if (count($team_members) < 1) {
+                $student->update([
+                    'team_number' => null,
+                    'is_group_leader' => false
+                ]);
+            } else {
+                // else if the team is active, assign next person as the team leader
+                $student->update([
+                    'team_number' => $student->team_number,
+                    'is_group_leader' => false
+                ]);
+
+                $team_members[0]->update([
+                    'team_number' => $team_members[0]->team_number,
+                    'is_group_leader' => true
+                ]);
+            }
         } else {
-            // if is a group leader - unset from a leader
-            $student = Student::find($student_id);
-            $student->update([
-                'is_group_leader' => false
-            ]);
+            // if not a leader, do: assign as leader
+
+            // check if theres existing leader in the team
+            $leader = Student::where('unit_id', $student->unit_id)
+                ->where('team_number', $student->team_number)
+                ->where('is_group_leader', true)
+                ->first();
+
+            // if leader does not exist, assign this student as the leader
+            if (!isset($leader)) {
+                $student->update([
+                    'team_number' => $newteam,
+                    'is_group_leader' => true
+                ]);
+            } else {
+                // if leader exist, swap the leader position to this student
+                $leader->update(['is_group_leader' => false]);
+                $student->update(['is_group_leader' => true]);
+            }
         }
 
         return 'updated';
