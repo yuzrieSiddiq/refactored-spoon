@@ -224,8 +224,8 @@ class StudentController extends Controller
             }
 
             // add user entry
-            $check_user_exist = User::where('email', $row[2])->first();
-            if (!$check_user_exist) {
+            $user = User::where('email', $row[2])->first();
+            if (!isset($user)) {
                 $user = User::create([
                     'firstname' => $row[0],
                     'lastname'  => $row[1],
@@ -244,19 +244,19 @@ class StudentController extends Controller
 
             // find if the units specified exist
             $units = [];
-            for ($i=0; $i < 5; $i++) {
-                $units[$i] = Unit::where('code', $row[$i+6])->first();
+            for ($i=6; $i < 11; $i++) {
+                $units[$i] = Unit::where('code', $row[$i])->first();
 
                 // check unit - only add those with the assigned unit
                 if ($units[$i]['code'] == $input['unit_code']) {
 
-                    return $check_user_exist->id;
-                    $check_student_exist = Student::where('user_id', $check_user_exist->id)
+                    // TODO: add check for semester and year
+                    $student = Student::where('user_id', $user->id)
                         ->where('unit_id', $units[$i]['id'])->first();
 
-                    if (!isset($check_student_exist)  || empty($check_student_exist)) {
+                    if (!isset($student)) {
                         Student::create([
-                            'user_id' => $check_user_exist->id,
+                            'user_id' => $user->id,
                             'unit_id' => $units[$i]['id'],
                             'semester'=> 'S1',
                             'year'    => 2017,
