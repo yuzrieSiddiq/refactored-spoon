@@ -277,6 +277,7 @@
         },
     })
 
+    // coloring templates
     let pie_attemptsbackgroundColor = ['rgba(99, 107, 111, 0.5)', 'rgba(42, 178, 123, 0.5)', 'rgba(255, 99, 132, 0.5)']
     let pie_attemptsborderColor = ['rgba(99, 107, 111, 1)', 'rgba(42, 178, 123, 1)', 'rgba(255, 99, 132, 1)']
     let pie_attemptsborderWidth = 1
@@ -341,26 +342,18 @@
 
     let pass_count = {{ $pass_count }}
 
-    if (individual_pass_count <= 0) {
-        individualPassingRate = individual_pass_count * 100 / (individual_pass_count + individual_fail_count)
-        individualFailingRate = 100 - individualPassingRate;
-    } else {
-        console.log("individual pass count: 0")
-    }
+    individualPassingRate = individual_pass_count * 100 / (individual_pass_count + individual_fail_count)
+    individualFailingRate = 100 - individualPassingRate;
 
-    if (group_pass_count <= 0) {
-        groupPassingRate = group_pass_count * 100 / (group_pass_count + group_fail_count)
-        groupFailingRate = 100 - groupPassingRate;
-    } else {
-        console.log("group pass count: 0")
-    }
+    groupPassingRate = group_pass_count * 100 / (group_pass_count + group_fail_count)
+    groupFailingRate = 100 - groupPassingRate;
 
 
     let passingRate = (individualPassingRate + groupPassingRate) / 2
     let failingRate = (individualFailingRate + groupFailingRate) / 2
 
     if (isNaN(passingRate)) {
-        console.log("booooo")
+        console.log("is NaN error")
     } else {
         let passingRateChart = new Chart($('#passingRateChart'), {
             type: 'doughnut',
@@ -400,8 +393,181 @@
             'method': 'POST',
             'data': { '_token': getToken()}
         }).done(function(response) {
+            //* INDIVIDUAL *//
+            if (response['individual']['attempted'] == false) {
+                $('.chart-individual').find('.quiz-not-attempted').removeClass('hidden')
+                $('.chart-individual').find('.row').addClass('hidden')
 
+                $('#student-id').addClass('hidden')
+                $('.chart-individual-questions').find('#studentChart').remove()
+                $('.chart-individual-score').find('#studentScore').remove()
+                $('.chart-individual-score').find('#studentRank').addClass('hidden')
+                $('.chart-individual-score').find('.passed-status').addClass('hidden')
 
+            } else {
+                $('.chart-canvas').find('.row').removeClass('hidden')
+                $('.chart-canvas').find('.quiz-not-attempted').addClass('hidden')
+
+                $('#student-id').removeClass('hidden')
+                $('.chart-individual-questions').find('#studentChart').remove()
+                $('.chart-individual-score').find('#studentScore').remove()
+                $('.chart-individual-score').find('#studentRank').removeClass('hidden')
+                $('.chart-individual-score').find('.passed-status').removeClass('hidden')
+                $('.chart-canvas').find('iframe').remove()
+                $('.chart-canvas').prop('width', 200)
+
+                $('.chart-individual-questions').append('<canvas class="hidden" id="studentChart" width="200" height="200"></canvas>')
+                $('.chart-individual-score').append('<canvas class="hidden" id="studentScore" width="100" height="100"></canvas>')
+
+                let studentChart = new Chart($('#studentChart'), {
+                    type: 'pie',
+                    data: {
+                        labels: ["Correct", "Wrong"],
+                        datasets: [{
+                            data: [response['individual']['correct'], response['individual']['wrong']],
+                            backgroundColor: pie_backgroundColor,
+                            borderColor: pie_borderColor,
+                            borderWidth: pie_borderWidth
+                        }]
+                    },
+                    options: {
+                        responsive: false,
+                        maintainAspectRatio: true,
+                        legend: { display: true, },
+                    }
+                })
+                $('#studentChart').removeClass('hidden')
+
+                let studentScore = new Chart($('#studentScore'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: ["Score", "100%"],
+                        datasets: [{
+                            data: [response['individual']['score'], response['individual']['remaining_score']],
+                            backgroundColor: doughnut_backgroundColor,
+                            borderColor: doughnut_borderColor,
+                            borderWidth: doughnut_borderWidth
+                        }]
+                    },
+                    options: {
+                        responsive: false,
+                        maintainAspectRatio: true,
+                        legend: { display: false },
+                        rotation: 1 * Math.PI,
+                        elements: {
+                            center: {
+                                text: Math.round(response['individual']['score']) + "%",
+                                fontColor: '#36A2EB',
+                                maxFontSize: 16,
+                            }
+                        }
+                    }
+                })
+                $('#studentScore').removeClass('hidden')
+                $('#studentRank').text(response['individual']['rank'] + '/' + response['individual']['last_rank'])
+                $('#student-id').text(response['individual']['student_std_id'])
+
+                if (response['individual']['pass'] == false) {
+                    $('.chart-individual-score').find('.passed-status').text('FAIL')
+                    $('.chart-individual-score').find('.passed-status').removeClass('text-success')
+                    $('.chart-individual-score').find('.passed-status').addClass('text-danger')
+                } else {
+                    $('.chart-individual-score').find('.passed-status').text('PASS')
+                    $('.chart-individual-score').find('.passed-status').removeClass('text-danger')
+                    $('.chart-individual-score').find('.passed-status').addClass('text-success')
+                }
+                $('.chart-individual-score').find('.passed-status').removeClass('hidden')
+            } //* END INDIVIDUAL *//
+
+            //* GROUP *//
+            if (response['group'] == null) {
+                $('.chart-group').find('.row').addClass('hidden')
+                $('.chart-group').find('.quiz-not-attempted').removeClass('hidden')
+
+                $('.chart-group-questions').find('#studentChart').remove()
+                $('.chart-group-score').find('#studentScore').remove()
+                $('.chart-group-score').find('#studentRank').addClass('hidden')
+                $('.chart-group-score').find('.passed-status').addClass('hidden')
+            }
+            else if (response['group']['attempted'] == false) {
+                $('.chart-group-questions').find('#groupChart').remove()
+                $('.chart-group-score').find('#groupScore').remove()
+                $('.chart-group-score').find('#groupRank').addClass('hidden')
+
+                $('.chart-group').find('.row').addClass('hidden')
+                $('.chart-group').find('.quiz-not-attempted').removeClass('hidden')
+            } else {
+                $('.chart-group').find('.row').removeClass('hidden')
+                $('.chart-group').find('.quiz-not-attempted').addClass('hidden')
+
+                $('.chart-group-score').find('#groupRank').removeClass('hidden')
+                $('.chart-group-questions').find('#groupChart').remove()
+                $('.chart-group-score').find('#groupScore').remove()
+                $('.chart-canvas').find('iframe').remove()
+                $('.chart-canvas').prop('width', 200)
+
+                $('.chart-group-questions').append('<canvas class="hidden" id="groupChart" width="200" height="200"></canvas>')
+                $('.chart-group-score').append('<canvas class="hidden" id="groupScore" width="100" height="100"></canvas>')
+
+                let groupChart = new Chart($('#groupChart'), {
+                    type: 'pie',
+                    data: {
+                        labels: ["Correct", "Wrong"],
+                        datasets: [{
+                            data: [response['group']['correct'], response['group']['wrong']],
+                            backgroundColor: pie_backgroundColor,
+                            borderColor: pie_borderColor,
+                            borderWidth: pie_borderWidth
+                        }]
+                    },
+                    options: {
+                        responsive: false,
+                        maintainAspectRatio: true,
+                        legend: { display: true },
+                    }
+                })
+
+                $('#groupChart').removeClass('hidden')
+                let groupScore = new Chart($('#groupScore'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: ["Score", "100%"],
+                        datasets: [{
+                            data: [response['group']['score'], response['group']['remaining_score']],
+                            backgroundColor: doughnut_backgroundColor,
+                            borderColor: doughnut_borderColor,
+                            borderWidth: doughnut_borderWidth
+                        }]
+                    },
+                    options: {
+                        responsive: false,
+                        maintainAspectRatio: true,
+                        legend: { display: false },
+                        rotation: 1 * Math.PI,
+                        elements: {
+                            center: {
+                                text: Math.round(response['group']['score']) + "%",
+                                fontColor: '#36A2EB',
+                                maxFontSize: 16,
+                            }
+                        }
+                    }
+                })
+                $('#groupScore').removeClass('hidden')
+                $('#groupRank').text(response['group']['rank'] + '/' + response['group']['last_rank'])
+
+                if (response['group']['pass'] == false) {
+                    $('.chart-group-score').find('.passed-status').text('FAIL')
+                    $('.chart-group-score').find('.passed-status').removeClass('text-success')
+                    $('.chart-group-score').find('.passed-status').addClass('text-danger')
+                } else {
+                    $('.chart-group-score').find('.passed-status').text('PASS')
+                    $('.chart-group-score').find('.passed-status').removeClass('text-danger')
+                    $('.chart-group-score').find('.passed-status').addClass('text-success')
+                }
+                $('.chart-group-score').find('.passed-status').removeClass('hidden')
+                $('.chart-group-questions').find('.group-no').text(response['group']['group_no'])
+            } //* END GROUP *// 
         })
     })
 }) ()
