@@ -77,16 +77,14 @@
                                         <div class="row">
                                             <div class="col-md-7 chart-group-questions">
                                                 <h4 class="text-center">GROUP <span class="group-no"></span></h4>
-                                                <canvas class="hidden" id="groupChart"></canvas>
+                                                <h4 class="text-center">SCORE</h4>
+                                                <canvas class="hidden" id="groupScore"></canvas>
                                             </div>
                                             <div class="col-md-5 chart-group-score">
                                                 <h4 class="text-success text-center hidden passed-status">PASS</h4>
 
                                                 <h4 class="text-center">RANK</h4>
                                                 <h3 class="text-center" id="groupRank" style="margin-top: 0;"></h3>
-
-                                                <h4 class="text-center">SCORE</h4>
-                                                <canvas class="hidden" id="groupScore"></canvas>
                                             </div>
                                         </div>
 
@@ -509,12 +507,12 @@
                 $('.chart-group-questions').append('<canvas class="hidden" id="groupChart" width="200" height="200"></canvas>')
                 $('.chart-group-score').append('<canvas class="hidden" id="groupScore" width="100" height="100"></canvas>')
 
-                let groupChart = new Chart($('#groupChart'), {
+                let groupScore = new Chart($('#groupScore'), {
                     type: 'pie',
                     data: {
-                        labels: ["Correct", "Wrong"],
+                        labels: ["Score", "100%"],
                         datasets: [{
-                            data: [response['group']['correct'], response['group']['wrong']],
+                            data: [response['group']['score'], response['group']['remaining_score']],
                             backgroundColor: pie_backgroundColor,
                             borderColor: pie_borderColor,
                             borderWidth: pie_borderWidth
@@ -523,33 +521,18 @@
                     options: {
                         responsive: false,
                         maintainAspectRatio: true,
-                        legend: { display: true },
-                    }
-                })
-
-                $('#groupChart').removeClass('hidden')
-                let groupScore = new Chart($('#groupScore'), {
-                    type: 'doughnut',
-                    data: {
-                        labels: ["Score", "100%"],
-                        datasets: [{
-                            data: [response['group']['score'], response['group']['remaining_score']],
-                            backgroundColor: doughnut_backgroundColor,
-                            borderColor: doughnut_borderColor,
-                            borderWidth: doughnut_borderWidth
-                        }]
-                    },
-                    options: {
-                        responsive: false,
-                        maintainAspectRatio: true,
                         legend: { display: false },
-                        rotation: 1 * Math.PI,
                         elements: {
                             center: {
                                 text: Math.round(response['group']['score']) + "%",
                                 fontColor: '#36A2EB',
                                 maxFontSize: 16,
                             }
+                        },
+                        pieceLabel: {
+                            mode: 'percentage',
+                            fontColor: '#333',
+                            fontSize: 24,
                         }
                     }
                 })
@@ -567,7 +550,7 @@
                 }
                 $('.chart-group-score').find('.passed-status').removeClass('hidden')
                 $('.chart-group-questions').find('.group-no').text(response['group']['group_no'])
-            } //* END GROUP *// 
+            } //* END GROUP *//
         })
     })
 }) ()
