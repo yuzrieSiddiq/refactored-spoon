@@ -208,6 +208,7 @@ class QuizController extends Controller
             $answers = json_decode($input['answers'], true);
 
             // save answers for all students
+            // its fine to save the wrong answer - the check is not here - see line 235
             if (isset($answers)) {
                 foreach ($answers as $answer) {
                     foreach ($this_team as $team_member) {
@@ -232,16 +233,25 @@ class QuizController extends Controller
                 ->get();
 
             // if quiz has been attempted, calculate the score
+            // - here is where its important to get the score
             if ($student_answers->count() > 0) {
                 $correct_count = 0;
                 foreach ($student_answers as $answer) {
                     $question = Question::find($answer->question_id);
-                    if ($answer->answer == $question->correct_answer)
-                        $correct_count++;
+                    if ($answer->answer == "4 POINTS")
+                        $correct_count += 4;
+                    else if ($answer->answer == "2 POINTS")
+                        $correct_count += 2;
+                    else if ($answer->answer == "1 POINTS")
+                            $correct_count += 1;
+                    else {
+                        $correct_count += 0;
+                    }
                 }
 
-                // calculate score in 100%
-                $score = ($correct_count * 100) / count($student_answers);
+                // calculate score in 100% (e.g: 36/40 = 90%)
+                // maximum marks is 4 POINTS
+                $score = ($correct_count * 100) / (count($student_answers)*4);
 
                 // add to the last rank existing (not sorted yet)
                 if ($student_ranks->count() > 0) {
