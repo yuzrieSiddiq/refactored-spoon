@@ -27,46 +27,68 @@ class ReportingController extends Controller
 
     /**
      * GET quiz report + ranking
+     * NOTE: uses of group_quiz and individual_quiz are interchangeable most of the time
      * return view()
      */
     public function quiz_report($quiz_id)
     {
         $data = [];
 
-        $quiz = Quiz::find($quiz_id);
+        // get the quizzes and its details
+        $quiz_group = Quiz::find($quiz_id);
+        $quiz_individual = Quiz::where('unit_id', $quiz_group->unit_id)
+            ->where('semester', $quiz_group->semester)
+            ->where('year', $quiz_group->year)
+            ->where('title', $quiz_group->title)
+            ->where('type', 'individual')
+            ->first();
         $questions = Question::where('quiz_id', $quiz_id)->get();
+
+        // get all students under this unit
         $students = Student::with(['user' => function($query) {
                 $query->with('student_info')->get();
             }])
-            ->where('unit_id', $quiz->unit_id)
-            ->where('year', $quiz->year)
-            ->where('semester', $quiz->semester)
+            ->where('unit_id', $quiz_group->unit_id)
+            ->where('year', $quiz_group->year)
+            ->where('semester', $quiz_group->semester)
             ->get();
+
+        // get all rankings for this individual quiz
         $rankings = Ranking::with(['student' => function($query) {
                 $query->with(['user' => function($next_query) {
                     $next_query->with('student_info')->get();
                 }])->get();
             }])
-            ->where('quiz_id', $quiz_id)
+            ->where('quiz_id', $quiz_individual->id)
             ->orderBy('rank_no')->get();
 
+        /**
+         * individual quiz implementation
+         * */
         $attempts = [];
 
         $page_count = 0;
-        $attempted_count = 0;
-        $unattempted_count = 0;
         $pass_count = 0;
         $fail_count = 0;
+        $attempted_count = 0;
+        $unattempted_count = 0;
 
+        /**
+         * For each student, get their attempts
+         * page_count is used to manually paginate the pages
+         * page_count indicates, at which page is this data at
+         */
         foreach ($students as $count => $student) {
             $this_data = [];
 
+            // add to page based on the number of students
             $this_data['count'] = $count;
             if ($this_data['count'] % 5 == 0) {
                 $page_count++;
             }
             $this_data['page_count'] = $page_count;
 
+            // add student details and his attempt details
             $this_data['student_id'] = $student->id;
             $this_data['student_std_id'] = $student->user->student_info->student_id;
             $this_data['student_name'] = $student->user->firstname . " " . $student->user->lastname;
@@ -77,7 +99,7 @@ class ReportingController extends Controller
 
             // check if student has already attempted the quiz
             $student_answers = StudentAnswer::where('student_id', $student->id)
-                ->where('quiz_id', $quiz->id)->get();
+                ->where('quiz_id', $quiz_individual->id)->get();
             if ($student_answers->count() > 0) {
                 $this_data['attempted'] = true;
                 $attempted_count++;
@@ -108,17 +130,15 @@ class ReportingController extends Controller
             array_push($attempts, $this_data);
         }
 
-        // group part starts here
-        $group_quiz = Quiz::where('title', $quiz->title)
-            ->where('semester', $quiz->semester)->where('year', $quiz->year)
-            ->where('type', 'group')->first();
-
+        /**
+         * group quiz implementation
+         * */
         $group_leaders = Student::with(['user' => function($query) {
                 $query->with('student_info')->get();
             }])
-            ->where('unit_id', $group_quiz->unit_id)
-            ->where('year', $group_quiz->year)
-            ->where('semester', $group_quiz->semester)
+            ->where('unit_id', $quiz_group->unit_id)
+            ->where('year', $quiz_group->year)
+            ->where('semester', $quiz_group->semester)
             ->where('is_group_leader', true)
             ->get();
 
@@ -127,7 +147,7 @@ class ReportingController extends Controller
                     $next_query->with('student_info')->get();
                 }])->get();
             }])
-            ->where('quiz_id', $group_quiz->id)
+            ->where('quiz_id', $quiz_group->id)
             ->orderBy('rank_no')->get();
 
         $group_attempted_count = 0;
@@ -146,7 +166,7 @@ class ReportingController extends Controller
 
             // check if student has already attempted the quiz
             $student_answers = StudentAnswer::where('student_id', $student->id)
-                ->where('quiz_id', $quiz->id)->get();
+                ->where('quiz_id', $quiz_group->id)->get();
             if ($student_answers->count() > 0) {
                 $this_data['attempted'] = true;
                 $group_attempted_count++;
@@ -179,12 +199,12 @@ class ReportingController extends Controller
 
         $data['page_count'] = $page_count;
 
-        $data['quiz'] = $quiz;
+        $data['quiz'] = $quiz_individual;
         $data['students'] = $students;
         $data['attempts'] = $attempts;
         $data['rankings'] = $rankings;
 
-        $data['group_quiz'] = $group_quiz;
+        $data['group_quiz'] = $quiz_group;
         $data['group_rankings'] = $group_rankings;
 
         $data['attempted_count'] = $attempted_count;
