@@ -6,7 +6,7 @@
         <div class="col-md-8 col-md-offset-2">
             <div class="panel panel-default">
                 <div class="panel-body">
-                    <h3 class="text-center">Welcome to Semester Quiz</h3>
+                    <h3 class="text-center">Welcome to Team Based Learning</h3>
                     <br>
                     <div class="row">
                         <div class="col-md-4 col-md-offset-1">
