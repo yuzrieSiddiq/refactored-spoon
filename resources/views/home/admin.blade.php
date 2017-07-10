@@ -102,17 +102,17 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">Semester</label>
                             <div class="col-sm-8">
-                                <input type="text" class="form-control" id="settings-semester" placeholder="S1">
+                                @if (isset($semester))
+                                    <input type="text" class="form-control" id="settings-semester" value="{{ $semester->value }}" placeholder="S1">
+                                @endif
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">Year</label>
                             <div class="col-sm-8">
-                                <select id="settings-year" class="form-control">
-                                    <option>2017</option>
-                                    <option>2018</option>
-                                    <option>2019</option>
-                                </select>
+                                @if (isset($year))
+                                    <input type="text" class="form-control" id="settings-year" value="{{ $year->value }}" placeholder="2017">
+                                @endif
                             </div>
                         </div>
                         <div class="form-group">

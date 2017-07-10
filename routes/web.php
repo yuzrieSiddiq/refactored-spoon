@@ -19,6 +19,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/csv/students',  'StudentController@uploadStudents')->name('csv.students');
     Route::post('/csv/questions/{quiz_id}', 'QuestionController@uploadQuestions')->name('csv.questions');
 
+    Route::put('settings', 'SettingsController@update')->name('settings.update');
+
     Route::get('users/{user}/create/studentinfo', 'StudentInfoController@create')
         ->name('users.create.studentinfo');
     Route::get('users/{user}/edit/studentinfo', 'StudentInfoController@edit')

@@ -9,6 +9,7 @@ use Auth;
 use App\Model\Unit;
 use App\Model\Quiz;
 use App\Model\LecturerUnit;
+use App\Model\Settings;
 
 class HomeController extends Controller
 {
@@ -36,7 +37,8 @@ class HomeController extends Controller
 
         switch ($user->roles()->pluck('id')[0]) {
             case '1':
-                return view ('home.admin');
+                $data = Self::admin($user);
+                return view ('home.admin', $data);
 
             case '2':
                 $data = Self::lecturer($user);
@@ -48,6 +50,15 @@ class HomeController extends Controller
             default:
                 return view('home');
         }
+    }
+
+    public function admin($user)
+    {
+        $data = [];
+        $data['semester'] = Settings::where('name', 'semester')->first();
+        $data['year'] = Settings::where('name', 'year')->first();
+
+        return $data;
     }
 
     public function lecturer($user)
