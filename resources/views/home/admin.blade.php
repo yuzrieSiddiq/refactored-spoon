@@ -16,6 +16,7 @@
                     <li role="presentation" class="active"><a href="#unit-list" role="tab" data-toggle="tab">Unit List</a></li>
                     <li role="presentation"><a href="#user-list" role="tab" data-toggle="tab">User List</a></li>
                     <li role="presentation"><a href="#assign-lecturer-list" role="tab" data-toggle="tab">Assign Lecturer</a></li>
+                    <li role="presentation"><a href="#settings" role="tab" data-toggle="tab">Settings</a></li>
                  </ul>
             </div>
 
@@ -92,6 +93,34 @@
                     <a class="btn btn-success" href="{{ route('l_units.create') }}">
                         ADD NEW LECTURER/UNIT
                     </a>
+                </div>
+
+                {{-- Settings --}}
+                <div role="tabpanel" class="tab-pane fade" id="settings">
+                    <div class="form-horizontal">
+                        <h3 class="col-sm-offset-1">System Settings</h3><br>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Semester</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="settings-semester" placeholder="S1">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Year</label>
+                            <div class="col-sm-8">
+                                <select id="settings-year" class="form-control">
+                                    <option>2017</option>
+                                    <option>2018</option>
+                                    <option>2019</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-8">
+                              <button class="btn btn-success">Update</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
             </div> {{-- end .tab-content --}}
