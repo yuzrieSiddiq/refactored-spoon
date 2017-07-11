@@ -110,9 +110,27 @@ class QuizController extends Controller
             ->where('year', $year)
             ->first();
 
-        $questions = Question::where('quiz_id', $quiz_id)->get();
+        $all_questions = Question::where('quiz_id', $quiz_id)->get();
+        $questions = Self::select_random_question($quiz->show_questions, $all_questions);
 
         return response()->json($questions);
+    }
+
+    public function select_random_question($allowed_questions, $questions)
+    {
+        // non repeating numbers between 1 - $allowed_questions
+        $choices = range( 1, count($questions)-1 );
+        shuffle($choices);
+        $selected = array_slice($choices, 0, $allowed_questions);
+        $selected_questions = [];
+
+        // for each found questions, add to array to be shown to students
+        foreach ($selected as $choice) {
+            array_push($selected_questions, $questions[$choice]);
+        }
+
+        // return the array
+        return $selected_questions;
     }
 
     public function submit_answers(Request $request, $quiz_id)
