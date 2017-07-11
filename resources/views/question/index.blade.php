@@ -12,9 +12,9 @@
                     <table class="table table-striped table-bordered" id="questions-table">
                         <thead>
                             <tr>
-                                <th>No</th>
-                                <th class="col-md-4">Question</th>
-                                <th class="col-md-2">Answer Type</th>
+                                <th class="text-center">No</th>
+                                <th class="col-md-5">Question</th>
+                                <th>Answer Type</th>
                                 <th class="col-md-3">Correct Answer</th>
                                 <th></th>
                             </tr>
@@ -45,8 +45,8 @@
                                         </td>
                                         <td>{{ $question->correct_answer }}</td>
                                         <td>
-                                            <a class="btn btn-primary" href="{{ route('quizzes.questions.show', ['quiz' => $quiz->id, 'question' => $question->id]) }}">
-                                                VIEW QUESTION
+                                            <a class="btn btn-info" href="{{ route('quizzes.questions.show', ['quiz' => $quiz->id, 'question' => $question->id]) }}">
+                                                MORE
                                             </a>
                                             <button class="btn btn-danger modal-remove"><span class="glyphicon glyphicon-remove"></span></button>
                                         </td>
