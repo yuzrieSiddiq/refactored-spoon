@@ -124,7 +124,8 @@
                                     <thead>
                                         <tr>
                                             <th>Quiz No</th>
-                                            <th class="col-md-6">Quiz Title</th>
+                                            <th class="col-md-1">Questions</th>
+                                            <th class="col-md-5">Quiz Title</th>
                                             <th class="col-md-5"></th>
                                         </tr>
                                     </thead>
@@ -133,6 +134,7 @@
                                             @foreach ($quizzes as $count => $quiz)
                                                 <tr>
                                                     <td class="text-center">{{ $count+1 }}</td>
+                                                    <td class="text-center">{{ $quiz->show_questions }}</td>
                                                     <td>{{ $quiz->title }}</td>
                                                     <td class="pull-right">
                                                         <a href="{{ route('quizzes.report', $quiz->id) }}" class="btn btn-primary">Report</a>

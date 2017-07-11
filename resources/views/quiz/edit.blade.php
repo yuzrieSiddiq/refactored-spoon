@@ -50,6 +50,27 @@
                             </div>
                         </div>
 
+                        {{-- Allowed/Show Questions --}}
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Allowed Questions</label>
+                            <div class="col-sm-9">
+                                <select class="form-control" id="show-questions">
+                                    <option value="{{ $quiz->show_questions }}">{{ $quiz->show_questions }}</option>
+                                    <option value="" disabled>___</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+                                    <option value="8">8</option>
+                                    <option value="9">9</option>
+                                    <option value="10">10</option>
+                                </select>
+                            </div>
+                        </div>
+
                         {{-- Update Button --}}
                         <div class="form-group">
                             <div class="col-sm-offset-2 col-sm-9">
@@ -92,6 +113,7 @@
             'title' : $('#title').val(),
             'type'  : $('#type').val(),
             'status': $('#status').val(),
+            'show_questions': $('#show-questions').val(),
         }
 
         $.ajax({

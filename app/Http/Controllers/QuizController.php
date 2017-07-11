@@ -65,7 +65,7 @@ class QuizController extends Controller
     public function store(Request $request)
     {
         $input = $request->only([
-            'unit_code', 'semester', 'year', 'title', 'type', 'status'
+            'unit_code', 'semester', 'year', 'title', 'type', 'status', 'show_questions'
         ]);
 
         $unit = Unit::where('code', $input['unit_code'])->first();
@@ -78,6 +78,7 @@ class QuizController extends Controller
             'title' => $input['title'],
             'type' => 'individual',
             'status' => 'open',
+            'show_questions' => $input['show_questions'],
         ]);
 
         // create group quiz
@@ -88,6 +89,7 @@ class QuizController extends Controller
             'title' => $input['title'],
             'type' => 'group',
             'status' => 'open',
+            'show_questions' => $input['show_questions'],
         ]);
 
         return 'ok';
@@ -131,7 +133,7 @@ class QuizController extends Controller
     public function update(Request $request, $id)
     {
         $input = $request->only([
-            'semester', 'year', 'title', 'type', 'status'
+            'semester', 'year', 'title', 'type', 'status', 'show_questions',
         ]);
         $quiz_group = Quiz::find($id);
         $quiz_individual = Quiz::where('unit_id', $quiz_group->unit_id)
@@ -145,14 +147,16 @@ class QuizController extends Controller
             'semester' => $input['semester'],
             'year' => $input['year'],
             'title' => $input['title'],
-            'status' => $input['status']
+            'status' => $input['status'],
+            'show_questions' => $input['show_questions'],
         ]);
 
         $quiz_individual->update([
             'semester' => $input['semester'],
             'year' => $input['year'],
             'title' => $input['title'],
-            'status' => $input['status']
+            'status' => $input['status'],
+            'show_questions' => $input['show_questions'],
         ]);
 
         return 'updated';
