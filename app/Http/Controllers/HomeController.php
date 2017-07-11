@@ -66,8 +66,14 @@ class HomeController extends Controller
         $data = [];
         $data['units'] = [];
 
+        $semester = Settings::where('name', 'semester')->first()->value;
+        $year = Settings::where('name', 'year')->first()->value;
+
         // get all of the lecturer's units
-        $my_units = LecturerUnit::where('user_id', $user->id)->get();
+        $my_units = LecturerUnit::where('user_id', $user->id)
+            ->where('semester', $semester)
+            ->where('year', $year)
+            ->get();
 
         // get all units
         $units = Unit::with('students','quizzes')->get();

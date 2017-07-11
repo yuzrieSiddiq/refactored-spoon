@@ -37,8 +37,7 @@ class DatatablesController extends Controller
     {
         $semester = Settings::where('name', 'semester')->first()->value;
         $year = Settings::where('name', 'year')->first()->value;
-        
-        // NEXT: to filter by semester and year
+
         return Datatables::of(
             Student::select('students.id', 'student_infos.student_id', 'users.firstname', 'users.lastname',
                 'students.team_number', 'students.is_group_leader')
@@ -60,11 +59,15 @@ class DatatablesController extends Controller
     // lecturer_units index
     public function getLUnitsDatatable()
     {
-        // TODO: filter by Lecturer, only show units for current lecturer
+        $semester = Settings::where('name', 'semester')->first()->value;
+        $year = Settings::where('name', 'year')->first()->value;
+
         return Datatables::of(
             LecturerUnit::select('lecturer_units.id', 'units.code', 'users.firstname', 'users.lastname')
             ->leftJoin('users', 'users.id', '=', 'lecturer_units.user_id')
             ->leftJoin('units', 'units.id', '=', 'lecturer_units.unit_id')
+            ->where('semester', $semester)
+            ->where('year', $year)
         )->make();
     }
 

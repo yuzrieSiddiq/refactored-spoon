@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class LecturerUnit extends Model
 {
     protected $fillable = [
-        'user_id', 'unit_id'
+        'user_id', 'unit_id', 'semester', 'year'
     ];
 
     // this belongs to a lecturer (user)

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Model\Settings;
 use App\Model\LecturerUnit;
 use App\Model\Unit;
 use App\User;
@@ -41,10 +42,16 @@ class LecturerUnitController extends Controller
      */
     public function store(Request $request)
     {
+        $semester = Settings::where('name', 'semester')->first()->value;
+        $year = Settings::where('name', 'year')->first()->value;
+
         $input = $request->only(['user_id', 'units']);
         $input_units = json_decode($input['units']);
 
-        $existing_units = LecturerUnit::where('user_id', $input['user_id'])->get();
+        $existing_units = LecturerUnit::where('user_id', $input['user_id'])
+            ->where('semester', $semester)
+            ->where('year', $year)
+            ->get();
         foreach ($input_units as $unit) {
             $unit_is_exist = false;
             foreach ($existing_units as $unitexist) {
@@ -58,62 +65,13 @@ class LecturerUnitController extends Controller
                 LecturerUnit::create([
                     'user_id' => $input['user_id'],
                     'unit_id' => $unit->unit_id,
+                    'semester'=> $semester,
+                    'year'    => $year,
                 ]);
             }
         }
 
         return 'ok';
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        $data = [];
-        $data['unit'] = Unit::find($id);
-
-        return view ('lecturer_unit.show', $data);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        $data = [];
-        $data['unit'] = Unit::find($id);
-
-        return view ('lecturer_unit.edit', $data);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        $input = $request->only([
-            'code', 'name', 'description'
-        ]);
-
-        $unit = Unit::find($id);
-        $unit->update([
-            'code' => $input['code'],
-            'name' => $input['name'],
-            'description' => $input['description'],
-        ]);
-
-        return 'updated';
     }
 
     /**
@@ -124,7 +82,7 @@ class LecturerUnitController extends Controller
      */
     public function destroy($id)
     {
-        $unit = Unit::find($id);
+        $unit = LecturerUnit::find($id);
         $unit->delete();
 
         return 'deleted';
