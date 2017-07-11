@@ -11,12 +11,12 @@ class SettingsController extends Controller
     {
         $input = $request->only(['settings-semester', 'settings-year']);
 
-        // fetch the correct settings
+        // fetch the correct settings and update the correct fields
         $semester = Settings::where('name', 'semester')->first();
-        $year = Settings::where('name', 'year')->first();
-
-        // update the correct fields
         $semester->update([ 'value' => $input['settings-semester'] ]);
+
+        $year = Settings::where('name', 'year')->first();
         $year->update([ 'value' => $input['settings-year'] ]);
+
     }
 }

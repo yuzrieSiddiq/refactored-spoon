@@ -11,6 +11,7 @@ use App\Model\StudentAnswer;
 use App\Model\Quiz;
 use App\Model\Question;
 use App\Model\Ranking;
+use App\Model\Settings;
 use Dingo\Api\Routing\Helpers;
 
 class QuizController extends Controller
@@ -19,21 +20,28 @@ class QuizController extends Controller
 
     public function index($unit_id)
     {
+        // settings semester and year
+        $semester = Settings::where('name', 'semester')->first()->value;
+        $year = Settings::where('name', 'year')->first()->value;
+
         $auth_user = JWTAuth::parseToken()->authenticate();
         $this_student = Student::with('unit', 'user')
             ->where('user_id', $auth_user->id)
             ->where('unit_id', $unit_id)
+            ->where('semester', $semester)
+            ->where('year', $year)
             ->first();
 
-
         $quizzes = Quiz::where('unit_id', $unit_id)
-            ->where('semester', $this_student->semester)
-            ->where('year', $this_student->year)
+            ->where('semester', $semester)
+            ->where('year', $year)
             ->where('status', 'open')
             ->get();
 
-        // all students later to add semester and year filter
+        // all students
         $all_students = Student::where('unit_id', $unit_id)
+            ->where('semester', $semester)
+            ->where('year', $year)
             ->whereNotNull('team_number')
             ->orderBy('team_number', 'asc')->get();
 
@@ -72,8 +80,10 @@ class QuizController extends Controller
             $data['rank'] = Ranking::where('student_id', $this_student->id)
                 ->where('quiz_id', $quiz->id)->first();
 
-            // todo: use semester and year filter too
-            $data['total_students'] = Student::where('unit_id', $quiz->unit_id)->count();
+            $data['total_students'] = Student::where('unit_id', $quiz->unit_id)
+                ->where('semester', $semester)
+                ->where('year', $year)
+                ->count();
             $data['total_teams'] = $number_of_groups;
             $data['this_student'] = $this_student;
 
@@ -89,9 +99,15 @@ class QuizController extends Controller
         $auth_user = JWTAuth::parseToken()->authenticate();
         $quiz = Quiz::find($quiz_id);
 
+        // settings semester and year
+        $semester = Settings::where('name', 'semester')->first()->value;
+        $year = Settings::where('name', 'year')->first()->value;
+
         $this_student = Student::with('unit', 'user')
             ->where('user_id', $auth_user->id)
             ->where('unit_id', $quiz->unit_id)
+            ->where('semester', $semester)
+            ->where('year', $year)
             ->first();
 
         $questions = Question::where('quiz_id', $quiz_id)->get();
@@ -104,10 +120,16 @@ class QuizController extends Controller
         $auth_user = JWTAuth::parseToken()->authenticate();
         $quiz = Quiz::find($quiz_id);
 
+        // settings semester and year
+        $semester = Settings::where('name', 'semester')->first()->value;
+        $year = Settings::where('name', 'year')->first()->value;
+
         if ($quiz->type == "individual") {
             $this_student = Student::with('unit', 'user')
                 ->where('user_id', $auth_user->id)
                 ->where('unit_id', $quiz->unit_id)
+                ->where('semester', $semester)
+                ->where('year', $year)
                 ->first();
 
             $input = $request->only(['answers']);
@@ -125,7 +147,6 @@ class QuizController extends Controller
                 }
             }
 
-            // all students later to add semester and year filter
             // get the student answers to calculate the scores
             $student_answers = StudentAnswer::where('quiz_id', $quiz->id)
                 ->where('student_id', $this_student->id)
@@ -182,15 +203,21 @@ class QuizController extends Controller
             $this_student = Student::with('unit', 'user')
                 ->where('user_id', $auth_user->id)
                 ->where('unit_id', $quiz->unit_id)
+                ->where('semester', $semester)
+                ->where('year', $year)
                 ->first();
 
             $this_team = Student::with('unit', 'user')
                 ->where('unit_id', $quiz->unit_id)
                 ->where('team_number', $this_student->team_number)
+                ->where('semester', $semester)
+                ->where('year', $year)
                 ->get();
 
-            // all students later to add semester and year filter
+            // all students
             $all_students = Student::where('unit_id', $quiz->unit_id)
+                ->where('semester', $semester)
+                ->where('year', $year)
                 ->whereNotNull('team_number')
                 ->orderBy('team_number', 'asc')->get();
 
@@ -321,9 +348,15 @@ class QuizController extends Controller
 
     public function quiz_report($quiz_id)
     {
+        // settings semester and year
+        $semester = Settings::where('name', 'semester')->first()->value;
+        $year = Settings::where('name', 'year')->first()->value;
+
         $auth_user = JWTAuth::parseToken()->authenticate();
         $this_student = Student::with('unit', 'user')
             ->where('user_id', $auth_user->id)
+            ->where('semester', $semester)
+            ->where('year', $year)
             ->first();
 
         $quiz = Quiz::find($quiz_id);

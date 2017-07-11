@@ -10,6 +10,7 @@ use App\Model\Ranking;
 use App\Model\Question;
 use App\Model\Student;
 use App\Model\StudentAnswer;
+use App\Model\Settings;
 
 class ReportingController extends Controller
 {
@@ -34,11 +35,15 @@ class ReportingController extends Controller
     {
         $data = [];
 
+        // get settings
+        $semester = Settings::where('name', 'semester')->first()->value;
+        $year = Settings::where('name', 'year')->first()->value;
+
         // get the quizzes and its details
         $quiz_group = Quiz::find($quiz_id);
         $quiz_individual = Quiz::where('unit_id', $quiz_group->unit_id)
-            ->where('semester', $quiz_group->semester)
-            ->where('year', $quiz_group->year)
+            ->where('semester', $semester)
+            ->where('year', $year)
             ->where('title', $quiz_group->title)
             ->where('type', 'individual')
             ->first();
@@ -49,8 +54,8 @@ class ReportingController extends Controller
                 $query->with('student_info')->get();
             }])
             ->where('unit_id', $quiz_group->unit_id)
-            ->where('year', $quiz_group->year)
-            ->where('semester', $quiz_group->semester)
+            ->where('semester', $semester)
+            ->where('year', $year)
             ->get();
 
         // get all rankings for this individual quiz
@@ -137,8 +142,8 @@ class ReportingController extends Controller
                 $query->with('student_info')->get();
             }])
             ->where('unit_id', $quiz_group->unit_id)
-            ->where('year', $quiz_group->year)
-            ->where('semester', $quiz_group->semester)
+            ->where('semester', $semester)
+            ->where('year', $year)
             ->where('is_group_leader', true)
             ->get();
 
@@ -227,6 +232,9 @@ class ReportingController extends Controller
      */
     public function student_report($student_id, $quiz_id)
     {
+        $semester = Settings::where('name', 'semester')->first()->value;
+        $year = Settings::where('name', 'year')->first()->value;
+
         $student = Student::with(['user' => function($query) {
             $query->with('student_info')->get();
         }])->find($student_id);
@@ -288,10 +296,14 @@ class ReportingController extends Controller
         $group_leader = Student::with(['user' => function($query) {
             $query->with('student_info')->get();
         }])->where('team_number', $student_group)
-            ->where('is_group_leader', true)->first();
+            ->where('is_group_leader', true)
+            ->where('semester', $semester)
+            ->where('year', $year)
+            ->first();
 
         $group_quiz = Quiz::where('title', $quiz->title)
-            ->where('semester', $quiz->semester)->where('year', $quiz->year)
+            ->where('semester', $semester)
+            ->where('year', $year)
             ->where('type', 'group')->first();
         $group_questions = Question::where('quiz_id', $group_quiz->id)->get();
         $group_ranking = Ranking::where('quiz_id', $group_quiz->id)->where('student_id', $student_id)->first();

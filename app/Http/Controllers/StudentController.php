@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Model\Settings;
 use App\Model\Quiz;
 use App\Model\Unit;
 use App\Model\Question;
@@ -77,12 +78,18 @@ class StudentController extends Controller
      */
     public function show($unit_id, $student_id)
     {
+        $semester = Settings::where('name', 'semester')->first()->value;
+        $year = Settings::where('name', 'year')->first()->value;
+
         $data = [];
         $data['this_student'] = Student::with('user')->find($student_id);
         $data['this_student_info'] = StudentInfo::where('user_id', $data['this_student']->user->id)->first();
         $data['this_unit'] = Unit::find($unit_id);
 
-        $data['all_students'] = Student::where('unit_id', $unit_id)->get();
+        $data['all_students'] = Student::where('unit_id', $unit_id)
+            ->where('semester', $semester)
+            ->where('year', $year)
+            ->get();
         $data['quizzes'] = Quiz::where('unit_id', $unit_id)->get();
 
         $data['ranking_asc'] = [];
@@ -172,11 +179,18 @@ class StudentController extends Controller
      */
     public function update(Request $request, $unit_id, $student_id)
     {
+        $semester = Settings::where('name', 'semester')->first()->value;
+        $year = Settings::where('name', 'year')->first()->value;
+
         $input = $request->only(['is_leader']); // 0 or 1
 
         // counting teams and assigning new team
         $newteam = 0;
-        $teams = Student::where('unit_id', $unit_id)->where('is_group_leader', true)->get();
+        $teams = Student::where('unit_id', $unit_id)
+            ->where('semester', $semester)
+            ->where('year', $year)
+            ->where('is_group_leader', true)
+            ->get();
         foreach ($teams as $team) {
             if ($team->team_number != null) {
                 if ($team->team_number > $newteam) {
@@ -190,6 +204,8 @@ class StudentController extends Controller
         if ($input['is_leader']) {
             // if is a leader, do: revoke as leader
             $team_members = Student::where('unit_id', $student->unit_id)
+                ->where('semester', $semester)
+                ->where('year', $year)
                 ->where('team_number', $student->team_number)
                 ->where('is_group_leader', false)->get();
 
@@ -216,6 +232,8 @@ class StudentController extends Controller
 
             // check if theres existing leader in the team
             $leader = Student::where('unit_id', $student->unit_id)
+                ->where('semester', $semester)
+                ->where('year', $year)
                 ->where('team_number', $student->team_number)
                 ->where('is_group_leader', true)
                 ->first();
@@ -254,6 +272,8 @@ class StudentController extends Controller
     {
         $input = $request->only([ 'file', 'unit_code' ]);
         $students = json_decode($input['file']);
+        $semester = Settings::where('name', 'semester')->first()->value;
+        $year = Settings::where('name', 'year')->first()->value;
 
         // headers error checking - return Error_H01
         if (count($students[0]) != 11) {
@@ -294,9 +314,11 @@ class StudentController extends Controller
                 // check unit - only add those with the assigned unit
                 if ($units[$i]['code'] == $input['unit_code']) {
 
-                    // TODO: add check for semester and year
                     $student = Student::where('user_id', $user->id)
-                        ->where('unit_id', $units[$i]['id'])->first();
+                        ->where('unit_id', $units[$i]['id'])
+                        ->where('semester', $semester)
+                        ->where('year', $year)
+                        ->first();
 
                     if (!isset($student)) {
                         Student::create([

@@ -10,6 +10,7 @@ use App\User;
 use App\Model\Student;
 use App\Model\StudentInfo;
 use App\Model\Unit;
+use App\Model\Settings;
 use Dingo\Api\Routing\Helpers;
 
 class StudentController extends Controller
@@ -18,12 +19,17 @@ class StudentController extends Controller
 
     public function index()
     {
+        $semester = Settings::where('name', 'semester')->first()->value;
+        $year = Settings::where('name', 'year')->first()->value;
+
         $auth_user = JWTAuth::parseToken()->authenticate();
 
         $data = [];
         $data['user'] = User::with('student_info')->find($auth_user->id);
         $data['this_student'] = Student::with('unit')
             ->where('user_id', $auth_user->id)
+            ->where('semester', $semester)
+            ->where('year', $year)
             ->get();
 
         return response()->json($data);
@@ -31,25 +37,30 @@ class StudentController extends Controller
 
     public function team_info($unit_id)
     {
+        $semester = Settings::where('name', 'semester')->first()->value;
+        $year = Settings::where('name', 'year')->first()->value;
+
         $auth_user = JWTAuth::parseToken()->authenticate();
 
         $this_unit = Unit::find($unit_id);
         $this_student = Student::with('unit', 'user')
             ->where('user_id', $auth_user->id)
             ->where('unit_id', $this_unit->id)
+            ->where('semester', $semester)
+            ->where('year', $year)
             ->first();
 
         $this_team = Student::with('user')
             ->where('unit_id', $this_student->unit->id)
-            ->where('semester', $this_student->semester)
-            ->where('year', $this_student->year)
+            ->where('semester', $semester)
+            ->where('year', $year)
             ->where('team_number', $this_student->team_number)
             ->get();
 
         $available_students = Student::with('user')
             ->where('unit_id', $this_student->unit->id)
-            ->where('semester', $this_student->semester)
-            ->where('year', $this_student->year)
+            ->where('semester', $semester)
+            ->where('year', $year)
             ->whereNull('team_number')
             ->get();
 
@@ -84,12 +95,17 @@ class StudentController extends Controller
 
     public function enlist_new_member($student_id, $unit_id)
     {
+        $semester = Settings::where('name', 'semester')->first()->value;
+        $year = Settings::where('name', 'year')->first()->value;
+
         $auth_user = JWTAuth::parseToken()->authenticate();
 
         $this_unit = Unit::find($unit_id);
         $this_student = Student::with('unit', 'user')
             ->where('user_id', $auth_user->id)
             ->where('unit_id', $this_unit->id)
+            ->where('semester', $semester)
+            ->where('year', $year)
             ->first();
 
         $new_member = Student::find($student_id);
@@ -100,12 +116,17 @@ class StudentController extends Controller
 
     public function delist_member($student_id, $unit_id)
     {
+        $semester = Settings::where('name', 'semester')->first()->value;
+        $year = Settings::where('name', 'year')->first()->value;
+
         $auth_user = JWTAuth::parseToken()->authenticate();
 
         $this_unit = Unit::find($unit_id);
         $this_student = Student::with('unit', 'user')
             ->where('user_id', $auth_user->id)
             ->where('unit_id', $this_unit->id)
+            ->where('semester', $semester)
+            ->where('year', $year)
             ->first();
 
         // selected to be removed
@@ -117,9 +138,14 @@ class StudentController extends Controller
 
     public function student_units()
     {
+        $semester = Settings::where('name', 'semester')->first()->value;
+        $year = Settings::where('name', 'year')->first()->value;
+
         $auth_user = JWTAuth::parseToken()->authenticate();
         $this_student = Student::with('unit')
             ->where('user_id', $auth_user->id)
+            ->where('semester', $semester)
+            ->where('year', $year)
             ->get();
 
         return response()->json($this_student);

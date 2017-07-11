@@ -12,6 +12,7 @@ use App\Model\Quiz;
 use App\Model\Question;
 use App\Model\Student;
 use App\Model\LecturerUnit;
+use App\Model\Settings;
 
 class DatatablesController extends Controller
 {
@@ -34,7 +35,9 @@ class DatatablesController extends Controller
     // users index
     public function getStudentsDatatable($unit_id)
     {
-        // TODO: filter by Unit, only show students in the current unit, (e.g: where unit = 'HRM20016', S1, 2017)
+        $semester = Settings::where('name', 'semester')->first()->value;
+        $year = Settings::where('name', 'year')->first()->value;
+        
         // NEXT: to filter by semester and year
         return Datatables::of(
             Student::select('students.id', 'student_infos.student_id', 'users.firstname', 'users.lastname',
@@ -43,6 +46,8 @@ class DatatablesController extends Controller
             ->leftJoin('units', 'units.id', '=', 'students.unit_id')
             ->leftJoin('student_infos', 'student_infos.user_id', '=', 'students.user_id')
             ->where('units.id', $unit_id)
+            ->where('students.semester', $semester)
+            ->where('students.year', $year)
         )->make();
     }
 

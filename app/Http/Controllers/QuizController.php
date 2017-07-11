@@ -22,10 +22,15 @@ class QuizController extends Controller
 
     public function index_unit($unit_id)
     {
+        $semester = Settings::where('name', 'semester')->first()->value;
+        $year = Settings::where('name', 'year')->first()->value;
+
         $data = [];
         $data['unit'] = Unit::find($unit_id);
         $data['quizzes'] = Quiz::where('unit_id', $unit_id)
-            ->where('semester', 'S1')->where('year', 2017)->get();
+            ->where('semester', $semester)
+            ->where('year', $year)
+            ->get();
 
         return view ('unit.index_quiz', $data);
     }

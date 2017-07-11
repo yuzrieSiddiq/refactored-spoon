@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Settings extends Model
 {
     protected $fillable = [
-        'name', 'setting'
+        'name', 'value'
     ];
     // name      |  value
     // semester,    'S1'

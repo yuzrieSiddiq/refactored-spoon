@@ -117,7 +117,7 @@
                         </div>
                         <div class="form-group">
                             <div class="col-sm-offset-2 col-sm-8">
-                              <button class="btn btn-success">Update</button>
+                              <button class="btn btn-success settings-update-btn">Update</button>
                             </div>
                         </div>
                     </div>
@@ -420,6 +420,21 @@
         // destroy the modal if dismissed
         modal.on('hidden.bs.modal', function (e) {
             $(this).remove()
+        })
+    })
+
+    $('.settings-update-btn').click(function () {
+        let data = {
+            '_token': getToken(),
+            'settings-semester': $('#settings-semester').val(),
+            'settings-year': $('#settings-year').val()
+        }
+        $.ajax({
+            'url': '{{ route('settings.update') }}',
+            'method': 'PUT',
+            'data': data
+        }).done(function() {
+            window.location.reload()
         })
     })
 

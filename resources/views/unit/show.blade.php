@@ -129,7 +129,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @if (isset($quizzes))
+                                        @if (count($quizzes) > 0)
                                             @foreach ($quizzes as $count => $quiz)
                                                 <tr>
                                                     <td class="text-center">{{ $count+1 }}</td>
@@ -141,6 +141,10 @@
                                                     </td>
                                                 </tr>
                                             @endforeach
+                                        @else
+                                            <tr>
+                                                <td colspan="3" class="text-center">No data available in the table</td>
+                                            </tr>
                                         @endif
                                     </tbody>
                                 </table>

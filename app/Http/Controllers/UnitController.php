@@ -9,6 +9,7 @@ use App\User;
 use App\Model\Quiz;
 use App\Model\Unit;
 use App\Model\LecturerUnit;
+use App\Model\Settings;
 use Carbon\Carbon;
 
 class UnitController extends Controller
@@ -78,6 +79,9 @@ class UnitController extends Controller
      */
     public function show($id)
     {
+        $semester = Settings::where('name', 'semester')->first()->value;
+        $year = Settings::where('name', 'year')->first()->value;
+
         $data = [];
         $data['unit'] = Unit::with('students','quizzes')->find($id);
 
@@ -85,6 +89,8 @@ class UnitController extends Controller
         $data['quizzes'] = Quiz::where('unit_id', $data['unit']->id)
             ->where('type', 'group')
             ->where('status', 'open')
+            ->where('semester', $semester)
+            ->where('year', $year)
             ->get();
 
         $students = User::role('Student')->with('student_info', 'students')->get();
