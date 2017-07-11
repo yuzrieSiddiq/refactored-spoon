@@ -22,6 +22,9 @@ class CreateLecturerUnitsTable extends Migration
             $table->foreign('unit_id')->references('id')->on('units')
                     ->onUpdate('cascade')->onDelete('cascade');
 
+            $table->string('semester');
+            $table->string('year');
+
             $table->timestamps();
         });
     }
