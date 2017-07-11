@@ -119,7 +119,7 @@ class QuizController extends Controller
     public function select_random_question($allowed_questions, $questions)
     {
         // non repeating numbers between 1 - $allowed_questions
-        $choices = range( 1, count($questions)-1 );
+        $choices = range( 0, count($questions)-1 );
         shuffle($choices);
         $selected = array_slice($choices, 0, $allowed_questions);
         $selected_questions = [];
