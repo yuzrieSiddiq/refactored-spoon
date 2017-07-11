@@ -64,7 +64,7 @@ CREATE TABLE `lecturer_units` (
   KEY `lecturer_units_unit_id_foreign` (`unit_id`),
   CONSTRAINT `lecturer_units_unit_id_foreign` FOREIGN KEY (`unit_id`) REFERENCES `units` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `lecturer_units_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -205,6 +205,7 @@ CREATE TABLE `quizzes` (
   `title` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `type` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `status` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `show_questions` int(10) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -219,7 +220,7 @@ CREATE TABLE `quizzes` (
 
 LOCK TABLES `quizzes` WRITE;
 /*!40000 ALTER TABLE `quizzes` DISABLE KEYS */;
-INSERT INTO `quizzes` VALUES (5,2,'S1',2017,'RAP Test 1','individual','open','2017-06-28 04:32:13','2017-06-28 04:32:13'),(6,2,'S1',2017,'RAP Test 1','group','open','2017-06-28 04:32:13','2017-06-28 04:32:13');
+INSERT INTO `quizzes` VALUES (5,2,'S1',2017,'RAP Test 1','individual','open',3,'2017-06-28 04:32:13','2017-06-28 04:32:13'),(6,2,'S1',2017,'RAP Test 1','group','open',3,'2017-06-28 04:32:13','2017-06-28 04:32:13');
 /*!40000 ALTER TABLE `quizzes` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -570,7 +571,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'admin first name','admin last name','admin@email.com','$2y$10$0HJzFIQ67apZIWIak4cCEeaf.VxMbkuLnP0cofr3wvIU4EPZyQEjG','PeTTx8SWeSVxZD38KQ7xs3zgkVpQo9AJYr1zwqfe4NzgAyfT2HSZZhTAzygR',NULL,NULL),(2,'MungLing','Voon','mvoon@swinburne.edu.my','$2y$10$M/4c4HarbbYZROxElWz1x.jWiQZBbFC6Xv28RLqZB0wFjTPg38lWW','dRJVoft89EQAyGL03aKXG3f7m7eQC7CB6nwZeyPLKbvWGmWTT3Kg7mc2L3BX','2017-06-19 00:56:00','2017-06-19 00:56:00'),(4,'Ngui Kwang Sing','Ngui','kngui@swinburne.edu.my','$2y$10$UZYwW03W9f84Q0vBx262KuwmmUjfeHFKD7XL140Ex4P7WbiT..87.','RKkOk3WeQhiP4tLXmGCOg4dUULR6BGI9xxzbALNsOUNKXhqzlf5U0zPoCiCh','2017-06-19 08:06:25','2017-06-26 09:47:01'),(22,'firstname1','lastname1','4971210@students.swinburne.edu.my','$2y$10$cITqCPzVgu2OpJCkilmzNODOiiUmw73iImn4EoecTqclzkEa9bNBq','fcN6ANw09ZZZrqTiQU5oZL363wUavb3OkYfXv8ve5sSMYGWfVQXhq0StY8jn','2017-06-20 01:21:23','2017-06-20 01:21:23'),(23,'firstname2','lastname2','4971211@students.swinburne.edu.my','$2y$10$D4ffuXiduWOZQt2XwGOewuUDDlmNTqagZsPmb8VDGmHAWFeqXRJ2O',NULL,'2017-06-20 01:21:23','2017-06-20 01:21:23'),(24,'firstname3','lastname3','4971212@students.swinburne.edu.my','$2y$10$HjoeDkBYsl5aXCtN4EcYPucEMpDLSGr1sKKfa.PdFER7c6K8dDd02',NULL,'2017-06-20 01:21:23','2017-06-20 01:21:23'),(25,'firstname4','lastname4','4971213@students.swinburne.edu.my','$2y$10$hyush4Twaq2/rZSdrzN1d.gr/sPGbLXSwxXWc/kteRf/MFTRB4nAK',NULL,'2017-06-20 01:21:23','2017-06-20 01:21:23'),(26,'firstname5','lastname5','4971214@students.swinburne.edu.my','$2y$10$2DQYsFDL4qPOEjzRShb.e..Wj9dZJO6FsYiXBw9uEP49vjxmztFm.',NULL,'2017-06-20 01:21:23','2017-06-20 01:21:23'),(27,'firstname6','lastname6','4971215@students.swinburne.edu.my','$2y$10$WgoodH/Hzjml3RpBxz1ke.RMLda4339RTX0YSFFIlSlb5L42YRjSi',NULL,'2017-06-20 01:21:24','2017-06-20 01:21:24'),(28,'firstname7','lastname7','4971216@students.swinburne.edu.my','$2y$10$dzLAnbBmzC4uoORY//W7cee3xw88KKB8or4nDkgQy.O3NlB438Kry',NULL,'2017-06-20 01:21:24','2017-06-20 01:21:24'),(29,'firstname8','lastname8','4971217@students.swinburne.edu.my','$2y$10$zdx/h7oudWC9xdouc0kt9OYSCwxbB2viAaMpzXF.8CNQH80l/rbNG',NULL,'2017-06-20 01:21:24','2017-06-20 01:21:24'),(30,'firstname9','lastname9','4971218@students.swinburne.edu.my','$2y$10$qy1ibBmTdWRClSYAxVq2UO8fsa4CEaPflTWxeFlbUVila3WSCGy4C',NULL,'2017-06-20 01:21:24','2017-06-20 01:21:24'),(31,'firstname10','lastname10','4971219@students.swinburne.edu.my','$2y$10$uIX//MHt/HzsVbNktQQhPOW7YW5Hw3tbAA53kORQGVAWQ2Srar4KS',NULL,'2017-06-20 01:21:24','2017-06-20 01:21:24'),(32,'Pat','Pat','pthen@swinburne.edu.my','$2y$10$24.ZxDQcumCFR/js4mhHDeyVIBDFmQWtwYPGTxyUwvFbeTXnbY/WS',NULL,'2017-06-20 14:02:39','2017-06-21 09:15:50'),(33,'fname','lname','4310001@students.swinburne.edu.my','$2y$10$janWkkx0T5NWMLkcX2hoPelwqcYi7Zcpk1HW.88PVK34SWjEuVrhS',NULL,'2017-06-20 15:54:50','2017-06-20 15:54:50');
+INSERT INTO `users` VALUES (1,'admin first name','admin last name','admin@email.com','$2y$10$0HJzFIQ67apZIWIak4cCEeaf.VxMbkuLnP0cofr3wvIU4EPZyQEjG','PeTTx8SWeSVxZD38KQ7xs3zgkVpQo9AJYr1zwqfe4NzgAyfT2HSZZhTAzygR',NULL,NULL),(2,'MungLing','Voon','mvoon@swinburne.edu.my','$2y$10$M/4c4HarbbYZROxElWz1x.jWiQZBbFC6Xv28RLqZB0wFjTPg38lWW','NVJWYBRoniOLUNRUfG5umQPzio5CQX71GrzJoZhPtb2TBvAKv8NbAWMqTDKP','2017-06-19 00:56:00','2017-06-19 00:56:00'),(4,'Ngui Kwang Sing','Ngui','kngui@swinburne.edu.my','$2y$10$UZYwW03W9f84Q0vBx262KuwmmUjfeHFKD7XL140Ex4P7WbiT..87.','RKkOk3WeQhiP4tLXmGCOg4dUULR6BGI9xxzbALNsOUNKXhqzlf5U0zPoCiCh','2017-06-19 08:06:25','2017-06-26 09:47:01'),(22,'firstname1','lastname1','4971210@students.swinburne.edu.my','$2y$10$cITqCPzVgu2OpJCkilmzNODOiiUmw73iImn4EoecTqclzkEa9bNBq','fcN6ANw09ZZZrqTiQU5oZL363wUavb3OkYfXv8ve5sSMYGWfVQXhq0StY8jn','2017-06-20 01:21:23','2017-06-20 01:21:23'),(23,'firstname2','lastname2','4971211@students.swinburne.edu.my','$2y$10$D4ffuXiduWOZQt2XwGOewuUDDlmNTqagZsPmb8VDGmHAWFeqXRJ2O',NULL,'2017-06-20 01:21:23','2017-06-20 01:21:23'),(24,'firstname3','lastname3','4971212@students.swinburne.edu.my','$2y$10$HjoeDkBYsl5aXCtN4EcYPucEMpDLSGr1sKKfa.PdFER7c6K8dDd02',NULL,'2017-06-20 01:21:23','2017-06-20 01:21:23'),(25,'firstname4','lastname4','4971213@students.swinburne.edu.my','$2y$10$hyush4Twaq2/rZSdrzN1d.gr/sPGbLXSwxXWc/kteRf/MFTRB4nAK',NULL,'2017-06-20 01:21:23','2017-06-20 01:21:23'),(26,'firstname5','lastname5','4971214@students.swinburne.edu.my','$2y$10$2DQYsFDL4qPOEjzRShb.e..Wj9dZJO6FsYiXBw9uEP49vjxmztFm.',NULL,'2017-06-20 01:21:23','2017-06-20 01:21:23'),(27,'firstname6','lastname6','4971215@students.swinburne.edu.my','$2y$10$WgoodH/Hzjml3RpBxz1ke.RMLda4339RTX0YSFFIlSlb5L42YRjSi',NULL,'2017-06-20 01:21:24','2017-06-20 01:21:24'),(28,'firstname7','lastname7','4971216@students.swinburne.edu.my','$2y$10$dzLAnbBmzC4uoORY//W7cee3xw88KKB8or4nDkgQy.O3NlB438Kry',NULL,'2017-06-20 01:21:24','2017-06-20 01:21:24'),(29,'firstname8','lastname8','4971217@students.swinburne.edu.my','$2y$10$zdx/h7oudWC9xdouc0kt9OYSCwxbB2viAaMpzXF.8CNQH80l/rbNG',NULL,'2017-06-20 01:21:24','2017-06-20 01:21:24'),(30,'firstname9','lastname9','4971218@students.swinburne.edu.my','$2y$10$qy1ibBmTdWRClSYAxVq2UO8fsa4CEaPflTWxeFlbUVila3WSCGy4C',NULL,'2017-06-20 01:21:24','2017-06-20 01:21:24'),(31,'firstname10','lastname10','4971219@students.swinburne.edu.my','$2y$10$uIX//MHt/HzsVbNktQQhPOW7YW5Hw3tbAA53kORQGVAWQ2Srar4KS',NULL,'2017-06-20 01:21:24','2017-06-20 01:21:24'),(32,'Pat','Pat','pthen@swinburne.edu.my','$2y$10$24.ZxDQcumCFR/js4mhHDeyVIBDFmQWtwYPGTxyUwvFbeTXnbY/WS',NULL,'2017-06-20 14:02:39','2017-06-21 09:15:50'),(33,'fname','lname','4310001@students.swinburne.edu.my','$2y$10$janWkkx0T5NWMLkcX2hoPelwqcYi7Zcpk1HW.88PVK34SWjEuVrhS',NULL,'2017-06-20 15:54:50','2017-06-20 15:54:50');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -583,4 +584,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-07-11 10:44:32
+-- Dump completed on 2017-07-11 22:44:40

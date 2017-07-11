@@ -23,6 +23,7 @@ class CreateQuizzesTable extends Migration
             $table->string('title');    // e.g: iRAT1
             $table->string('type');     // individual/group
             $table->string('status');   // open/closed/attempted
+            $table->integer('show_questions')->unsigned(); // how many questions can be shown
 
             $table->timestamps();
         });
