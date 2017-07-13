@@ -268,7 +268,7 @@ class QuestionController extends Controller
             if ($all_is_set) {
                 Question::create([
                     'quiz_id' => $quiz_group->id,
-                    'answer_type' => '',
+                    'answer_type' => 'MCQ',
                     'question'=> $row[1],
                     'answer1' => $row[2],
                     'answer2' => $row[3],
@@ -280,7 +280,7 @@ class QuestionController extends Controller
 
                 Question::create([
                     'quiz_id' => $quiz_individual->id,
-                    'answer_type' => '',
+                    'answer_type' => 'MCQ',
                     'question'=> $row[1],
                     'answer1' => $row[2],
                     'answer2' => $row[3],
