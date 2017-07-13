@@ -182,6 +182,25 @@
             </div> {{-- end .panel --}}
         </div> {{-- end .col --}}
     </div> {{-- end .row --}}
+
+    {{-- loading modal --}}
+    <div class="modal fade" id="loading" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-body">
+                  <div class="form-horizontal">
+                      {{-- Code --}}
+                      <div class="form-group">
+                          <label class="col-xs-2 control-label text-align-right"><div class="loader"></div></label>
+                          <div class="col-xs-9">
+                              <h4 class="form-control-static">Loading Please Wait</h4>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+            </div>
+        </div>
+    </div>
 </div> {{-- end .container  --}}
 @endsection
 
@@ -371,8 +390,7 @@
                     'unit_code': '{{ $unit->code }}'
                 }
 
-                // TODO: add the loading button gif + attribute hidden/un-hidden
-
+                $('#loading').modal('toggle')
                 $.ajax({
                     'url': '{{ route('csv.students') }}',
                     'method': 'POST',
@@ -383,7 +401,8 @@
                         let errormsg = 'The file has wrong format/headers please ensure .csv file has the correct format'
                         showErrorMessage(errormsg)
                     } else {
-                        // window.location.reload()
+                        $('#loading').modal('toggle')
+                        window.location.reload()
                     }
                 })
             }
