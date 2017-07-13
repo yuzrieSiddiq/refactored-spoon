@@ -9,7 +9,7 @@
                     <h4 class="text-center">QUIZ {{ $quiz->id }}: {{ $quiz->title }}</h4>
                 </div>
                 <div class="table-responsive">
-                    <table class="table table-striped table-bordered" id="questions-table">
+                    <table class="table table-striped" id="questions-table">
                         <thead>
                             <tr>
                                 <th class="col-md-1 text-center">No</th>
