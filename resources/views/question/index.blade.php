@@ -12,11 +12,10 @@
                     <table class="table table-striped table-bordered" id="questions-table">
                         <thead>
                             <tr>
-                                <th class="text-center">No</th>
+                                <th class="col-md-1 text-center">No</th>
                                 <th class="col-md-5">Question</th>
-                                <th>Answer Type</th>
                                 <th class="col-md-3">Correct Answer</th>
-                                <th></th>
+                                <th class="col-md-2"></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -25,26 +24,8 @@
                                     <tr>
                                         <td class="text-center">{{ $count+1 }}</td>
                                         <td>{{ $question->question }}</td>
-                                        <td class="text-uppercase">
-                                            @if (!empty($question->answer_type))
-                                                {{ $question->answer_type }}
-                                            @else
-                                                <label class="custom-control custom-radio">
-                                                    <input name="question-{{ $question->id }}-answer-type" type="radio" class="custom-control-input" data-id="{{ $question->id }}"
-                                                        data-question="{{ $question->question }}" checked>
-                                                    <span class="custom-control-indicator"></span>
-                                                    <span class="custom-control-description radio-value">MCQ</span>
-                                                </label>
-                                                <label class="custom-control custom-radio">
-                                                    <input name="question-{{ $question->id }}-answer-type" type="radio" class="custom-control-input" data-id="{{ $question->id }}"
-                                                        data-question="{{ $question->question }}">
-                                                    <span class="custom-control-indicator"></span>
-                                                    <span class="custom-control-description radio-value">RANKING</span>
-                                                </label>
-                                            @endif
-                                        </td>
                                         <td>{{ $question->correct_answer }}</td>
-                                        <td>
+                                        <td class="text-right">
                                             <a class="btn btn-info" href="{{ route('quizzes.questions.show', ['quiz' => $quiz->id, 'question' => $question->id]) }}">
                                                 MORE
                                             </a>
