@@ -94,6 +94,26 @@
             @endif
         </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
+
+    {{-- loading modal --}}
+    <div class="modal fade" id="loading" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-body">
+                  <div class="form-horizontal">
+                      {{-- Code --}}
+                      <div class="form-group">
+                          <label class="col-xs-2 control-label text-align-right"><div class="loader"></div></label>
+                          <div class="col-xs-9">
+                              <h4 class="form-control-static">Loading Please Wait</h4>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+            </div>
+        </div>
+    </div>
+    {{-- end loading modal --}}
 </div>
 @endsection
 
@@ -144,12 +164,14 @@
                     'file': jsonstring
                 }
 
+                $('#loading').modal('toggle')
                 $.ajax({
                     'url': '{{ route('csv.questions', $quiz->id) }}',
                     'method': 'POST',
                     'data': data,
                     'enctype': 'multipart/form-data'
                 }).done(function(response) {
+                    $('#loading').modal('toggle')
                     window.location.reload()
                 })
             }
