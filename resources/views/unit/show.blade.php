@@ -145,7 +145,7 @@
                                             @endforeach
                                         @else
                                             <tr>
-                                                <td colspan="3" class="text-center">No data available in the table</td>
+                                                <td colspan="4" class="text-center">No data available in the table</td>
                                             </tr>
                                         @endif
                                     </tbody>
@@ -399,6 +399,7 @@
                 }).done(function(response) {
                     if (response == "Error_H01") {
                         let errormsg = 'The file has wrong format/headers please ensure .csv file has the correct format'
+                        $('#loading').modal('toggle')
                         showErrorMessage(errormsg)
                     } else {
                         $('#loading').modal('toggle')

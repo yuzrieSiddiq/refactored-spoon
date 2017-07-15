@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('extra_head')
-    <link rel="stylesheet" href="{{ asset('css/datatables.bootstrap.css') }}"> 
+    <link rel="stylesheet" href="{{ asset('css/datatables.bootstrap.css') }}">
 @endsection
 
 @section('content')
