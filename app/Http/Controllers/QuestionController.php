@@ -160,7 +160,7 @@ class QuestionController extends Controller
         ]);
 
         // create questions for individual quiz
-        $questions_individual = Question::where('question', $question_group->question)
+        $questions_individual = Question::where('quiz_id', $quiz_individual->id)
             ->where('question', $question_group->question)
             ->first();
 
