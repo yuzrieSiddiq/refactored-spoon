@@ -151,17 +151,44 @@ class QuizController extends Controller
                 ->first();
 
             $input = $request->only(['answers']);
-            $answers = json_decode($input['answers'], true);
+            $raw_answers = json_decode($input['answers'], true);
 
-            // set answers for the student
-            if (isset($answers)) {
-                foreach ($answers as $answer) {
-                    StudentAnswer::create([
-                        'student_id' => $this_student->id,
-                        'question_id' => $answer['question_id'],
-                        'quiz_id' => $quiz->id,
-                        'answer' => $answer['answer'],
-                    ]);
+            /**
+             * Answer format for each questions: "A(0) B(0) C(0) D(0)"
+             *                                   "1234567890123456789"
+             *                                   "9876543210987654321"
+             * the answers are to be broken and translated into A = first answer, etc...
+             * */
+
+            foreach ($raw_answers as $answer) {
+                /** separate all the raw_answers accordingly **/
+                $answer_string = [];
+                $answer_string[0]['answer'] = substr($answer['answer'], -19, 1);   // A
+                $answer_string[0]['rank']   = substr($answer['answer'], -17, 1);   // 0
+                $answer_string[1]['answer'] = substr($answer['answer'], -14, 1);   // B
+                $answer_string[1]['rank']   = substr($answer['answer'], -12, 1);   // B
+                $answer_string[2]['answer'] = substr($answer['answer'], -9, 1);    // C
+                $answer_string[2]['rank']   = substr($answer['answer'], -7, 1);    // C
+                $answer_string[3]['answer'] = substr($answer['answer'], -4, 1);    // D
+                $answer_string[3]['rank']   = substr($answer['answer'], -2, 1);    // D
+
+                /** get the questions sets from db and convert the A,B,C,D to actual answers to get whether it is correct or wrong **/
+                $question = Question::find($answer['question_id']);
+                $answer_string[0]['answer'] = $question->answer1;
+                $answer_string[1]['answer'] = $question->answer2;
+                $answer_string[2]['answer'] = $question->answer3;
+                $answer_string[3]['answer'] = $question->answer4;
+
+                /** after updated, add to db as student_answer - add the correct answers only **/
+                foreach ($answer_string as $student_answer) {
+                    if ($student_answer['answer'] == $question->correct_answer) {
+                        StudentAnswer::create([
+                            'student_id' => $this_student->id,
+                            'question_id' => $answer['question_id'],
+                            'quiz_id' => $quiz->id,
+                            'answer' => $student_answer['rank'] . " POINTS",
+                        ]);
+                    }
                 }
             }
 
@@ -181,12 +208,12 @@ class QuizController extends Controller
                 $correct_count = 0;
                 foreach ($student_answers as $answer) {
                     $question = Question::find($answer->question_id);
-                    if ($answer->answer == $question->correct_answer)
-                        $correct_count++;
+                    $answer_score = substr($answer->answer, -8, 1); // get 4 in "4 POINTS"
+                    $correct_count += $answer_score;
                 }
 
                 // calculate score in 100%
-                $score = ($correct_count * 100) / count($student_answers);
+                $score = ($correct_count * 100) / (count($student_answers)*4);
 
                 // add to the last rank existing (not sorted yet)
                 if ($student_ranks->count() > 0) {
