@@ -225,10 +225,19 @@ class QuestionController extends Controller
      */
     public function destroy($quiz_id, $question_id)
     {
+        $quiz_group = Quiz::find($quiz_id);
+
+        $quiz_individual = Quiz::where('unit_id', $quiz_group->unit_id)
+            ->where('semester', $quiz_group->semester)
+            ->where('year', $quiz_group->year)
+            ->where('title', $quiz_group->title)
+            ->where('type', 'individual')
+            ->first();
+
         $question_group = Question::find($question_id);
         $question_group->delete();
 
-        $questions_individual = Question::where('question', $question_group->question)
+        $questions_individual = Question::where('quiz_id', $quiz_individual->id)
             ->where('question', $question_group->question)
             ->first();
         $questions_individual->delete();
