@@ -27,22 +27,6 @@
                             </div>
                         </div>
 
-                        {{-- Semester --}}
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">Semester</label>
-                            <div class="col-sm-9">
-                                <input class="form-control semester" placeholder="i.e: S1">
-                            </div>
-                        </div>
-
-                        {{-- Year --}}
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">Year</label>
-                            <div class="col-sm-9">
-                                <input class="form-control year" placeholder="i.e: 2017">
-                            </div>
-                        </div>
-
                         {{-- Title --}}
                         <div class="form-group">
                             <label class="col-sm-2 control-label">Title</label>
@@ -51,30 +35,28 @@
                             </div>
                         </div>
 
-                        {{-- Allowed/Show Questions --}}
+                        {{-- Questions Type --}}
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">Allowed Questions</label>
+                            <label class="col-sm-2 control-label">Quiz Type</label>
                             <div class="col-sm-9">
-                                <select class="form-control" id="show-questions">
-                                    <option value="1">1</option>
-                                    <option value="2">2</option>
-                                    <option value="3">3</option>
-                                    <option value="4">4</option>
-                                    <option value="5">5</option>
-                                    <option value="6">6</option>
-                                    <option value="7">7</option>
-                                    <option value="8">8</option>
-                                    <option value="9">9</option>
-                                    <option value="10">10</option>
+                                <select class="form-control" id="quiz-type">
+                                    <option value="both">Individual and Group</option>
+                                    <option value="individual">Individual</option>
                                 </select>
                             </div>
                         </div>
 
-                        {{-- Update Button --}}
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-9">
+                                <p class="form-control-static">You may set the number of allowed questions after you have created the quiz</p>
+                            </div>
+                        </div>
+
+                        {{-- Create Button --}}
                         <div class="form-group">
                             <div class="col-sm-offset-2 col-sm-9">
                                 <a class="btn btn-info" href="{{ route('units.show', $unit->id) }}">BACK TO PREVIOUS PAGE</a>
-                                <button class="btn btn-success submit pull-right" data-url="{{ route('quizzes.store') }}">SUBMIT</button>
+                                <button class="btn btn-success submit pull-right" data-url="{{ route('quizzes.store') }}">CREATE</button>
                             </div>
                         </div>
                     </div> {{-- end .form-horizontal --}}
