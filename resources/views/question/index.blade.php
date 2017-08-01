@@ -6,9 +6,11 @@
         <div class="col-md-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h4 class="text-center">QUIZ {{ $quiz->id }}: {{ $quiz->title }}</h4>
+                    <button class="btn btn-warning allow-randomize-modal">ALLOW RANDOMIZE</button>
+                    <button class="btn btn-danger pull-right remove-all-modal">REMOVE ALL QUESTIONS</button>
                 </div>
                 <div class="table-responsive">
+                    <h4 class="text-center">QUIZ {{ $quiz->id }}: {{ $quiz->title }}</h4>
                     <table class="table table-striped" id="questions-table">
                         <thead>
                             <tr>
@@ -22,7 +24,17 @@
                             @if (isset($questions))
                                 @foreach ($questions as $count => $question)
                                     <tr>
-                                        <td class="text-center">{{ $count+1 }}</td>
+                                        <td class="text-center">
+                                            {{-- TODO: (JS) add if check: if is_allowed randomized, show .choose-questions-checks --}}
+                                            <div class="input-group choose-questions-checks hidden">
+                                                <span class="input-group-addon"><input class="chosen-question" type="checkbox"></span>
+                                                <input type="text" class="form-control" value="{{ $count+1 }}" disabled>
+                                            </div><!-- /input-group -->
+                                            {{-- else, show .question-number --}}
+                                            <div class="question-number">
+                                                {{ $count+1 }}
+                                            </div>
+                                        </td>
                                         <td>{{ $question->question }}</td>
                                         <td>{{ $question->correct_answer }}</td>
                                         <td class="text-right">
@@ -182,6 +194,10 @@
         }).done(function(response) {
             window.location.reload()
         })
+    })
+
+    $('.remove-all').click(function() {
+        console.log('Tests')
     })
 
 }) ()
