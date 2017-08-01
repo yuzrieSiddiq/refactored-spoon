@@ -100,7 +100,7 @@
                     <div class="form-horizontal">
                         <h3 class="col-sm-offset-1">System Settings</h3><br>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">Semester</label>
+                            <label class="col-sm-2 control-label">Teaching Period</label>
                             <div class="col-sm-8">
                                 @if (isset($semester))
                                     <input type="text" class="form-control" id="settings-semester" value="{{ $semester->value }}" placeholder="S1">
