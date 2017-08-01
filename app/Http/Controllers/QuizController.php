@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use App\Model\Unit;
 use App\Model\Quiz;
 use App\Model\Question;
+use App\Model\Settings;
 
 class QuizController extends Controller
 {
@@ -69,12 +70,14 @@ class QuizController extends Controller
         ]);
 
         $unit = Unit::where('code', $input['unit_code'])->first();
+        $semester = Settings::where('name', 'semester')->first()->value;
+        $year = Settings::where('name', 'year')->first()->value;
 
         // create individual quiz
         Quiz::create([
             'unit_id' => $unit->id,
-            'semester' => $input['semester'],
-            'year' => $input['year'],
+            'semester' => $semester,
+            'year' => $year,
             'title' => $input['title'],
             'type' => 'individual',
             'status' => 'open',
@@ -84,15 +87,14 @@ class QuizController extends Controller
         // create group quiz
         Quiz::create([
             'unit_id' => $unit->id,
-            'semester' => $input['semester'],
+            'semester' => $semester,'semester' => $input['semester'],
             'year' => $input['year'],
+            'year' => $year,
             'title' => $input['title'],
             'type' => 'group',
             'status' => 'open',
             'show_questions' => $input['show_questions'],
         ]);
-
-        return 'ok';
     }
 
     /**
@@ -133,7 +135,7 @@ class QuizController extends Controller
     public function update(Request $request, $id)
     {
         $input = $request->only([
-            'semester', 'year', 'title', 'type', 'status', 'show_questions',
+            'title', 'type', 'status', 'show_questions',
         ]);
         $quiz_group = Quiz::find($id);
         $quiz_individual = Quiz::where('unit_id', $quiz_group->unit_id)
@@ -144,22 +146,16 @@ class QuizController extends Controller
             ->first();
 
         $quiz_group->update([
-            'semester' => $input['semester'],
-            'year' => $input['year'],
             'title' => $input['title'],
             'status' => $input['status'],
             'show_questions' => $input['show_questions'],
         ]);
 
         $quiz_individual->update([
-            'semester' => $input['semester'],
-            'year' => $input['year'],
             'title' => $input['title'],
             'status' => $input['status'],
             'show_questions' => $input['show_questions'],
         ]);
-
-        return 'updated';
     }
 
     /**
@@ -180,8 +176,6 @@ class QuizController extends Controller
             ->where('type', 'individual')
             ->first();
         $quiz_individual->delete();
-
-        return 'deleted';
     }
 
     public function create_upload()
@@ -263,7 +257,5 @@ class QuizController extends Controller
                 // skip, todo: add to a list to show as error
             }
         }
-
-        return 'ok';
     }
 }

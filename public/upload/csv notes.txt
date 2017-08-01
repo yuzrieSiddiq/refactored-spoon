@@ -1,0 +1,39 @@
+The format of the upload files are as follows:
+
+--------------------------------------------------------------------------------------------------
+lecturer_sample.csv
+
+    First Name, Last Name, Email, Password
+
+--------------------------------------------------------------------------------------------------
+student_sample.csv
+
+    First Name, Last Name, Email, Student id, Password, LOCAL or INTERNATIONAL, unitcode 1, unitcode 2, unitcode 3, unitcode 4, unitcode 5
+
+    * please fill the unitcode columns with 'NA' should the students take less than 5 units.
+
+--------------------------------------------------------------------------------------------------
+student_sample (updated).csv
+
+    First Name, Last Name, Email, Student id, Password, LOCAL or INTERNATIONAL, unitcode 1, unitcode 2, unitcode 3, unitcode 4, unitcode 5, unit1group, unit2group, unit3group, unit4group, unit5group,
+
+    * please fill the unitcode columns with 'NA' should the students take less than 5 units.
+
+--------------------------------------------------------------------------------------------------
+question_template_sample.csv
+
+    unit code, question, ans1, ans2, ans3, ans4, ans5, correct answer
+
+    * if the question only has 4 possible answers, please leave 'ans5' blank. 
+
+--------------------------------------------------------------------------------------------------
+******************************* 
+Do take note of the following:
+
+1. in the upload templates, do not create a header row in any of the file uploads. simply start with real data from row 1. 
+2. ensure that you save in ".csv" format.
+3. only "students" in the Content Management System can download the android app apk from the website, as the website will prompt for student email and password. 
+4. any "lecturer" created will be able to log in to the Content Management System.
+5. unit code must exist before multiple questions or students can be uploaded.
+6. the free webhosting is free of charge, and therefore its servers are not very fast. It may occasionally be unstable or down from time to time. 
+*******************************

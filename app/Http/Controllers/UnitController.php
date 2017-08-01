@@ -88,7 +88,6 @@ class UnitController extends Controller
         // show only for current year
         $data['quizzes'] = Quiz::where('unit_id', $data['unit']->id)
             ->where('type', 'group')
-            ->where('status', 'open')
             ->where('semester', $semester)
             ->where('year', $year)
             ->get();

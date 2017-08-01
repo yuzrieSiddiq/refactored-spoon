@@ -10,22 +10,6 @@
                     <hr>
 
                     <div class="form-horizontal">
-                        {{-- Semester --}}
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">Semester</label>
-                            <div class="col-sm-9">
-                                <input class="form-control" id="semester" placeholder="i.e: S1" value="{{ $quiz->semester }}">
-                            </div>
-                        </div>
-
-                        {{-- Year --}}
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">Year</label>
-                            <div class="col-sm-9">
-                                <input class="form-control" id="year" placeholder="i.e: 2017" value="{{ Carbon\Carbon::parse($quiz->year)->format('Y') }}">
-                            </div>
-                        </div>
-
                         {{-- Title --}}
                         <div class="form-group">
                             <label class="col-sm-2 control-label">Title</label>
@@ -57,16 +41,9 @@
                                 <select class="form-control" id="show-questions">
                                     <option value="{{ $quiz->show_questions }}">{{ $quiz->show_questions }}</option>
                                     <option value="" disabled>___</option>
-                                    <option value="1">1</option>
-                                    <option value="2">2</option>
-                                    <option value="3">3</option>
-                                    <option value="4">4</option>
-                                    <option value="5">5</option>
-                                    <option value="6">6</option>
-                                    <option value="7">7</option>
-                                    <option value="8">8</option>
-                                    <option value="9">9</option>
-                                    <option value="10">10</option>
+                                    @for ($i=1; $i <= 100; $i++)
+                                        <option value="{{ $i }}">{{ $i }}</option>
+                                    @endfor
                                 </select>
                             </div>
                         </div>
@@ -108,8 +85,6 @@
         let url = $(this).data('url')
         let data = {
             '_token': getToken(),
-            'semester': $('#semester').val(),
-            'year': $('#year').val(),
             'title' : $('#title').val(),
             'type'  : $('#type').val(),
             'status': $('#status').val(),
