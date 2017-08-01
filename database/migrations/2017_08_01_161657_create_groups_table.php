@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateQuestionsTable extends Migration
+class CreateGroupsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,20 +13,14 @@ class CreateQuestionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('questions', function (Blueprint $table) {
+        Schema::create('groups', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('quiz_id')->unsigned();
             $table->foreign('quiz_id')->references('id')->on('quizzes')
                     ->onUpdate('cascade')->onDelete('cascade');
-
-            $table->text('question');
-            $table->text('answer1');        // A
-            $table->text('answer2');        // B
-            $table->text('answer3');        // C
-            $table->text('answer4');        // D
-            $table->text('answer5');        // E
-            $table->text('correct_answer');
-
+            $table->integer('group_no');
+            $table->boolean('is_open');
+            $table->boolean('is_randomized');
             $table->timestamps();
         });
     }
@@ -38,6 +32,6 @@ class CreateQuestionsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('questions');
+        Schema::dropIfExists('groups');
     }
 }

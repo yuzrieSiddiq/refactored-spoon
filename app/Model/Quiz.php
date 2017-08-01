@@ -33,4 +33,9 @@ class Quiz extends Model
     {
         return $this->hasMany('App\Model\Ranking');
     }
+
+    public function groups()
+    {
+        return $this->hasMany('App\Model\Groups');
+    }
 }

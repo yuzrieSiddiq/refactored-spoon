@@ -20,9 +20,8 @@ class CreateQuizzesTable extends Migration
                     ->onUpdate('cascade')->onDelete('cascade');
             $table->string('semester'); // S1
             $table->integer('year');    // 2017
-            $table->string('title');    // e.g: iRAT1
-            $table->string('type');     // individual/group
-            $table->string('status');   // open/closed/attempted
+            $table->string('title');    // e.g: RAT1
+            $table->string('type');     // individual/group=
             $table->integer('show_questions')->unsigned(); // how many questions can be shown
 
             $table->timestamps();
