@@ -58,6 +58,8 @@ Route::group(['middleware' => 'auth'], function () {
                     ->name('quizzes.questions.update');
     /** delete **/  Route::delete('quizzes/{quiz}/questions/{question}', 'QuestionController@destroy')
                     ->name('quizzes.questions.destroy');
+    /** delete **/  Route::delete('quizzes/{quiz}/deleteAll', 'QuestionController@destroy_all')
+                    ->name('quizzes.questions.destroy_all');
     /** report **/  Route::get('quizzes/{quiz}/report', 'ReportingController@quiz_report')
                     ->name('quizzes.report');
 

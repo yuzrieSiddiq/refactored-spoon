@@ -235,14 +235,32 @@ class QuestionController extends Controller
             ->first();
 
         $question_group = Question::find($question_id);
-        $question_group->delete();
-
         $questions_individual = Question::where('quiz_id', $quiz_individual->id)
             ->where('question', $question_group->question)
             ->first();
-        $questions_individual->delete();
 
-        return 'deleted';
+        $question_group->delete();
+        $questions_individual->delete();
+    }
+
+    public function destroy_all($quiz_id)
+    {
+        $quiz_group = Quiz::find($quiz_id);
+        $quiz_individual = Quiz::where('unit_id', $quiz_group->unit_id)
+            ->where('semester', $quiz_group->semester)
+            ->where('year', $quiz_group->year)
+            ->where('title', $quiz_group->title)
+            ->where('type', 'individual')
+            ->first();
+
+        $questions_group = Question::where('quiz_id', $quiz_group->id)->get();
+        $questions_individual = Question::where('quiz_id', $quiz_individual->id)->get();
+
+        foreach ($questions_group as $question)
+            $question->delete();
+
+        foreach ($questions_individual as $question)
+            $question->delete();
     }
 
     public function uploadQuestions(Request $request, $quiz_id)

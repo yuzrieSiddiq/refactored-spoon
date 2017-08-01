@@ -6,11 +6,11 @@
         <div class="col-md-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <button class="btn btn-warning allow-randomize-modal">ALLOW RANDOMIZE</button>
-                    <button class="btn btn-danger pull-right remove-all-modal">REMOVE ALL QUESTIONS</button>
+                    <button class="btn btn-warning allow-randomize option-modal">ALLOW RANDOMIZE</button>
+                    <button class="btn btn-danger pull-right remove-all option-modal">REMOVE ALL QUESTIONS</button>
                 </div>
                 <div class="table-responsive">
-                    <h4 class="text-center">QUIZ {{ $quiz->id }}: {{ $quiz->title }}</h4>
+                    <h4 class="text-center">{{ $quiz->title }}</h4>
                     <table class="table table-striped" id="questions-table">
                         <thead>
                             <tr>
@@ -41,7 +41,10 @@
                                             <a class="btn btn-info" href="{{ route('quizzes.questions.show', ['quiz' => $quiz->id, 'question' => $question->id]) }}">
                                                 MORE
                                             </a>
-                                            <button class="btn btn-danger modal-remove"><span class="glyphicon glyphicon-remove"></span></button>
+                                            <button class="btn btn-danger option-modal" data-question-no="{{ $count+1 }}"
+                                                data-url="{{ route('quizzes.questions.destroy', ['quiz' => $quiz->id, 'question' => $question->id]) }}">
+                                                    <span class="glyphicon glyphicon-remove"></span>
+                                            </button>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -75,12 +78,23 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title">Remove question: {{ $question->id }}</h4>
+                    <h4 class="modal-title"></h4>
                 </div>
                 <div class="modal-body">
                         <button type="button" class="btn btn-default cancel-modal" data-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-danger delete" data-url="{{ route('quizzes.questions.destroy', ['quiz' => $quiz->id, 'question' => $question->id]) }}">
+
+                        {{-- action buttons - hide unnecessary ones --}}
+                        <button type="button" class="btn btn-danger submit hidden btn-delete" data-method="DELETE">
                             DELETE
+                        </button>
+                        <button type="button" class="btn btn-danger submit hidden btn-delete-all" data-method="DELETE"
+                            data-url="{{ route('quizzes.questions.destroy_all', $quiz->id) }}">
+                            DELETE ALL
+                        </button>
+
+                        <button type="button" class="btn btn-success submit hidden btn-allow-randomize" data-method="POST"
+                            data-url="">
+                            ALL RANDOMIZE
                         </button>
                 </div>
             </div><!-- /.modal-content -->
@@ -118,33 +132,6 @@
     let getToken = function() {
         return $('meta[name=csrf-token]').attr('content')
     }
-
-    $('.modal-remove').click(function() {
-        // clone the template to make new modal
-        let modal = $('.modal-template').clone().removeClass('modal-template');
-
-        // register the modal to the body and toggle the modal
-        $('.container').append(modal)
-        modal.modal('toggle')
-
-        // on click delete
-        modal.find('.delete').click(function() {
-            let url = $(this).data('url')
-
-            $.ajax({
-                'url': url,
-                'method': 'DELETE',
-                'data': { '_token': getToken() }
-            }).done(function() {
-                window.location.reload()
-            })
-        })
-
-        // destroy the modal if dismissed
-        modal.on('hidden.bs.modal', function (e) {
-            $(this).remove()
-        })
-    })
 
     $('.file-upload').change(function() {
         // do the csv file parsing
@@ -196,8 +183,40 @@
         })
     })
 
-    $('.remove-all').click(function() {
-        console.log('Tests')
+    $('.option-modal').click(function() {
+        let modal = $('.modal-template').clone().removeClass('modal-template');
+        $('.container').append(modal)
+
+        if ($(this).hasClass('allow-randomize')) {
+            modal.find('.modal-title').html('Allow randomize')
+            modal.find('.btn-allow-randomize').removeClass('hidden')
+        } else if ($(this).hasClass('remove-all')) {
+            modal.find('.modal-title').html('Remove all questions')
+            modal.find('.btn-delete-all').removeClass('hidden')
+        } else {
+            modal.find('.modal-title').html('Remove question: ' + $(this).data('question-no'))
+            modal.find('.btn-delete').removeClass('hidden')
+            modal.find('.btn-delete').data('url', $(this).data('url'))
+        }
+
+        modal.modal('toggle')
+        modal.find('.submit').click(function() {
+            let url = $(this).data('url')
+            let method = $(this).data('method')
+
+            $.ajax({
+                'url': url,
+                'method': method,
+                'data': { '_token': getToken() }
+            }).done(function() {
+                window.location.reload()
+            })
+        })
+
+        // destroy the modal on dismissed
+        modal.on('hidden.bs.modal', function () {
+            $(this).remove()
+        })
     })
 
 }) ()
