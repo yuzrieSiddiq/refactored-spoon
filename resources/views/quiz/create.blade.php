@@ -39,7 +39,7 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">Quiz Type</label>
                             <div class="col-sm-9">
-                                <select class="form-control" id="quiz-type">
+                                <select class="form-control quiz-type">
                                     <option value="both">Individual and Group</option>
                                     <option value="individual">Individual</option>
                                 </select>
@@ -78,9 +78,8 @@
         let data = {
             '_token': getToken(),
             'unit_code': $('.unit-code').val(),
-            'semester': $('.semester').val(),
-            'year': $('.year').val(),
             'title': $('.title').val(),
+            'type': $('.quiz-type').val(),
             'show_questions': $('#show-questions').val()
         }
         $.ajax({

@@ -18,9 +18,12 @@ class CreateGroupsTable extends Migration
             $table->integer('quiz_id')->unsigned();
             $table->foreign('quiz_id')->references('id')->on('quizzes')
                     ->onUpdate('cascade')->onDelete('cascade');
-            $table->integer('group_no');
+
+            $table->integer('group_number');
             $table->boolean('is_open');
             $table->boolean('is_randomized');
+            $table->date('test_date')->nullable();   // 01/07/2017
+            $table->integer('duration')->nullable(); // 30, 60, 90, 120, 150, 180 minutes
             $table->timestamps();
         });
     }

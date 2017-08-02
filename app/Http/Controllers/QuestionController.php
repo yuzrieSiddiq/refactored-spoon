@@ -55,7 +55,7 @@ class QuestionController extends Controller
     public function store(Request $request, $quiz_id)
     {
         $input = $request->only([
-            'quiz_title', 'question', 'answer_type', 'correct_answer',
+            'quiz_title', 'question', 'correct_answer',
             'answer1', 'answer2', 'answer3', 'answer4', 'answer5'
         ]);
 
@@ -71,7 +71,6 @@ class QuestionController extends Controller
         $questions_group = Question::create([
             'quiz_id' => $quiz_group->id,
             'question' => $input['question'],
-            'answer_type' => $input['answer_type'],
             'answer1' => $input['answer1'],
             'answer2' => $input['answer2'],
             'answer3' => $input['answer3'],
@@ -84,7 +83,6 @@ class QuestionController extends Controller
         $questions_individual = Question::create([
             'quiz_id' => $quiz_individual->id,
             'question' => $input['question'],
-            'answer_type' => $input['answer_type'],
             'answer1' => $input['answer1'],
             'answer2' => $input['answer2'],
             'answer3' => $input['answer3'],
@@ -134,7 +132,7 @@ class QuestionController extends Controller
     public function update(Request $request, $quiz_id, $question_id)
     {
         $input = $request->only([
-            'question', 'answer_type', 'answer1', 'answer2', 'answer3',
+            'question', 'answer1', 'answer2', 'answer3',
             'answer4', 'answer5', 'correct_answer'
         ]);
 
@@ -146,27 +144,14 @@ class QuestionController extends Controller
             ->where('type', 'individual')
             ->first();
 
-        // create questions for group quiz
+        // get questions for group and individual quiz
         $question_group = Question::find($question_id);
-        $question_group->update([
-            'question' => $input['question'],
-            'answer_type' => $input['answer_type'],
-            'answer1' => $input['answer1'],
-            'answer2' => $input['answer2'],
-            'answer3' => $input['answer3'],
-            'answer4' => $input['answer4'],
-            'answer5' => $input['answer5'],
-            'correct_answer' => $input['correct_answer'],
-        ]);
-
-        // create questions for individual quiz
         $questions_individual = Question::where('quiz_id', $quiz_individual->id)
             ->where('question', $question_group->question)
             ->first();
 
-        $questions_individual->update([
+        $question_group->update([
             'question' => $input['question'],
-            'answer_type' => $input['answer_type'],
             'answer1' => $input['answer1'],
             'answer2' => $input['answer2'],
             'answer3' => $input['answer3'],
@@ -175,46 +160,15 @@ class QuestionController extends Controller
             'correct_answer' => $input['correct_answer'],
         ]);
 
-        return 'updated';
-    }
-
-    public function update_answer_type(Request $request, $quiz_id)
-    {
-        $input = $request->only([ 'answer_types' ]);
-
-        $quiz_group = Quiz::with('questions')->find($quiz_id);
-
-        $quiz_individual = Quiz::with('questions')
-            ->where('unit_id', $quiz_group->unit_id)
-            ->where('semester', $quiz_group->semester)
-            ->where('year', $quiz_group->year)
-            ->where('title', $quiz_group->title)
-            ->where('type', 'individual')
-            ->first();
-
-        // update group quizzes
-        foreach ($quiz_group->questions as $question) {
-            foreach ($input['answer_types'] as $answer_type) {
-                if ($question->question == $answer_type['question']) {
-                    $question->update([
-                        'answer_type' => $answer_type['answer_type']
-                    ]);
-                }
-            }
-        }
-
-        // update individual quizzes
-        foreach ($quiz_individual->questions as $question) {
-            foreach ($input['answer_types'] as $answer_type) {
-                if ($question->question == $answer_type['question']) {
-                    $question->update([
-                        'answer_type' => $answer_type['answer_type']
-                    ]);
-                }
-            }
-        }
-
-        return 'updated';
+        $questions_individual->update([
+            'question' => $input['question'],
+            'answer1' => $input['answer1'],
+            'answer2' => $input['answer2'],
+            'answer3' => $input['answer3'],
+            'answer4' => $input['answer4'],
+            'answer5' => $input['answer5'],
+            'correct_answer' => $input['correct_answer'],
+        ]);
     }
 
     /**

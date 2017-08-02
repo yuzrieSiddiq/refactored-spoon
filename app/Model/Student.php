@@ -8,7 +8,7 @@ class Student extends Model
 {
     protected $fillable = [
         'user_id', 'unit_id', 'semester', 'year',
-        'team_number', 'is_group_leader'
+        'team_number', 'group_number', 'is_group_leader'
     ];
 
     // this entry (from a class list) belongs to one student

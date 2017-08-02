@@ -18,22 +18,6 @@
                             </div>
                         </div>
 
-                        {{-- Status --}}
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">Status</label>
-                            <div class="col-sm-9">
-                                <select class="form-control" id="status">
-                                    @if ($quiz->status == 'open')
-                                        <option value="open">Open</option>
-                                        <option value="close">Close</option>
-                                    @else
-                                        <option value="open">Open</option>
-                                        <option value="close">Close</option>
-                                    @endif
-                                </select>
-                            </div>
-                        </div>
-
                         {{-- Allowed/Show Questions --}}
                         <div class="form-group">
                             <label class="col-sm-2 control-label">Allowed Questions</label>
@@ -63,6 +47,74 @@
                 </div> {{-- end .panel-body --}}
             </div> {{-- end .panel --}}
         </div> {{-- end .col-10 --}}
+
+        <div class="col-md-offset-1 col-md-10">
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="text-uppercase">QUIZZES SETTINGS</h4>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th class="col-md-2">Group Number</th>
+                                <th class="col-md-2">Test Date</th>
+                                <th class="col-md-2">Duration</th>
+                                <th class="col-md-1">Is Open</th>
+                                <th class="col-md-2">Is Randomized</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="text-center" colspan="6">Individual Quizzes</td>
+                            </tr>
+                            @if (!isset($groups_individual[0]))
+                                <tr>
+                                    <td class="text-center" colspan="6">No groups are assigned</td>
+                                </tr>
+                            @else
+                                @foreach ($groups_individual as $group)
+                                    @if (isset($group))
+                                        <tr>
+                                            <td class="text-center">{{ $group->group_number }}</td>
+                                            <td class="text-center">{{ isset($group->test_date) ? $group->test_date : 'Not Set' }}</td>
+                                            <td class="text-center">{{ isset($group->duration) ? $group->duration : 'Not Set' }}</td>
+                                            <td class="text-center">{{ $group->is_open ? 'Yes' : 'No' }}</td>
+                                            <td class="text-center">{{ $group->is_randomized ? 'Yes' : 'No' }}</td>
+                                            <td><button class="btn btn-success form-control">CHANGE</button></td>
+                                        </tr>
+                                    @endif
+                                @endforeach
+                            @endif
+                            <tr>
+                                <td class="text-center" colspan="6">Group Quizzes</td>
+                            </tr>
+                            @if (!isset($groups_group[0]))
+                                <tr>
+                                    <td class="text-center" colspan="6">No groups are assigned</td>
+                                </tr>
+                            @else
+                                @foreach ($groups_group as $group)
+                                    @if (isset($group))
+                                        <tr>
+                                            <td class="text-center">{{ $group->group_number }}</td>
+                                            <td class="text-center">{{ isset($group->test_date) ? $group->test_date : 'Not Set' }}</td>
+                                            <td class="text-center">{{ isset($group->duration) ? $group->duration : 'Not Set' }}</td>
+                                            <td class="text-center">{{ $group->is_open ? 'Yes' : 'No' }}</td>
+                                            <td class="text-center">{{ $group->is_randomized ? 'Yes' : 'No' }}</td>
+                                            <td><button class="btn btn-success form-control">CHANGE</button></td>
+                                        </tr>
+                                    @endif
+                                @endforeach
+                            @endif
+                        </tbody>
+                    </table>
+                </div> {{-- end .table-responsive --}}
+            </div> {{-- end .panel --}}
+
+        </div> {{-- end .col-10 --}}
     </div> {{-- end .row --}}
 </div> {{-- end .container --}}
 @endsection
@@ -87,7 +139,6 @@
             '_token': getToken(),
             'title' : $('#title').val(),
             'type'  : $('#type').val(),
-            'status': $('#status').val(),
             'show_questions': $('#show-questions').val(),
         }
 
@@ -113,7 +164,8 @@
             'method': 'DELETE',
             'data': data
         }).done(function(data) {
-            window.location.href = "{{ route('units.show', $quiz->unit_id) }}"
+            // window.location.href = "{{ route('units.show', $quiz->unit_id) }}"
+            window.location.reload()
         })
     })
 }) ()

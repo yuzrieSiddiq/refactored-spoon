@@ -8,9 +8,11 @@ class Group extends Model
 {
     protected $fillable = [
         'quiz_id',
-        'group_no',
+        'group_number',
         'is_open',
-        'is_randomized'
+        'is_randomized',
+        'test_date',
+        'duration',
     ];
 
     public function quiz()

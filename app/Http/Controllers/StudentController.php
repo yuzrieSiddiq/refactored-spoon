@@ -64,10 +64,9 @@ class StudentController extends Controller
             'semester'=> $input['semester'],
             'year'    => $input['year'],
             'team_number' => null,
+            'group_number' => null,
             'is_group_leader' => false,
         ]);
-
-        return 'ok';
     }
 
     /**
@@ -250,8 +249,6 @@ class StudentController extends Controller
                 $student->update(['is_group_leader' => true]);
             }
         }
-
-        return 'updated';
     }
 
     /**
@@ -276,7 +273,7 @@ class StudentController extends Controller
         $year = Settings::where('name', 'year')->first()->value;
 
         // headers error checking - return Error_H01
-        if (count($students[0]) != 11) {
+        if (count($students[0]) != 16) {
             return response()->json("Error_H01");
         }
 
@@ -310,6 +307,7 @@ class StudentController extends Controller
             $units = [];
             for ($i=6; $i < 11; $i++) {
                 $units[$i] = Unit::where('code', $row[$i])->first();
+                $unit_group_number = $row[$i + 5];
 
                 // check unit - only add those with the assigned unit
                 if ($units[$i]['code'] == $input['unit_code']) {
@@ -327,13 +325,12 @@ class StudentController extends Controller
                             'semester'=> 'S1',
                             'year'    => 2017,
                             'team_number' => null,
+                            'group_number' => $unit_group_number,
                             'is_group_leader' => false,
                         ]);
                     }
                 }
             }
         }
-
-        return 'ok';
     }
 }

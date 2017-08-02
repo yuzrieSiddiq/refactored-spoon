@@ -7,8 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class Quiz extends Model
 {
     protected $fillable = [
-        'unit_id', 'title', 'type', 'status',
-        'semester', 'year', 'show_questions',
+        'unit_id', 'title', 'type', 'semester', 'year',
+        'show_questions', 'individual_only',
     ];
 
     // this quiz is made for a specific unit

@@ -23,6 +23,7 @@ class CreateQuizzesTable extends Migration
             $table->string('title');    // e.g: RAT1
             $table->string('type');     // individual/group=
             $table->integer('show_questions')->unsigned(); // how many questions can be shown
+            $table->boolean('individual_only');
 
             $table->timestamps();
         });

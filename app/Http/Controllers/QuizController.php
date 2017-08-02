@@ -8,6 +8,8 @@ use App\Model\Unit;
 use App\Model\Quiz;
 use App\Model\Question;
 use App\Model\Settings;
+use App\Model\Student;
+use App\Model\Group;
 
 class QuizController extends Controller
 {
@@ -66,35 +68,95 @@ class QuizController extends Controller
     public function store(Request $request)
     {
         $input = $request->only([
-            'unit_code', 'semester', 'year', 'title', 'type', 'status', 'show_questions'
+            'unit_code', 'semester', 'year', 'title', 'type'
         ]);
 
         $unit = Unit::where('code', $input['unit_code'])->first();
         $semester = Settings::where('name', 'semester')->first()->value;
         $year = Settings::where('name', 'year')->first()->value;
 
-        // create individual quiz
-        Quiz::create([
-            'unit_id' => $unit->id,
-            'semester' => $semester,
-            'year' => $year,
-            'title' => $input['title'],
-            'type' => 'individual',
-            'status' => 'open',
-            'show_questions' => $input['show_questions'],
-        ]);
+        if ($input['type'] == 'both') {
+            // create both quizzes
+            $quiz_individual = Quiz::create([
+                'unit_id' => $unit->id,
+                'semester' => $semester,
+                'year' => $year,
+                'title' => $input['title'],
+                'type' => 'individual',
+                'show_questions' => 0,
+                'individual_only' => false,
+            ]);
 
-        // create group quiz
-        Quiz::create([
-            'unit_id' => $unit->id,
-            'semester' => $semester,'semester' => $input['semester'],
-            'year' => $input['year'],
-            'year' => $year,
-            'title' => $input['title'],
-            'type' => 'group',
-            'status' => 'open',
-            'show_questions' => $input['show_questions'],
-        ]);
+            $quiz_group = Quiz::create([
+                'unit_id' => $unit->id,
+                'semester' => $semester,
+                'year' => $year,
+                'title' => $input['title'],
+                'type' => 'group',
+                'show_questions' => 0,
+                'individual_only' => false,
+            ]);
+
+        } else if ($input['type'] == 'individual') {
+            // create individual quiz only
+            $quiz_individual = Quiz::create([
+                'unit_id' => $unit->id,
+                'semester' => $semester,
+                'year' => $year,
+                'title' => $input['title'],
+                'type' => 'individual',
+                'show_questions' => 0,
+                'individual_only' => true,
+            ]);
+        }
+
+        // group here as in tutorial class groups
+        $group_count = 0;
+        $students = Student::where('unit_id', $quiz_individual->unit_id)
+            ->where('semester', $semester)
+            ->where('year', $year)
+            ->orderBy('group_number')
+            ->get();
+        foreach ($students as $student) {
+            if ($group_count < $student->group_number) {
+                $group_count = $student->group_number;
+
+                // group for individual quiz only
+                $group_individual = Group::where('quiz_id', $quiz_individual->id)
+                    ->where('group_number', $group_count)
+                    ->first();
+
+                if (!isset($group_individual)) {
+                    Group::create([
+                        'quiz_id' => $quiz_individual->id,
+                        'group_number' => $group_count,
+                        'is_open' => false,
+                        'is_randomized' => true,
+                        'test_date' => null,
+                        'duration' => null,
+                    ]);
+                }
+
+                // if quiz is not for both, only create groups for individual quizzes
+                // group : tutorial group, _group = type of quiz -> individual/group
+                if ($input['type'] == 'both') {
+                    $group_group = Group::where('quiz_id', $quiz_group->id)
+                    ->where('group_number', $group_count)
+                    ->first();
+
+                    if (!isset($group_group)) {
+                        Group::create([
+                            'quiz_id' => $quiz_group->id,
+                            'group_number' => $group_count,
+                            'is_open' => false,
+                            'is_randomized' => true,
+                            'test_date' => null,
+                            'duration' => null,
+                        ]);
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -119,8 +181,49 @@ class QuizController extends Controller
      */
     public function edit($id)
     {
+        $semester = Settings::where('name', 'semester')->first()->value;
+        $year = Settings::where('name', 'year')->first()->value;
+
+        $quiz_group = Quiz::find($id);
+        $quiz_individual = Quiz::where('unit_id', $quiz_group->unit_id)
+            ->where('semester', $quiz_group->semester)
+            ->where('year', $quiz_group->year)
+            ->where('title', $quiz_group->title)
+            ->where('type', 'individual')
+            ->first();
+
         $data = [];
-        $data['quiz'] = Quiz::find($id);
+        $data['quiz'] = $quiz_group;
+        $data['quiz_individual'] = $quiz_individual;
+
+        // get the number of groups available based on students list
+        $data['group_count'] = 0;
+        $data['groups_individual'] = [];
+        $data['groups_group'] = [];
+        $students = Student::where('unit_id', $data['quiz']->unit_id)
+            ->where('semester', $semester)
+            ->where('year', $year)
+            ->orderBy('group_number')
+            ->get();
+
+        foreach ($students as $student) {
+            if ($data['group_count'] < $student->group_number) {
+                $data['group_count'] = $student->group_number;
+
+                $group_individual = Group::where('quiz_id', $quiz_individual->id)
+                    ->where('group_number', $data['group_count'])
+                    ->first();
+
+                $group_group = Group::where('quiz_id', $quiz_group->id)
+                    ->where('group_number', $data['group_count'])
+                    ->first();
+
+                array_push($data['groups_individual'], $group_individual);
+                array_push($data['groups_group'], $group_group);
+            }
+        }
+
+        // return response()->json($data);
 
         return view ('quiz.edit', $data);
     }
@@ -135,7 +238,7 @@ class QuizController extends Controller
     public function update(Request $request, $id)
     {
         $input = $request->only([
-            'title', 'type', 'status', 'show_questions',
+            'title', 'show_questions', 'groups_schedule'
         ]);
         $quiz_group = Quiz::find($id);
         $quiz_individual = Quiz::where('unit_id', $quiz_group->unit_id)
@@ -147,13 +250,11 @@ class QuizController extends Controller
 
         $quiz_group->update([
             'title' => $input['title'],
-            'status' => $input['status'],
             'show_questions' => $input['show_questions'],
         ]);
 
         $quiz_individual->update([
             'title' => $input['title'],
-            'status' => $input['status'],
             'show_questions' => $input['show_questions'],
         ]);
     }
@@ -176,86 +277,5 @@ class QuizController extends Controller
             ->where('type', 'individual')
             ->first();
         $quiz_individual->delete();
-    }
-
-    public function create_upload()
-    {
-        return view ('quiz.create_upload');
-    }
-
-    public function store_upload(Request $request)
-    {
-        $input = $request->only([
-            'file', 'title', 'semester',
-            'year', 'type', 'status'
-        ]);
-        $questions = json_decode($input['file']);
-
-        foreach ($questions as $row) {
-            if ($row[0] == '') {
-                break;
-            }
-
-            // find the unit and make sure it exist
-            $unit = Unit::where('code', $row[0])->first();
-            if (isset($unit)) {
-
-                $quiz = Quiz::where('unit_id', $unit->id)
-                    ->where('title', $input['title'])
-                    ->where('semester', $input['semester'])
-                    ->where('year', $input['year'])
-                    ->where('type', $input['type'])
-                    ->first();
-
-                if (!isset($quiz)) {
-                    $quiz = Quiz::create([
-                        'unit_id' => $unit->id,
-                        'semester' => $input['semester'],
-                        'year' => $input['year'],
-                        'title' => $input['title'],
-                        'type' => $input['type'],
-                        'status' => $input['status']
-                    ]);
-                }
-
-                // add entry for each column
-                $all_is_set = true;
-                for ($i=1; $i < 8; $i++) {
-                    // if answer 5 is empty, keep it -
-                    if (!isset($row[6])) {
-                        $row[6] = '-';
-                    }
-                    if (!isset($row[$i])) {
-                        $all_is_set = false;
-                    }
-                }
-                if ($all_is_set) {
-
-                    $question = Question::where('quiz_id', $quiz->id)
-                        ->where('question', $row[1])
-                        ->first();
-
-                    if (!isset($question)) {
-                        Question::create([
-                            'quiz_id' => $quiz->id,
-                            'answer_type' => '',
-                            'question'=> $row[1],
-                            'answer1' => $row[2],
-                            'answer2' => $row[3],
-                            'answer3' => $row[4],
-                            'answer4' => $row[5],
-                            'answer5' => $row[6],
-                            'correct_answer' => $row[7],
-                        ]);
-                    }
-                } else {
-                    return '2';
-                }
-
-            } else {
-                // if unit is not exist
-                // skip, todo: add to a list to show as error
-            }
-        }
     }
 }

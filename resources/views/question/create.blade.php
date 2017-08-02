@@ -18,17 +18,6 @@
                             </div>
                         </div>
 
-                        {{-- ANSwER TYPE --}}
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label">ANSWER TYPE</label>
-                            <div class="col-sm-9">
-                                <select class="form-control" id="answer-type">
-                                    <option value="MCQ">MCQ</option>
-                                    <option value="RANKING">RANKING</option>
-                                </select>
-                            </div>
-                        </div>
-
                         {{-- ANSWER 1 --}}
                         <div class="form-group">
                             <label class="col-sm-3 control-label">ANSWER 1</label>
@@ -108,7 +97,6 @@
             '_token': getToken(),
             'quiz_title' : $('#quiz-title').val(),
             'question'  : $('#question').val(),
-            'answer_type': $('#answer-type').val(),
             'answer1': $('#answer1').val(),
             'answer2': $('#answer2').val(),
             'answer3': $('#answer3').val(),
