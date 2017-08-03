@@ -40,7 +40,7 @@ class DatatablesController extends Controller
 
         return Datatables::of(
             Student::select('students.id', 'student_infos.student_id', 'users.firstname', 'users.lastname',
-                'students.team_number', 'students.is_group_leader')
+                'students.team_number', 'students.is_group_leader', 'students.group_number')
             ->leftJoin('users', 'users.id', '=', 'students.user_id')
             ->leftJoin('units', 'units.id', '=', 'students.unit_id')
             ->leftJoin('student_infos', 'student_infos.user_id', '=', 'students.user_id')

@@ -85,6 +85,8 @@ Route::group(['middleware' => 'auth'], function () {
                     ->name('units.students.edit');
     /** update **/  Route::put('units/{unit}/students/{student}', 'StudentController@update')
                     ->name('units.students.update');
+    /** update **/  Route::put('units/{unit}/students/{student}/group', 'StudentController@update_group_no')
+                    ->name('units.students.update_group_no');
     /** delete **/  Route::delete('units/{unit}/students/{student}', 'StudentController@destroy')
                     ->name('units.students.destroy');
     /** report **/  Route::get('units/{unit}/report', 'ReportingController@unit_report')

@@ -29,11 +29,12 @@
                                     <thead>
                                         <tr>
                                             <th></th> {{-- id [hidden in JS] --}}
-                                            <th>Student ID</th>
-                                            <th>First Name</th>
-                                            <th>Last Name</th>
-                                            <th>Team No.</th>
+                                            <th width="10%">Student ID</th>
+                                            <th width="20%">First Name</th>
+                                            <th width="20%">Last Name</th>
+                                            <th width="10%">Team No.</th>
                                             <th></th> {{-- is group leader [hidden in JS] --}}
+                                            <th width="5%">Group</th>
                                             <th></th> {{-- options [hidden in JS] --}}
                                         </tr>
                                     </thead>
@@ -222,10 +223,6 @@
         return $('meta[name=csrf-token]').attr('content')
     }
 
-    /**
-     * temporarily removed:
-     * <button class="btn btn-success student-report" data-toggle="tooltip" data-placement="top" title="Student Report"><span class="glyphicon glyphicon-book"></span></button>\
-     */
     let student_table_operations = '\
         <div class="pull-right">\
             <button class="btn btn-info set-teamleader"><span class="glyphicon glyphicon-star"></span> SET LEADER</button>\
@@ -236,6 +233,12 @@
         <div class="pull-right">\
             <button class="btn btn-info set-teamleader"><span class="glyphicon glyphicon-star-empty"></span> UNSET LEADER</button>\
             <button class="btn btn-danger modal-remove" data-toggle="tooltip" data-placement="top" title="Remove Student"><span class="glyphicon glyphicon-remove" data-toggle="modal"></span></button>\
+        </div>'
+
+    let new_student_table_operations = '\
+        <div class="input-group update-group-div">\
+            <input type="text" class="form-control update_group_form" placeholder="Example: 1">\
+            <span class="input-group-btn"><button class="btn btn-success update-group">UPDATE</button></span>\
         </div>'
 
     let table = $('#students-table').DataTable( {
@@ -261,7 +264,7 @@
                 }
             },
             {
-                // hide student id
+                // hide student is_group_leader - to be shown together with team_number
                 "targets": 5,
                 "visible": false,
             },
@@ -269,11 +272,13 @@
                 // add extra column
                 "targets": -1,
                 "data": null,
-                // "defaultContent": table_operations
                 "render": function(data, type, full, meta) {
-                    // full shows full data in an array
+                    // full[6] takes only group_number properties
+                    if (full[6] == "") {
+                        return new_student_table_operations
+                    }
+
                     // full[5] takes only is_group_leader properties
-                    let leader_mark = ' [Team Leader]'
                     if (full[5] == 1) {
                         return leader_table_operations
                     } else {
@@ -330,6 +335,30 @@
 
         window.location.href = url
     });
+
+    $('#students-table tbody').on( 'click', '.update-group', function () {
+        let rowdata = table.row( $(this).parents('tr') ).data()
+        let student_id = rowdata[0];
+        let group_no = $(this).parents('.update-group-div').children('.update_group_form').val()
+
+        let data = {
+            '_token': getToken(),
+            'group_no': group_no
+        }
+
+        let method = 'PUT'
+        let url = '{{ route('units.students.update_group_no', ['unit' => 'unit_id', 'student' => 'student_id']) }}'
+        url = url.replace('unit_id', {{ $unit->id }})
+        url = url.replace('student_id', student_id)
+
+        $.ajax({
+            'url': url,
+            'method': method,
+            'data': data
+        }).done(function(response) {
+            window.location.reload()
+        })
+    })
 
     $('.add-student').click(function() {
         data = {

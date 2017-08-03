@@ -251,6 +251,15 @@ class StudentController extends Controller
         }
     }
 
+    public function update_group_no(Request $request, $unit_id, $student_id)
+    {
+        // return response()->json($request);
+        $student = Student::find($student_id);
+        $student->update([
+            'group_number' => $request['group_no'],
+        ]);
+    }
+
     /**
      * Remove the specified resource from storage.
      *
