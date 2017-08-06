@@ -236,6 +236,7 @@
         "columnDefs": [
             {   // hide question id
                 "targets": 0,
+                "searchable": false,
                 "visible": false
             },
             {   // show question number instead of chosen_questions
