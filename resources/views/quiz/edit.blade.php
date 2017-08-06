@@ -80,10 +80,12 @@
                                         <tr>
                                             <td class="text-center">{{ $group->group_number }}</td>
                                             <td class="text-center">{{ isset($group->test_date) ? $group->test_date : 'Not Set' }}</td>
-                                            <td class="text-center">{{ isset($group->duration) ? $group->duration : 'Not Set' }}</td>
+                                            <td class="text-center">{{ isset($group->duration) ? $group->duration . ' minutes' : 'Not Set' }}</td>
                                             <td class="text-center">{{ $group->is_open ? 'Yes' : 'No' }}</td>
                                             <td class="text-center">{{ $group->is_randomized ? 'Yes' : 'No' }}</td>
-                                            <td><button class="btn btn-success form-control">CHANGE</button></td>
+                                            <td><a class="btn btn-success form-control"
+                                                href="{{ route('quizzes.questions.edit.group', ['quiz' => $quiz->id, 'group' => $group->group_number]) }}">CHANGE
+                                            </a></td>
                                         </tr>
                                     @endif
                                 @endforeach
@@ -101,10 +103,12 @@
                                         <tr>
                                             <td class="text-center">{{ $group->group_number }}</td>
                                             <td class="text-center">{{ isset($group->test_date) ? $group->test_date : 'Not Set' }}</td>
-                                            <td class="text-center">{{ isset($group->duration) ? $group->duration : 'Not Set' }}</td>
+                                            <td class="text-center">{{ isset($group->duration) ? $group->duration . ' minutes': 'Not Set' }}</td>
                                             <td class="text-center">{{ $group->is_open ? 'Yes' : 'No' }}</td>
                                             <td class="text-center">{{ $group->is_randomized ? 'Yes' : 'No' }}</td>
-                                            <td><button class="btn btn-success form-control">CHANGE</button></td>
+                                            <td><a class="btn btn-success form-control"
+                                                href="{{ route('quizzes.questions.edit.group', ['quiz' => $quiz->id, 'group' => $group->group_number]) }}">CHANGE
+                                            </a></td>
                                         </tr>
                                     @endif
                                 @endforeach

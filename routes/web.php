@@ -52,10 +52,14 @@ Route::group(['middleware' => 'auth'], function () {
                     ->name('quizzes.questions.show');
     /** edit   **/  Route::get('quizzes/{quiz}/questions/{question}/edit', 'QuestionController@edit')
                     ->name('quizzes.questions.edit');
+    /** edit   **/  Route::get('quizzes/{quiz}/group_no/{group}/edit', 'QuizController@edit_tutorial_group')
+                    ->name('quizzes.questions.edit.group');
     /** update **/  Route::put('quizzes/{quiz}/questions/answer_types', 'QuestionController@update_answer_type')
                     ->name('quizzes.questions.update.answer_types');
     /** update **/  Route::put('quizzes/{quiz}/questions/{question}', 'QuestionController@update')
                     ->name('quizzes.questions.update');
+    /** update **/  Route::put('quizzes/{quiz}/group_no/{group}/update', 'QuizController@update_tutorial_group')
+                    ->name('quizzes.questions.update.group');
     /** delete **/  Route::delete('quizzes/{quiz}/questions/{question}', 'QuestionController@destroy')
                     ->name('quizzes.questions.destroy');
     /** delete **/  Route::delete('quizzes/{quiz}/deleteAll', 'QuestionController@destroy_all')

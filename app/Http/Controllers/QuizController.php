@@ -228,6 +228,60 @@ class QuizController extends Controller
         return view ('quiz.edit', $data);
     }
 
+    public function edit_tutorial_group($quiz_id, $group_no)
+    {
+        $data = [];
+        $quiz = Quiz::find($quiz_id);
+        $tutorial_group = Group::where('quiz_id', $quiz->id)
+            ->where('group_number', $group_no)
+            ->first();
+
+        $data = [];
+        $data['quiz'] = $quiz;
+        $data['group'] = $tutorial_group;
+
+        // return response()->json($data);
+        return view ('quiz.edit_tutorial_groups', $data);
+    }
+
+    public function update_tutorial_group(Request $request, $quiz_id, $group_no)
+    {
+        $quiz_group = Quiz::find($quiz_id);
+        $quiz_individual = Quiz::where('unit_id', $quiz_group->unit_id)
+            ->where('semester', $quiz_group->semester)
+            ->where('year', $quiz_group->year)
+            ->where('title', $quiz_group->title)
+            ->where('type', 'individual')
+            ->first();
+
+        $group_group = Group::where('quiz_id', $quiz_group->id)
+            ->where('group_number', $group_no)
+            ->first();
+        $group_individual = Group::where('quiz_id', $quiz_individual->id)
+            ->where('group_number', $group_no)
+            ->first();
+
+        $date = Carbon::parse($request['date']);
+        $is_open = ($request['is_open'] == 'true');
+        $is_random = ($request['is_randomized'] == 'true');
+
+        $group_group->update([
+            'is_open' => $is_open,
+            'is_randomized' => $is_random,
+            'duration' => $request['duration'],
+            'test_date' => $date,
+        ]);
+
+        $group_individual->update([
+            'is_open' => $is_open,
+            'is_randomized' => $is_random,
+            'duration' => $request['duration'],
+            'test_date' => $date,
+        ]);
+
+        return response()->json($request);
+    }
+
     /**
      * Update the specified resource in storage.
      *

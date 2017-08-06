@@ -43,3 +43,7 @@ mix.copy(momentJSPath + 'moment.min.js', 'public/js/moment.min.js');
 
 const twbsPaginationJSPath = './node_modules/twbs-pagination/';
 mix.copy(twbsPaginationJSPath + 'jquery.twbsPagination.min.js', 'public/js/twbs-pagination.min.js');
+
+const bootstrapDatepickerPath = './node_modules/bootstrap-datepicker/dist/';
+mix.copy(bootstrapDatepickerPath + 'js/bootstrap-datepicker.min.js', 'public/js/bootstrap-datepicker.min.js');
+mix.copy(bootstrapDatepickerPath + 'css/bootstrap-datepicker.min.css', 'public/css/bootstrap-datepicker.min.css');
