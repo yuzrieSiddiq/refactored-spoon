@@ -107,4 +107,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('l_unitsdatatable', 'DatatablesController@getLUnitsDatatable')->name('get.l_units.datatable');
     Route::get('studentsdatatable/{unit_id}', 'DatatablesController@getStudentsDatatable')->name('get.students.datatable');
     Route::get('quizzesdatatable', 'DatatablesController@getQuizzesDatatable')->name('get.quizzes.datatable');
+    Route::get('questionsdatatable/{quiz_id}', 'DatatablesController@getQuestionsDatatable')->name('get.questions.datatable');
+    Route::get('groupquestionsdatatable/{quiz_id}/group/{group_no}', 'DatatablesController@getGroupQuestionsDatatable')
+        ->name('get.questions.group.datatable');
 });

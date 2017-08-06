@@ -13,6 +13,7 @@ use App\Model\Question;
 use App\Model\Student;
 use App\Model\LecturerUnit;
 use App\Model\Settings;
+use App\Model\Group;
 
 class DatatablesController extends Controller
 {
@@ -79,11 +80,21 @@ class DatatablesController extends Controller
     }
 
     // question index
-    public function getQuestionsDatatable()
+    public function getQuestionsDatatable($quiz_id)
     {
         return Datatables::of(
-            Question::select('questions.id', 'quizzes.title', 'questions.question', 'questions.answer_type')
-            ->leftJoin('quizzes', 'quizzes.id', '=', 'questions.quiz_id')
+            Question::select('id', 'quiz_id', 'question', 'correct_answer')
+            ->where('quiz_id', $quiz_id)
+        )->make();
+    }
+
+    public function getGroupQuestionsDatatable($quiz_id, $group_no)
+    {
+        return Datatables::of(
+            Group::select('questions.id', 'groups.chosen_questions', 'questions.question', 'questions.correct_answer')
+            ->leftJoin('questions', 'questions.quiz_id', '=', 'groups.quiz_id')
+            ->where('groups.group_number', $group_no)
+            ->where('groups.quiz_id', $quiz_id)
         )->make();
     }
 }

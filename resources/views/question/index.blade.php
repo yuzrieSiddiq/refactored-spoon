@@ -219,6 +219,41 @@
         })
     })
 
+    /** datatable **/
+    // let choose_questions_operation = function(question_id, checked) {
+    //     return '<div class="input-group update-group-div">\
+    //                 <input type="checkbox" class="chosen_questions" data-question-id="' + question_id +  '" checked="'+ checked +'">\
+    //             </div>'
+    // }
+    //
+    // let table = $('#questions-table').DataTable( {
+    //     "ajax": "{{ route('get.questions.datatable', $quiz->id) }}",
+    //     "columnDefs": [
+    //         {
+    //             // hide question id
+    //             "targets": 0,
+    //             "visible": false
+    //         },
+    //         {
+    //             // show question number
+    //             "targets": 1,
+    //             "className": "text-center",
+    //             "render": function(data, type, full, meta) {
+    //                 return meta['row']+1
+    //             }
+    //         },
+    //         {
+    //             // add extra column
+    //             "targets": -1,
+    //             "data": null,
+    //             "className": "text-center",
+    //             "render": function(data, type, full, meta) {
+    //                 return choose_questions_operation(full[0], )
+    //             }
+    //         }
+    //     ]
+    // });
+
 }) ()
 </script>
 @endsection

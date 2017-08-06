@@ -2,7 +2,9 @@
 
 @section('extra_head')
     <link rel="stylesheet" href="{{ asset('css/bootstrap-datepicker.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/datatables.bootstrap.css') }}">
 @endsection
+
 @section('content')
 <div class="container">
     <div class="row">
@@ -90,6 +92,22 @@
 
             @if ($group->is_randomized == 0)
                 <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped" id="questions-table">
+                                <thead>
+                                    <tr>
+                                        <th></th> {{-- id [hidden in JS] --}}
+                                        <th class="text-center" width="10%">No</th>
+                                        <th class="text-center" width="30%">Question</th>
+                                        <th class="text-center" width="30%">Correct Answer</th>
+                                        <th></th> {{-- options [hidden in JS] --}}
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div> {{-- end .table-responsive --}}
+                    </div>
+                    {{--
                     <div class="table-responsive">
                         <h4 class="text-center">{{ $quiz->title }}</h4>
                         <table class="table table-striped" id="questions-table">
@@ -106,12 +124,10 @@
                                     @foreach ($quiz->questions as $count => $question)
                                         <tr>
                                             <td class="text-center">
-                                                {{-- TODO: (JS) add if check: if is_allowed randomized, show .choose-questions-checks --}}
                                                 <div class="input-group choose-questions-checks hidden">
                                                     <span class="input-group-addon"><input class="chosen-question" type="checkbox"></span>
                                                     <input type="text" class="form-control" value="{{ $count+1 }}" disabled>
                                                 </div><!-- /input-group -->
-                                                {{-- else, show .question-number --}}
                                                 <div class="question-number">
                                                     {{ $count+1 }}
                                                 </div>
@@ -126,7 +142,8 @@
                                 @endif
                             </tbody>
                         </table>
-                    </div> {{-- end .table-responsive --}}
+                    </div>
+                     --}}
                     <div class="panel-footer">
                         <button type="button" class="btn btn-success submit" data-method="PUT" data-method-direction="choose_questions"
                         data-url="{{ route('quizzes.questions.choose', ['quiz' => $quiz->id, 'group' => $group->group_number]) }}">
@@ -142,6 +159,8 @@
 @endsection
 
 @section('extra_js')
+<script src="{{ asset('js/datatables.net.js') }}"></script>
+<script src="{{ asset('js/datatables.bootstrap.js') }}"></script>
 <script src="{{ asset('js/bootstrap-datepicker.min.js') }}"></script>
 <script>
 (function(){
@@ -172,16 +191,16 @@
                 'duration': $('#duration').val()
             }
         } else if (method_direction == "choose_questions") {
-            let chosen_questions = []
+            let chosen_questions = ""
             $( ".chosen_questions" ).each(function() {
                 if ($(this).prop('checked')) {
-                    chosen_questions.push($(this).data('question-id'))
+                    chosen_questions += ($(this).data('question-id') + " ")
                 }
             });
 
             data = {
                 '_token': getToken(),
-                'chosen_questions': JSON.stringify(chosen_questions)
+                'chosen_questions': chosen_questions
             }
         }
 
@@ -191,9 +210,57 @@
             'method': method,
             'data': data
         }).done(function(response) {
-            // window.location.reload()
+            window.location.reload()
         })
     })
+
+    /** datatable **/
+    let choose_questions_operation = function(question_id, chosen_questions) {
+        // if the the question id matches one of the id in chosen_questions array, return with a checked
+        for (let i = 0; i < chosen_questions.length; i++) {
+            if (chosen_questions[i] == question_id) {
+                return '<div class="input-group update-group-div">\
+                            <input type="checkbox" class="chosen_questions" data-question-id="' + question_id +  '" checked="true">\
+                        </div>'
+            }
+        }
+
+        // if id is not listed in chosen questions array, return default
+        return '<div class="input-group update-group-div">\
+                    <input type="checkbox" class="chosen_questions" data-question-id="' + question_id +  '" value="false">\
+                </div>'
+    }
+
+    let table = $('#questions-table').DataTable( {
+        "ajax": "{{ route('get.questions.group.datatable', ['quiz_id' => $quiz->id, 'group_no' => $group->group_number]) }}",
+        "columnDefs": [
+            {   // hide question id
+                "targets": 0,
+                "visible": false
+            },
+            {   // show question number instead of chosen_questions
+                "targets": 1,
+                "className": "text-center",
+                "render": function(data, type, full, meta) {
+                    return meta['row']+1
+                }
+            },
+            {   // add extra column and process the question "checked" status
+                "targets": -1,
+                "data": null,
+                "className": "text-center",
+                "render": function(data, type, full, meta) {
+                    let question_id = full[0]
+                    let chosen_questions = full[1].split(" ")
+
+                    return choose_questions_operation(question_id, chosen_questions)
+                }
+            }
+        ]
+    });
+
+
+
 }) ()
 </script>
 @endsection
