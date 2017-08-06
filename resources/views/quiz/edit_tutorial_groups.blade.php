@@ -50,7 +50,7 @@
                             {{-- Test Date --}}
                             <div class="col-sm-4">
                                 @if (isset($group->test_date))
-                                    <input id="test-date" class="form-control" data-provide="datepicker" value="{{ Carbon\Carbon::parse($group->test_date)->format('j/m/Y') }}">
+                                    <input id="test-date" class="form-control" value="{{ Carbon\Carbon::parse($group->test_date)->format('d/m/Y') }}" data-provide="datepicker">
                                 @else
                                     <input id="test-date" class="form-control" data-provide="datepicker" placeholder="Date" value="">
                                 @endif
@@ -59,10 +59,10 @@
                             {{-- Duration --}}
                             <div class="col-sm-offset-1 col-sm-4">
                                 <select class="form-control" id="duration">
-                                    @if (isset($quiz->show_questions))
+                                    @if (!empty($quiz->show_questions))
                                         <option value="{{ $group->duration }}">{{ $group->duration }} minutes</option>
-                                        <option value="" disabled>___</option>
                                     @endif
+                                    <option value="" disabled>___</option>
                                     {{-- options are separated every 30 minutes --}}
                                     @for ($i=1; $i < 7; $i++)
                                         <option value="{{ $i*30 }}">{{ $i*30 }} minutes</option>
@@ -76,7 +76,7 @@
                             <div class="col-sm-offset-2 col-sm-9">
                                 <a class="btn btn-info" href="{{ route('quizzes.edit', $quiz->id) }}">BACK TO PREVIOUS PAGE</a>
                                 <div class="pull-right">
-                                    <button class="btn btn-success submit" data-method="PUT"
+                                    <button class="btn btn-success submit" data-method="PUT" data-method-direction="update_tutorial_group"
                                         data-url="{{ route('quizzes.questions.update.group', ['quiz' => $quiz->id, 'group' => $group->group_number]) }}">
                                         UPDATE
                                     </button>
@@ -87,6 +87,55 @@
 
                 </div> {{-- end .panel-body --}}
             </div> {{-- end .panel --}}
+
+            @if ($group->is_randomized == 0)
+                <div class="panel panel-default">
+                    <div class="table-responsive">
+                        <h4 class="text-center">{{ $quiz->title }}</h4>
+                        <table class="table table-striped" id="questions-table">
+                            <thead>
+                                <tr>
+                                    <th class="col-md-1 text-center">No</th>
+                                    <th class="col-md-5">Question</th>
+                                    <th class="col-md-3">Correct Answer</th>
+                                    <th class="col-md-2"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (isset($quiz->questions))
+                                    @foreach ($quiz->questions as $count => $question)
+                                        <tr>
+                                            <td class="text-center">
+                                                {{-- TODO: (JS) add if check: if is_allowed randomized, show .choose-questions-checks --}}
+                                                <div class="input-group choose-questions-checks hidden">
+                                                    <span class="input-group-addon"><input class="chosen-question" type="checkbox"></span>
+                                                    <input type="text" class="form-control" value="{{ $count+1 }}" disabled>
+                                                </div><!-- /input-group -->
+                                                {{-- else, show .question-number --}}
+                                                <div class="question-number">
+                                                    {{ $count+1 }}
+                                                </div>
+                                            </td>
+                                            <td>{{ $question->question }}</td>
+                                            <td>{{ $question->correct_answer }}</td>
+                                            <td class="text-center">
+                                                <input type="checkbox" class="chosen_questions" data-question-id="{{ $question->id }}">
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                @endif
+                            </tbody>
+                        </table>
+                    </div> {{-- end .table-responsive --}}
+                    <div class="panel-footer">
+                        <button type="button" class="btn btn-success submit" data-method="PUT" data-method-direction="choose_questions"
+                        data-url="{{ route('quizzes.questions.choose', ['quiz' => $quiz->id, 'group' => $group->group_number]) }}">
+                        UPDATE
+                    </button>
+                </div> {{-- end .panel-footer --}}
+            </div> {{-- end .panel --}}
+            @endif
+
         </div> {{-- end .col-10 --}}
     </div> {{-- end .row --}}
 </div> {{-- end .container --}}
@@ -101,23 +150,48 @@
         return $('meta[name=csrf-token]').attr('content')
     }
 
+    // formatting the datepicker
+    $('#test-date').datepicker({
+        format: 'dd/mm/yyyy',
+        startDate: '-3d'
+    });
+
     $('.submit').click(function() {
-        let url = $(this).data('url')
-        let method = $(this).data('method')
-        let data = {
-            '_token': getToken(),
-            'is_open': $('#is_open_check').prop('checked'),
-            'is_randomized': $('#is_randomized_check').prop('checked'),
-            'date': $('#test-date').val(),
-            'duration': $('#duration').val()
+        let url = $(this).data('url');
+        let method = $(this).data('method');
+        let method_direction = $(this).data('method-direction');
+        let data = {};
+
+        if (method_direction == "update_tutorial_group") {
+
+            data = {
+                '_token': getToken(),
+                'is_open': $('#is_open_check').prop('checked'),
+                'is_randomized': $('#is_randomized_check').prop('checked'),
+                'date': $('#test-date').val(),
+                'duration': $('#duration').val()
+            }
+        } else if (method_direction == "choose_questions") {
+            let chosen_questions = []
+            $( ".chosen_questions" ).each(function() {
+                if ($(this).prop('checked')) {
+                    chosen_questions.push($(this).data('question-id'))
+                }
+            });
+
+            data = {
+                '_token': getToken(),
+                'chosen_questions': JSON.stringify(chosen_questions)
+            }
         }
+
 
         $.ajax({
             'url': url,
             'method': method,
             'data': data
         }).done(function(response) {
-            window.location.reload()
+            // window.location.reload()
         })
     })
 }) ()

@@ -134,6 +134,7 @@ class QuizController extends Controller
                         'is_randomized' => true,
                         'test_date' => null,
                         'duration' => null,
+                        'chosen_questions' => null,
                     ]);
                 }
 
@@ -152,6 +153,7 @@ class QuizController extends Controller
                             'is_randomized' => true,
                             'test_date' => null,
                             'duration' => null,
+                            'chosen_questions' => null,
                         ]);
                     }
                 }
@@ -231,7 +233,7 @@ class QuizController extends Controller
     public function edit_tutorial_group($quiz_id, $group_no)
     {
         $data = [];
-        $quiz = Quiz::find($quiz_id);
+        $quiz = Quiz::with('questions')->find($quiz_id);
         $tutorial_group = Group::where('quiz_id', $quiz->id)
             ->where('group_number', $group_no)
             ->first();
@@ -261,7 +263,8 @@ class QuizController extends Controller
             ->where('group_number', $group_no)
             ->first();
 
-        $date = Carbon::parse($request['date']);
+        $date = Carbon::createFromFormat('d/m/Y', $request['date']);
+
         $is_open = ($request['is_open'] == 'true');
         $is_random = ($request['is_randomized'] == 'true');
 
@@ -278,8 +281,32 @@ class QuizController extends Controller
             'duration' => $request['duration'],
             'test_date' => $date,
         ]);
+    }
 
-        return response()->json($request);
+    public function choose_questions(Request $request, $quiz_id, $group_no)
+    {
+        $quiz_group = Quiz::find($quiz_id);
+        $quiz_individual = Quiz::where('unit_id', $quiz_group->unit_id)
+            ->where('semester', $quiz_group->semester)
+            ->where('year', $quiz_group->year)
+            ->where('title', $quiz_group->title)
+            ->where('type', 'individual')
+            ->first();
+
+        $group_group = Group::where('quiz_id', $quiz_group->id)
+            ->where('group_number', $group_no)
+            ->first();
+        $group_individual = Group::where('quiz_id', $quiz_individual->id)
+            ->where('group_number', $group_no)
+            ->first();
+
+        $group_group->update([
+            'chosen_questions' => $request['chosen_questions'],
+        ]);
+
+        $group_individual->update([
+            'chosen_questions' => $request['chosen_questions'],
+        ]);
     }
 
     /**

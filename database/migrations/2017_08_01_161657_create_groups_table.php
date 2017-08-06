@@ -24,6 +24,7 @@ class CreateGroupsTable extends Migration
             $table->boolean('is_randomized');
             $table->date('test_date')->nullable();   // 01/07/2017
             $table->integer('duration')->nullable(); // 30, 60, 90, 120, 150, 180 minutes
+            $table->text('chosen_questions')->nullable(); // [{"question_id": "4"}, {...}]
             $table->timestamps();
         });
     }

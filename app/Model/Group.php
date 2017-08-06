@@ -13,6 +13,7 @@ class Group extends Model
         'is_randomized',
         'test_date',
         'duration',
+        'chosen_questions',
     ];
 
     public function quiz()

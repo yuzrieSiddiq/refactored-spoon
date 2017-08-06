@@ -60,6 +60,8 @@ Route::group(['middleware' => 'auth'], function () {
                     ->name('quizzes.questions.update');
     /** update **/  Route::put('quizzes/{quiz}/group_no/{group}/update', 'QuizController@update_tutorial_group')
                     ->name('quizzes.questions.update.group');
+    /** update **/  Route::put('quizzes/{quiz}/group_no/{group}/choose_questions', 'QuizController@choose_questions')
+                    ->name('quizzes.questions.choose');
     /** delete **/  Route::delete('quizzes/{quiz}/questions/{question}', 'QuestionController@destroy')
                     ->name('quizzes.questions.destroy');
     /** delete **/  Route::delete('quizzes/{quiz}/deleteAll', 'QuestionController@destroy_all')
