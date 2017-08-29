@@ -61,8 +61,10 @@
                             {{-- Duration --}}
                             <div class="col-sm-offset-1 col-sm-4">
                                 <select class="form-control" id="duration">
-                                    @if (!empty($quiz->show_questions))
+                                    @if ($quiz->duration !== 0)
                                         <option value="{{ $group->duration }}">{{ $group->duration }} minutes</option>
+                                    @else
+                                        <option value="0">Test</option>
                                     @endif
                                     <option value="" disabled>___</option>
                                     {{-- options are separated every 30 minutes --}}
@@ -107,43 +109,6 @@
                             </table>
                         </div> {{-- end .table-responsive --}}
                     </div>
-                    {{--
-                    <div class="table-responsive">
-                        <h4 class="text-center">{{ $quiz->title }}</h4>
-                        <table class="table table-striped" id="questions-table">
-                            <thead>
-                                <tr>
-                                    <th class="col-md-1 text-center">No</th>
-                                    <th class="col-md-5">Question</th>
-                                    <th class="col-md-3">Correct Answer</th>
-                                    <th class="col-md-2"></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @if (isset($quiz->questions))
-                                    @foreach ($quiz->questions as $count => $question)
-                                        <tr>
-                                            <td class="text-center">
-                                                <div class="input-group choose-questions-checks hidden">
-                                                    <span class="input-group-addon"><input class="chosen-question" type="checkbox"></span>
-                                                    <input type="text" class="form-control" value="{{ $count+1 }}" disabled>
-                                                </div><!-- /input-group -->
-                                                <div class="question-number">
-                                                    {{ $count+1 }}
-                                                </div>
-                                            </td>
-                                            <td>{{ $question->question }}</td>
-                                            <td>{{ $question->correct_answer }}</td>
-                                            <td class="text-center">
-                                                <input type="checkbox" class="chosen_questions" data-question-id="{{ $question->id }}">
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                @endif
-                            </tbody>
-                        </table>
-                    </div>
-                     --}}
                     <div class="panel-footer">
                         <button type="button" class="btn btn-success submit" data-method="PUT" data-method-direction="choose_questions"
                         data-url="{{ route('quizzes.questions.choose', ['quiz' => $quiz->id, 'group' => $group->group_number]) }}">
@@ -214,6 +179,13 @@
         })
     })
 
+    let ellipsis = function(string) {
+        if (string.length > 100)
+            return string.substring(0, 100) + '...'
+
+        return string
+    }
+
     /** datatable **/
     let choose_questions_operation = function(question_id, chosen_questions) {
         // if the the question id matches one of the id in chosen_questions array, return with a checked
@@ -244,6 +216,12 @@
                 "className": "text-center",
                 "render": function(data, type, full, meta) {
                     return meta['row']+1
+                }
+            },
+            {   // ellipsis text
+                "targets": 2,
+                "render": function(data, type, full, meta) {
+                    return ellipsis(data)
                 }
             },
             {   // add extra column and process the question "checked" status

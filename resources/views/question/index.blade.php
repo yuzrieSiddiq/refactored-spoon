@@ -1,73 +1,60 @@
 @extends('layouts.app')
-
+@section('extra_head')
+    <link rel="stylesheet" href="{{ asset('css/datatables.bootstrap.css') }}">
+@endsection
 @section('content')
 <div class="container">
     <div class="row">
         <div class="col-md-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <button class="btn btn-warning allow-randomize option-modal">ALLOW RANDOMIZE</button>
-                    <button class="btn btn-danger pull-right remove-all option-modal">REMOVE ALL QUESTIONS</button>
+                    <h4>
+                        {{ $quiz->title }}
+                        <div class="pull-right">
+                            <a class="btn btn-info" href="{{ route('units.show', $quiz->unit_id) }}">BACK TO PREVIOUS PAGE</a>
+                            <a class="btn btn-success" href="{{ route('quizzes.questions.create', $quiz->id) }}">CREATE NEW QUESTION</a>
+                            <label class="btn btn-primary btn-file">UPLOAD QUESTIONS (.CSV) <input class="file-upload" type="file" style="display: none;"></label>
+                            <button class="btn btn-danger remove-all option-modal">REMOVE ALL QUESTIONS</button>
+                        </div>
+                    </h4>
                 </div>
-                <div class="table-responsive">
-                    <h4 class="text-center">{{ $quiz->title }}</h4>
-                    <table class="table table-striped" id="questions-table">
-                        <thead>
-                            <tr>
-                                <th class="col-md-1 text-center">No</th>
-                                <th class="col-md-5">Question</th>
-                                <th class="col-md-3">Correct Answer</th>
-                                <th class="col-md-2"></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @if (isset($questions))
-                                @foreach ($questions as $count => $question)
-                                    <tr>
-                                        <td class="text-center">
-                                            {{-- TODO: (JS) add if check: if is_allowed randomized, show .choose-questions-checks --}}
-                                            <div class="input-group choose-questions-checks hidden">
-                                                <span class="input-group-addon"><input class="chosen-question" type="checkbox"></span>
-                                                <input type="text" class="form-control" value="{{ $count+1 }}" disabled>
-                                            </div><!-- /input-group -->
-                                            {{-- else, show .question-number --}}
-                                            <div class="question-number">
-                                                {{ $count+1 }}
-                                            </div>
-                                        </td>
-                                        <td>{{ $question->question }}</td>
-                                        <td>{{ $question->correct_answer }}</td>
-                                        <td class="text-right">
-                                            <a class="btn btn-info" href="{{ route('quizzes.questions.show', ['quiz' => $quiz->id, 'question' => $question->id]) }}">
-                                                MORE
-                                            </a>
-                                            <button class="btn btn-danger option-modal" data-question-no="{{ $count+1 }}"
-                                                data-url="{{ route('quizzes.questions.destroy', ['quiz' => $quiz->id, 'question' => $question->id]) }}">
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped" id="questions-table">
+                            <thead>
+                                <tr>
+                                    <th class="col-md-1 text-center">No</th>
+                                    <th class="col-md-5">Question</th>
+                                    <th class="col-md-3">Correct Answer</th>
+                                    <th class="col-md-2"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (isset($questions))
+                                    @foreach ($questions as $count => $question)
+                                        <tr>
+                                            <td class="text-center">
+                                                <div class="question-number">
+                                                    {{ $count+1 }}
+                                                </div>
+                                            </td>
+                                            <td>{{ $question->question }}</td>
+                                            <td>{{ $question->correct_answer }}</td>
+                                            <td class="text-right">
+                                                <a class="btn btn-info" href="{{ route('quizzes.questions.show', ['quiz' => $quiz->id, 'question' => $question->id]) }}">
+                                                    MORE
+                                                </a>
+                                                <button class="btn btn-danger option-modal" data-question-no="{{ $count+1 }}" data-url="{{ route('quizzes.questions.destroy', ['quiz' => $quiz->id, 'question' => $question->id]) }}">
                                                     <span class="glyphicon glyphicon-remove"></span>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            @endif
-                        </tbody>
-                    </table>
-                </div> {{-- end .table-responsive --}}
-                <div class="panel-footer">
-                    @if ($has_empty_answer_type)
-                        <button class="btn btn-success update">UPDATE</button>
-                    @else
-                        <a class="btn btn-info" href="{{ route('units.show', $quiz->unit_id) }}">BACK TO PREVIOUS PAGE</a>
-                    @endif
-
-                    <div class="pull-right">
-                        <label class="btn btn-primary btn-file">
-                            UPLOAD QUESTIONS (.CSV) <input class="file-upload" type="file" style="display: none;">
-                        </label>
-                        <a class="btn btn-success" href="{{ route('quizzes.questions.create', $quiz->id) }}">
-                            CREATE NEW QUESTION
-                        </a>
-                    </div>
-                </div> {{-- end .panel-footer --}}
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                @endif
+                            </tbody>
+                        </table>
+                    </div> {{-- end .table-responsive --}}
+                </div>
             </div>
         </div>
     </div>
@@ -125,6 +112,8 @@
 @endsection
 
 @section('extra_js')
+<script src="{{ asset('js/datatables.net.js') }}"></script>
+<script src="{{ asset('js/datatables.bootstrap.js') }}"></script>
 <script src="{{ asset('js/papaparse.min.js') }}"></script>
 <script type="text/javascript">
 (function() {
@@ -132,6 +121,8 @@
     let getToken = function() {
         return $('meta[name=csrf-token]').attr('content')
     }
+
+    $('#questions-table').DataTable()
 
     $('.file-upload').change(function() {
         // do the csv file parsing
