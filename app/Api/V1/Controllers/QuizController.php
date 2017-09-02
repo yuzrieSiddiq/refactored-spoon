@@ -12,6 +12,7 @@ use App\Model\Quiz;
 use App\Model\Question;
 use App\Model\Ranking;
 use App\Model\Settings;
+use App\Model\Group;
 use Dingo\Api\Routing\Helpers;
 
 class QuizController extends Controller
@@ -32,11 +33,14 @@ class QuizController extends Controller
             ->where('year', $year)
             ->first();
 
-        $quizzes = Quiz::where('unit_id', $unit_id)
-            ->where('semester', $semester)
-            ->where('year', $year)
-            ->where('status', 'open')
-            ->get();
+        $quizzes = Group::with(['quiz' => function ($query) use ($unit_id, $semester, $year) {
+            $query->where('unit_id', $unit_id)
+                ->where('semester', $semester)
+                ->where('year', $year)
+                ->get();
+        }])->where('group_number', $this_student->group_number)
+        ->where('is_open', true)
+        ->get();
 
         // all students
         $all_students = Student::where('unit_id', $unit_id)
@@ -59,12 +63,13 @@ class QuizController extends Controller
         foreach ($quizzes as $quiz) {
             $data = [];
             $data['quiz'] = $quiz;
+            $data['is_open'] = $quiz->is_open;
             $data['has_been_attempted'] = false;
             $data['answers_count'] = StudentAnswer::where('student_id', $this_student->id)
-                ->where('quiz_id', $quiz->id)->count();
+                ->where('quiz_id', $quiz->quiz->id)->count();
 
             $student_answers = StudentAnswer::where('student_id', $this_student->id)
-                ->where('quiz_id', $quiz->id)->get();
+                ->where('quiz_id', $quiz->quiz->id)->get();
 
             $data['correct_count'] = 0;
             foreach ($student_answers as $answer) {
@@ -78,9 +83,9 @@ class QuizController extends Controller
                 $data['has_been_attempted'] = true;
 
             $data['rank'] = Ranking::where('student_id', $this_student->id)
-                ->where('quiz_id', $quiz->id)->first();
+                ->where('quiz_id', $quiz->quiz->id)->first();
 
-            $data['total_students'] = Student::where('unit_id', $quiz->unit_id)
+            $data['total_students'] = Student::where('unit_id', $quiz->quiz->unit_id)
                 ->where('semester', $semester)
                 ->where('year', $year)
                 ->count();
@@ -97,23 +102,41 @@ class QuizController extends Controller
     public function show($quiz_id)
     {
         $auth_user = JWTAuth::parseToken()->authenticate();
-        $quiz = Quiz::find($quiz_id);
-
+        $group_quiz = Group::with('quiz')->where('quiz_id', $quiz_id)->first();
+        $quiz_is_randomized = $group_quiz->is_randomized ? true : false;
         // settings semester and year
         $semester = Settings::where('name', 'semester')->first()->value;
         $year = Settings::where('name', 'year')->first()->value;
 
         $this_student = Student::with('unit', 'user')
             ->where('user_id', $auth_user->id)
-            ->where('unit_id', $quiz->unit_id)
+            ->where('unit_id', $group_quiz->quiz->unit_id)
             ->where('semester', $semester)
             ->where('year', $year)
             ->first();
 
         $all_questions = Question::where('quiz_id', $quiz_id)->get();
-        $questions = Self::select_random_question($quiz->show_questions, $all_questions);
+
+        if ($quiz_is_randomized) {
+            $questions = Self::select_random_question($group_quiz->quiz->show_questions, $all_questions);
+        } else {
+            $questions = Self::select_chosen_questions($group_quiz->quiz->show_questions, $group_quiz->chosen_questions);
+        }
 
         return response()->json($questions);
+    }
+
+    public function select_chosen_questions($allowed_questions, $chosen_questions)
+    {
+        $selected_questions = [];
+        $chosen_questions = explode(' ', $chosen_questions);
+
+        foreach ($chosen_questions as $chosen_id) {
+            $question = Question::find($chosen_id);
+            array_push($selected_questions, $question);
+        }
+
+        return $selected_questions;
     }
 
     public function select_random_question($allowed_questions, $questions)
