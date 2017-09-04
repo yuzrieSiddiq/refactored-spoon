@@ -30,6 +30,13 @@ class ResultsController extends Controller
             ->where('type', 'individual')
             ->first();
 
+        $data = [];
+        $data['quiz'] = $quiz_group;
+        $data['quiz_individual'] = $quiz_individual;
+
+        /**
+         * 1st part - overall quiz results
+         * */
         // get the ranking along with the student details (name, year)
         $rankings = Ranking::where('quiz_id', $quiz_individual->id)
             ->with(['student' => function($query) {
@@ -43,31 +50,68 @@ class ResultsController extends Controller
                     ->get();
 
         }])->get();
+        $data['rankings'] = $rankings;
 
-        $students = Student::with('unit', 'user')
-            ->where('unit_id', $quiz_individual->unit_id)
+        /**
+         * 2nd part - compare results between teams (group_leaders)
+         * */
+        $group_leaders = Student::with(['user' => function($query) { $query->with('student_info')->get(); }])
+            ->where('unit_id', $quiz_group->unit_id)
             ->where('semester', $semester)
             ->where('year', $year)
+            ->where('is_group_leader', true)
             ->get();
 
-        $answers = [];
-        foreach ($students as $student) {
-            $student_answers = StudentAnswer::where('quiz_id', $quiz_individual->id)
-                ->where('student_id', $student->id)
-                ->get();
+        $group_rankings = Ranking::with(['student' => function($query) {
+                $query->with(['user' => function($next_query) {
+                    $next_query->with('student_info')->get();
+                }])->get();
+            }])
+            ->where('quiz_id', $quiz_group->id)
+            ->orderBy('rank_no')->get();
 
-            // if already attempted - by checking if the first object of the array is empty
-            if (!empty($student_answers[0])) {
-                array_push($answers, $student_answers);
+        $data['group_leaders'] = $group_leaders;
+        $data['group_rankings'] = $group_rankings;
+
+        /**
+         * 3rd part - compare results by questions
+         * */
+        $questions = Question::where('quiz_id', $quiz_group)->get();
+        $individual_quiz_answers = StudentAnswer::with([
+            'question' => function($query) use ($quiz_individual) {
+                $query->where('quiz_id', $quiz_individual->id)->get();
+            },
+            'student' => function($query) use ($year, $semester) {
+                $query->where('year', $year)->where('semester', $semester)->get();
             }
-        }
+        ])->get();
 
-        $data = [];
-        $data['quiz'] = $quiz_group;
-        $data['quiz_individual'] = $quiz_individual;
-        $data['rankings'] = $rankings;
-        $data['students'] = $students;
-        $data['answers'] = $answers;
+        $group_quiz_answers = StudentAnswer::with([
+            'question' => function($query) use ($quiz_group) {
+                $query->where('quiz_id', $quiz_group->id)->get();
+            },
+            'student' => function($query) use ($year, $semester) {
+                $query->where('year', $year)->where('semester', $semester)->get();
+        }])->get();
+
+        $data['questions'] = $questions;
+        $data['group_quiz_answers'] = $group_quiz_answers;
+        $data['individual_quiz_answers'] = $individual_quiz_answers;
+
+        /**
+         * 4th part - compare results between students in different groups
+         * */
+        $individual_quiz_groups = Group::where('quiz_id', $quiz_individual->id)
+            ->with(['quiz' => function ($query) {
+                $query->with(['ranking'])->get();
+            }])->get();
+        $group_quiz_groups = Group::where('quiz_id', $quiz_group->id)
+            ->with(['quiz' => function ($query) {
+                $query->with(['ranking'])->get();
+            }])->get();
+
+        $data['individual_quiz_groups'] = $individual_quiz_groups;
+        $data['group_quiz_groups'] = $group_quiz_groups;
 
         // return response()->json($data);
         return view ('quiz.results', $data);
@@ -84,27 +128,6 @@ class ResultsController extends Controller
             ->where('quiz_id', $quiz_id)
             ->where('student_id', $student_id)
             ->get();
-
-        $correct_count = 0;
-        $wrong_count = 0;
-
-        // NOTE: may require change
-        if (isset($answers)) {
-            foreach ($answers as $answer) {
-                $question = Question::find($answer->question_id);
-                if ($answer->answer == "4 POINTS")
-                    $correct_count += 4;
-                else if ($answer->answer == "2 POINTS")
-                    $correct_count += 2;
-                else if ($answer->answer == "1 POINTS")
-                        $correct_count += 1;
-                else {
-                    $correct_count += 0;
-                }
-            }
-        }
-        $data['correct_answers'] = $correct_count;
-        $data['wrong_answers'] = $wrong_count;
 
         return response()->json($data);
     }

@@ -52,7 +52,7 @@
                                 <td>{{ $ranking->student['user']['firstname'] }} {{ $ranking->student['user']['lastname'] }}</td>
                                 <td>{{ $ranking->score }}</td>
                                 <td>
-                                    <button class="btn btn-primary questions-modal" data-id="{{ $ranking->id }}"
+                                    <button class="btn btn-primary questions-modal" data-id="{{ $ranking->id }}" data-student-id="{{ $ranking->student['user']['student_info']['student_id'] }}"
                                         data-name = "{{ $ranking->student['user']['firstname'] }} {{ $ranking->student['user']['lastname'] }}"
                                         data-route="{{ route('results.get.answers', ['quiz' => $quiz_individual->id, 'student' => $ranking->student['id']]) }}">
                                         Details
@@ -97,7 +97,6 @@
                 </div>
 
                 <button type="button" class="btn btn-default cancel-modal" data-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-danger delete">DELETE</button>
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
@@ -174,7 +173,7 @@
                 tbody_template.find('.std-answer').addClass(text_color)
                 modal.find('.table-body').append(tbody_template)
             }
-            
+
             // transform to datatable
             let table = modal.find('table')
             table.DataTable({
@@ -187,6 +186,7 @@
 
         $('.container').append(modal)
 
+        // ISSUE: everytime the modal close and open again, it will make duplicate modal
         modal.modal('toggle')
         modal.on('hidden.bs.modal', function (e) {
             $(this).remove()
