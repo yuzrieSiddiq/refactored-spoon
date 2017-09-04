@@ -87,3 +87,8 @@ td {
    0% { transform: rotate(0deg); }
    100% { transform: rotate(360deg); }
 }
+
+.selected-type:disabled {
+    color: #9ca2a5; //grey
+    background-color: #fff;
+}

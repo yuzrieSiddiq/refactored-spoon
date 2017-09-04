@@ -63,7 +63,11 @@
                                 <th class="col-md-2">Duration</th>
                                 <th class="col-md-1">Is Open</th>
                                 <th class="col-md-2">Is Randomized</th>
-                                <th></th>
+                                <th>
+                                    <a class="btn btn-primary form-control" href="{{ route('results.quiz', $quiz->id) }}">
+                                         RESULTS
+                                    </a>
+                                </th>
                             </tr>
                         </thead>
                         <tbody>

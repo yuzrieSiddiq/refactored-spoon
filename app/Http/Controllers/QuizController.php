@@ -285,6 +285,7 @@ class QuizController extends Controller
 
     public function choose_questions(Request $request, $quiz_id, $group_no)
     {
+        $request['chosen_questions'] = substr($request['chosen_questions'], 0, -1);
         $quiz_group = Quiz::find($quiz_id);
         $quiz_individual = Quiz::where('unit_id', $quiz_group->unit_id)
             ->where('semester', $quiz_group->semester)

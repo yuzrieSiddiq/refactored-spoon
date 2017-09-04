@@ -110,4 +110,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('questionsdatatable/{quiz_id}', 'DatatablesController@getQuestionsDatatable')->name('get.questions.datatable');
     Route::get('groupquestionsdatatable/{quiz_id}/group/{group_no}', 'DatatablesController@getGroupQuestionsDatatable')
         ->name('get.questions.group.datatable');
+
+    Route::get('results/{quiz}', 'ResultsController@overall_results')->name('results.quiz');
+    Route::get('results/{quiz}/group/{group}', 'ResultsController@group_results')->name('results.quiz.group');
+    Route::post('results/{quiz}/student/{student}', 'ResultsController@group_results')->name('results.get.answers');
 });
