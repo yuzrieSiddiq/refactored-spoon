@@ -76,7 +76,7 @@ class ResultsController extends Controller
         /**
          * 3rd part - compare results by questions
          * */
-        $questions = Question::where('quiz_id', $quiz_group)->get();
+        $questions = Question::where('quiz_id', $quiz_group->id)->get();
         $individual_quiz_answers = StudentAnswer::with([
             'question' => function($query) use ($quiz_individual) {
                 $query->where('quiz_id', $quiz_individual->id)->get();
@@ -97,7 +97,6 @@ class ResultsController extends Controller
         $data['questions'] = $questions;
         $data['group_quiz_answers'] = $group_quiz_answers;
         $data['individual_quiz_answers'] = $individual_quiz_answers;
-
         /**
          * 4th part - compare results between students in different groups
          * */

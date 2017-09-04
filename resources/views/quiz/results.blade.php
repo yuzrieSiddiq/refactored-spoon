@@ -4,6 +4,8 @@
 @endsection
 @section('content')
 <div class="container">
+
+    {{-- 1st part - overall quiz results --}}
     <div class="panel panel-default">
         <div class="panel-heading">
             <h4>
@@ -53,7 +55,7 @@
                                 <td>{{ $ranking->score }}</td>
                                 <td>
                                     <button class="btn btn-primary questions-modal" data-id="{{ $ranking->id }}" data-student-id="{{ $ranking->student['user']['student_info']['student_id'] }}"
-                                        data-name = "{{ $ranking->student['user']['firstname'] }} {{ $ranking->student['user']['lastname'] }}"
+                                        data-name="{{ $ranking->student['user']['firstname'] }} {{ $ranking->student['user']['lastname'] }}"
                                         data-route="{{ route('results.get.answers', ['quiz' => $quiz_individual->id, 'student' => $ranking->student['id']]) }}">
                                         Details
                                     </button>
@@ -64,11 +66,75 @@
                 </table>
             </div>
         </div>
+    </div>
 
+    <div class="row">
+        <div class="col-md-6">
+            {{-- 2nd part - compare results between teams (group_leaders) --}}
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Teams Comparison</h4>
+                </div>
+                <div class="panel-body">
+                    <canvas id="teams-chart" width="fill" height="150"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            {{-- 4th part - compare results between students in different groups --}}
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4>Tutorial Groups Comparisons</h4>
+                </div>
+                <div class="panel-body">
+                    <canvas id="groups-chart" width="fill" height="150"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- 3rd part - compare results by questions --}}
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4>Questions Comparison</h4>
+        </div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="table-responsive">
+                        <table id="questions-table" class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th width="2%"></th>
+                                    <th width="15%" class="text-center">Questions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($questions as $count => $question)
+                                    <tr>
+                                        <td class="text-center">
+                                            <button class="btn btn-sm btn-primary question">{{ $count+1 }}</button>
+                                        </td>
+                                        <td>{{ $question->question }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div> {{-- end col-6 --}}
+
+                <div class="col-md-6">
+                    <h4>Individual</h4>
+                    <canvas id="individual-results-chart" width="fill" height="150"></canvas>
+                    <h4>Group</h4>
+                    <canvas id="group-results-chart" width="fill" height="150"></canvas>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
-{{-- Delete Modal --}}
+{{-- Details Modal --}}
 <div class="modal fade modal-template" id="questions-modal" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
@@ -126,6 +192,8 @@
 @section('extra_js')
 <script src="{{ asset('js/datatables.net.js') }}"></script>
 <script src="{{ asset('js/datatables.bootstrap.js') }}"></script>
+<script src="{{ asset('js/Chart.min.js') }}"></script>
+<script src="{{ asset('js/chart.piecelabel.min.js') }}"></script>
 <script type="text/javascript">
 (function() {
     let getToken = function () {
@@ -141,6 +209,11 @@
             'targets': -1,
             'orderable': false
         }]
+    })
+    $('#questions-table').DataTable({
+        'sort' : false,
+        'lengthMenu': [ [5, 10, 25, 50], [5, 10, 25, 50] ],
+        'pageLength': 5
     })
 
     $('.questions-modal').click(function() {
@@ -191,6 +264,104 @@
         modal.on('hidden.bs.modal', function (e) {
             $(this).remove()
         })
+    })
+
+    // 2nd part
+    let teams_ctx = document.getElementById("teams-chart").getContext('2d');
+    let teams_chart = new Chart(teams_ctx, {
+        type: 'bar',
+        data: {
+            labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
+            datasets: [{
+                label: '# of Votes',
+                data: [12, 19, 3, 5, 2, 3],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.8)',
+                    'rgba(54, 162, 235, 0.8)',
+                    'rgba(255, 206, 86, 0.8)',
+                    'rgba(75, 192, 192, 0.8)',
+                    'rgba(153, 102, 255, 0.8)',
+                    'rgba(255, 159, 64, 0.8)'
+                ],
+                borderColor: [
+                    'rgba(255,99,132,1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            maintainAspectRatio: false,
+            legend: { display: false },
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero:true
+                    }
+                }]
+            }
+        }
+    })
+
+    // 3rd part
+    let groups_ctx = document.getElementById("groups-chart").getContext('2d');
+    let groups_chart = new Chart(groups_ctx, {
+        type: 'pie',
+        data: {
+            labels: ["Red", "Blue"],
+            datasets: [{
+                data: [10, 20],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.8)',
+                    'rgba(75, 192, 192, 0.8)',
+                ],
+            }],
+        },
+        options: {
+            maintainAspectRatio: false,
+            legend: { display: false },
+        }
+    });
+
+    // 4th part - compare results between students in different groups (delegated function for dynamic content)
+    $('#questions-table').on('click', '.question',function () {
+        let individual_results_ctx = document.getElementById("individual-results-chart").getContext('2d');
+        let individual_results_chart = new Chart(individual_results_ctx, {
+            type: 'pie',
+            data: {
+                labels: ['4 Points', '2 Points', '1 Point', '0 Point'],
+                datasets: [{
+                    data: [10, 20, 15, 25],
+                    backgroundColor: [
+                        'rgba(75, 192, 192, 0.8)',
+                        'rgba(54, 162, 235, 0.8)',
+                        'rgba(255, 206, 86, 0.8)',
+                        'rgba(255, 99, 132, 0.8)',
+                    ],
+                }],
+            }
+        });
+
+        let groups_results_ctx = document.getElementById("group-results-chart").getContext('2d');
+        let groups_results_chart = new Chart(groups_results_ctx, {
+            type: 'pie',
+            data: {
+                labels: ['4 Points', '2 Points', '1 Point', '0 Point'],
+                datasets: [{
+                    data: [10, 20, 15, 25],
+                    backgroundColor: [
+                        'rgba(75, 192, 192, 0.8)',
+                        'rgba(54, 162, 235, 0.8)',
+                        'rgba(255, 206, 86, 0.8)',
+                        'rgba(255, 99, 132, 0.8)',
+                    ],
+                }],
+            }
+        });
     })
 })()
 </script>
