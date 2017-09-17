@@ -55,14 +55,14 @@ class ResultsController extends Controller
         /**
          * 2nd part - compare results between teams (group_leaders)
          * */
-        $group_leaders = Student::with(['user' => function($query) { $query->with('student_info')->get(); }])
+        $team_leaders = Student::with(['user' => function($query) { $query->with('student_info')->get(); }])
             ->where('unit_id', $quiz_group->unit_id)
             ->where('semester', $semester)
             ->where('year', $year)
             ->where('is_group_leader', true)
             ->get();
 
-        $group_rankings = Ranking::with(['student' => function($query) {
+        $team_rankings = Ranking::with(['student' => function($query) {
                 $query->with(['user' => function($next_query) {
                     $next_query->with('student_info')->get();
                 }])->get();
@@ -70,8 +70,8 @@ class ResultsController extends Controller
             ->where('quiz_id', $quiz_group->id)
             ->orderBy('rank_no')->get();
 
-        $data['group_leaders'] = $group_leaders;
-        $data['group_rankings'] = $group_rankings;
+        $data['$team_leaders'] = $team_leaders;
+        $data['$team_rankings'] = $team_rankings;
 
         /**
          * 3rd part - compare results by questions
@@ -134,7 +134,7 @@ class ResultsController extends Controller
     /**
      * AJAX CALL - POST
      */
-    public function group_results($quiz_id, $group_id)
+    public function group_results(Request $request, $quiz_id, $group_id)
     {
         $semester = Settings::where('name', 'semester')->first()->value;
         $year = Settings::where('name', 'year')->first()->value;
@@ -147,14 +147,12 @@ class ResultsController extends Controller
         // get all students under this unit -> this sem, year
 
         // add filter
-        $answer_list = StudentAnswer::with(['question',
-            'student' => function($query) use ($year, $semester, $group) {
-                $query->where('year', $year)
-                    ->where('semester', $semester)
-                    ->where('group_number', $group->group_number)
-                    ->get();
-        }])->get();
+        $answer_list = StudentAnswer::with('question','student')
+            ->where('quiz_id', $quiz_id)
+            ->where('student_id', $request['student_id'])
+            ->get();
 
         return response()->json($answer_list);
+        // return response()->json($request);
     }
 }

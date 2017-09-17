@@ -71,9 +71,9 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
+                            {{-- <tr>
                                 <td class="text-center" colspan="6">Individual Quizzes</td>
-                            </tr>
+                            </tr> --}}
                             @if (!isset($groups_individual[0]))
                                 <tr>
                                     <td class="text-center" colspan="6">No groups are assigned</td>
@@ -94,7 +94,7 @@
                                     @endif
                                 @endforeach
                             @endif
-                            <tr>
+                            {{-- <tr>
                                 <td class="text-center" colspan="6">Group Quizzes</td>
                             </tr>
                             @if (!isset($groups_group[0]))
@@ -116,7 +116,7 @@
                                         </tr>
                                     @endif
                                 @endforeach
-                            @endif
+                            @endif --}}
                         </tbody>
                     </table>
                 </div> {{-- end .table-responsive --}}

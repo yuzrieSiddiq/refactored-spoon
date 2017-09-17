@@ -35,12 +35,14 @@
                 <table id="ranking-table" class="table table-striped">
                     <thead>
                         <tr>
-                            <th width="10%" class="text-center">Ranking</th>
-                            <th width="10%" class="text-center">Group No</th>
-                            <th width="10%" class="text-center">Team No</th>
+                            <th width="5%" class="text-center">I-Rank</th>
+                            <th width="5%" class="text-center">T-Rank</th>
+                            <th width="5%" class="text-center">Group</th>
+                            <th width="5%" class="text-center">Team</th>
                             <th width="10%" class="text-center">Student ID</th>
                             <th width="10%" class="text-center">Student Name</th>
-                            <th width="10%" class="text-center">Score</th>
+                            <th width="5%" class="text-center">I Score</th>
+                            <th width="5%" class="text-center">T Score</th>
                             <th width="10%"></th>
                         </tr>
                     </thead>
@@ -48,13 +50,17 @@
                         @foreach ($rankings as $count => $ranking)
                             <tr class="text-center">
                                 <td>{{ $ranking->rank_no }}</td>
+                                <td>N/A</td>
                                 <td>{{ $ranking->student['group_number'] }}</td>
                                 <td>{{ $ranking->student['team_number'] }}</td>
                                 <td>{{ $ranking->student['user']['student_info']['student_id'] }}</td>
                                 <td>{{ $ranking->student['user']['firstname'] }} {{ $ranking->student['user']['lastname'] }}</td>
                                 <td>{{ $ranking->score }}</td>
+                                <td>N/A</td>
                                 <td>
                                     <button class="btn btn-primary questions-modal" data-id="{{ $ranking->id }}" data-student-id="{{ $ranking->student['user']['student_info']['student_id'] }}"
+                                        data-group-number="{{ $ranking->student['group_number'] }}" data-team-number="{{ $ranking->student['team_number'] }}"
+                                        data-std-id="{{ $ranking->student['id'] }}"
                                         data-name="{{ $ranking->student['user']['firstname'] }} {{ $ranking->student['user']['lastname'] }}"
                                         data-route="{{ route('results.get.answers', ['quiz' => $quiz_individual->id, 'student' => $ranking->student['id']]) }}">
                                         Details
@@ -76,7 +82,7 @@
                     <h4>Teams Comparison</h4>
                 </div>
                 <div class="panel-body">
-                    <canvas id="teams-chart" width="fill" height="150"></canvas>
+                    <canvas id="teams-chart" width="fill" height="250"></canvas>
                 </div>
             </div>
         </div>
@@ -87,7 +93,7 @@
                     <h4>Tutorial Groups Comparisons</h4>
                 </div>
                 <div class="panel-body">
-                    <canvas id="groups-chart" width="fill" height="150"></canvas>
+                    <canvas id="groups-chart" width="fill" height="250"></canvas>
                 </div>
             </div>
         </div>
@@ -135,7 +141,7 @@
 </div>
 
 {{-- Details Modal --}}
-<div class="modal fade modal-template" id="questions-modal" tabindex="-1" role="dialog">
+<div class="modal fade modal-template" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -149,14 +155,16 @@
                             <tr>
                                 <th class="text-center" width="5%">No.</th>
                                 <th width="75%">Question</th>
-                                <th class="text-center" width="20%">Student Answer</th>
+                                <th class="text-center" width="20%">Individual Answer</th>
+                                <th class="text-center" width="20%">Team Answer</th>
                             </tr>
                         </thead>
                         <tbody class="table-body">
                             <tr class="tbody-template hidden">
                                 <td class="question-number text-center"></td>
                                 <td class="question"></td>
-                                <td class="std-answer text-center"></td>
+                                <td class="individual-answer text-center"></td>
+                                <td class="team-answer text-center"></td>
                             </tr>
                         </tbody>
                     </table>
@@ -220,16 +228,23 @@
         let id  = $(this).data('id')
         let name  = $(this).data('name')
         let route = $(this).data('route')
-        let modal = $('.modal-template').clone().removeClass('questions-modal');
+        let modal = $('.modal-template').clone().removeClass('modal-template');
 
         modal.prop('id', 'delete-modal-' + id)
         modal.find('.modal-title').text(name)
 
+        let data = {
+            '_token': getToken(),
+            'student_id': $(this).data('std-id'),
+            'team_number': $(this).data('team-number'),
+            'group_number': $(this).data('group-number'),
+        }
         $.ajax({
             'url': route,
             'method': 'POST',
-            'data': { '_token': getToken() }
+            'data': data,
         }).done(function(response) {
+            console.log(response)
             for (let i = 0; i < response.length; i++) {
                 let text_color = ""
 
@@ -242,8 +257,10 @@
                 tbody_template.removeClass('tbody-template hidden')
                 tbody_template.find('.question-number').text(i+1)
                 tbody_template.find('.question').text(response[i]['question']['question'])
-                tbody_template.find('.std-answer').text(response[i]['answer'])
-                tbody_template.find('.std-answer').addClass(text_color)
+                tbody_template.find('.individual-answer').text(response[i]['answer'])
+                tbody_template.find('.individual-answer').addClass(text_color)
+                tbody_template.find('.team-answer').text('N/A')
+                // tbody_template.find('.std-answer').addClass(text_color)
                 modal.find('.table-body').append(tbody_template)
             }
 
@@ -271,7 +288,7 @@
     let teams_chart = new Chart(teams_ctx, {
         type: 'bar',
         data: {
-            labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
+            labels: ['Team 1', 'Team 2', 'Team 3', 'Team 4', 'Team 5', 'Team 6'],
             datasets: [{
                 label: '# of Votes',
                 data: [12, 19, 3, 5, 2, 3],
@@ -310,20 +327,35 @@
     // 3rd part
     let groups_ctx = document.getElementById("groups-chart").getContext('2d');
     let groups_chart = new Chart(groups_ctx, {
-        type: 'pie',
+        type: 'bar',
         data: {
-            labels: ["Red", "Blue"],
-            datasets: [{
-                data: [10, 20],
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.8)',
-                    'rgba(75, 192, 192, 0.8)',
-                ],
-            }],
+            labels: ['Group 1', 'Group 2', 'Group 3', 'Group 4'],
+            datasets: [
+                {
+                    label: 'Pass',
+                    backgroundColor: 'rgba(54, 162, 235, 0.8)',
+                    data: [4,3,5,4] // passed students
+                },
+                {
+                    label: 'Fail',
+                    backgroundColor: 'rgba(255, 99, 132, 0.8)',
+                    data: [3,7,4,8] // failed students
+                },
+            ]
         },
         options: {
             maintainAspectRatio: false,
             legend: { display: false },
+            scales: {
+                xAxes: [{
+                    barPercentage: 1.0,
+                }],
+                yAxes: [{
+                    ticks: {
+                        beginAtZero:true
+                    }
+                }]
+            }
         }
     });
 
