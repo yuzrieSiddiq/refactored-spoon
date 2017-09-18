@@ -113,5 +113,6 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('results/{quiz}', 'ResultsController@overall_results')->name('results.quiz');
     Route::get('results/{quiz}/group/{group}', 'ResultsController@group_results')->name('results.quiz.group');
+    Route::get('results/{quiz}/question/{question}', 'ResultsController@get_question_answers')->name('results.get.question.answers');
     Route::post('results/{quiz}/student/{student}', 'ResultsController@group_results')->name('results.get.answers');
 });

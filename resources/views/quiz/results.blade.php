@@ -119,7 +119,10 @@
                                 @foreach ($questions as $count => $question)
                                     <tr>
                                         <td class="text-center">
-                                            <button class="btn btn-sm btn-primary question">{{ $count+1 }}</button>
+                                            <button data-route = "{{ route('results.get.question.answers', ['quiz' => $quiz->id, 'question' => $question->id]) }}"
+                                                class="btn btn-sm btn-primary question">
+                                                {{ $count+1 }}
+                                            </button>
                                         </td>
                                         <td>{{ $question->question }}</td>
                                     </tr>
@@ -382,45 +385,54 @@
 
     // 4th part - compare results between students in different groups (delegated function for dynamic content)
     $('#questions-table').on('click', '.question',function () {
-        let individual_results_ctx = document.getElementById("individual-results-chart").getContext('2d');
-        let individual_results_chart = new Chart(individual_results_ctx, {
-            type: 'pie',
-            data: {
-                labels: ['4 Points', '2 Points', '1 Point', '0 Point'],
-                datasets: [{
-                    data: [10, 20, 15, 25],
-                    backgroundColor: [
-                        'rgba(75, 192, 192, 0.8)',
-                        'rgba(54, 162, 235, 0.8)',
-                        'rgba(255, 206, 86, 0.8)',
-                        'rgba(255, 99, 132, 0.8)',
-                    ],
-                }],
-            },
-            options: {
-                plugins: pie_plugins,
-            }
-        });
+        let route = $(this).data('route')
 
-        let groups_results_ctx = document.getElementById("group-results-chart").getContext('2d');
-        let groups_results_chart = new Chart(groups_results_ctx, {
-            type: 'pie',
-            data: {
-                labels: ['4 Points', '2 Points', '1 Point', '0 Point'],
-                datasets: [{
-                    data: [10, 20, 15, 25],
-                    backgroundColor: [
-                        'rgba(75, 192, 192, 0.8)',
-                        'rgba(54, 162, 235, 0.8)',
-                        'rgba(255, 206, 86, 0.8)',
-                        'rgba(255, 99, 132, 0.8)',
-                    ],
-                }],
-            },
-            options: {
-                plugins: pie_plugins,
-            }
-        });
+        $.ajax({
+            'url': route,
+            'method': 'GET'
+        }).done(function (response) {
+            let individual_results_ctx = document.getElementById("individual-results-chart").getContext('2d');
+            let individual_results_chart = new Chart(individual_results_ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['4 Points', '2 Points', '1 Point', '0 Point'],
+                    datasets: [{
+                        data: [
+                            response['individual']['count_4'],response['individual']['count_2'],
+                            response['individual']['count_1'],response['individual']['count_0'],
+                        ],
+                        backgroundColor: [
+                            'rgba(75, 192, 192, 0.8)','rgba(54, 162, 235, 0.8)',
+                            'rgba(255, 206, 86, 0.8)','rgba(255, 99, 132, 0.8)',
+                        ],
+                    }],
+                },
+                options: {
+                    plugins: pie_plugins,
+                }
+            });
+
+            let groups_results_ctx = document.getElementById("group-results-chart").getContext('2d');
+            let groups_results_chart = new Chart(groups_results_ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['4 Points', '2 Points', '1 Point', '0 Point'],
+                    datasets: [{
+                        data: [
+                            response['group']['count_4'],response['group']['count_2'],
+                            response['group']['count_1'],response['group']['count_0'],
+                        ],
+                        backgroundColor: [
+                            'rgba(75, 192, 192, 0.8)','rgba(54, 162, 235, 0.8)',
+                            'rgba(255, 206, 86, 0.8)','rgba(255, 99, 132, 0.8)',
+                        ],
+                    }],
+                },
+                options: {
+                    plugins: pie_plugins,
+                }
+            });
+        })
     })
 })()
 </script>

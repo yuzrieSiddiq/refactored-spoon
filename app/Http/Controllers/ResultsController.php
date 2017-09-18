@@ -86,26 +86,8 @@ class ResultsController extends Controller
          * 3rd part - compare results by questions
          * */
         $questions = Question::where('quiz_id', $quiz_group->id)->get();
-        $individual_quiz_answers = StudentAnswer::with([
-            'question' => function($query) use ($quiz_individual) {
-                $query->where('quiz_id', $quiz_individual->id)->get();
-            },
-            'student' => function($query) use ($year, $semester) {
-                $query->where('year', $year)->where('semester', $semester)->get();
-            }
-        ])->get();
-
-        $group_quiz_answers = StudentAnswer::with([
-            'question' => function($query) use ($quiz_group) {
-                $query->where('quiz_id', $quiz_group->id)->get();
-            },
-            'student' => function($query) use ($year, $semester) {
-                $query->where('year', $year)->where('semester', $semester)->get();
-        }])->get();
-
         $data['questions'] = $questions;
-        $data['group_quiz_answers'] = $group_quiz_answers;
-        $data['individual_quiz_answers'] = $individual_quiz_answers;
+        // to be continue in another function because call by ajax
 
         /**
          * 4th part - compare results between students in different groups
@@ -157,6 +139,69 @@ class ResultsController extends Controller
         $data['groups'] = $groups;
 
         return view ('quiz.results', $data);
+    }
+
+
+    public function get_question_answers($quiz_id, $question_id)
+    {
+        $data = [];
+
+        $semester = Settings::where('name', 'semester')->first()->value;
+        $year = Settings::where('name', 'year')->first()->value;
+        $quiz_group = Quiz::find($quiz_id);
+        $quiz_individual = Quiz::where('unit_id', $quiz_group->unit_id)
+            ->where('semester', $quiz_group->semester)
+            ->where('year', $quiz_group->year)
+            ->where('title', $quiz_group->title)
+            ->where('type', 'individual')
+            ->first();
+
+        $question_group = Question::find($question_id);
+        $question_individual = Question::where('quiz_id', $quiz_individual->id)
+            ->where('question', $question_group->question)
+            ->first();
+
+        $group_quiz_answers = StudentAnswer::where('quiz_id', $quiz_group->id)
+            ->where('question_id', $question_group->id)->get();
+
+        $individual_quiz_answers = StudentAnswer::where('quiz_id', $quiz_individual->id)
+            ->where('question_id', $question_individual->id)->get();
+
+        // get group quiz answers
+        $count_4 = $count_3 = $count_2 = $count_1 = $count_0 = 0;
+        foreach ($group_quiz_answers as $answer) {
+            $count_4 = ($answer->answer == '4 POINTS') ? $count_4+1 : $count_4;
+            $count_3 = ($answer->answer == '3 POINTS') ? $count_3+1 : $count_3;
+            $count_2 = ($answer->answer == '2 POINTS') ? $count_2+1 : $count_2;
+            $count_1 = ($answer->answer == '1 POINTS') ? $count_1+1 : $count_1;
+            $count_0 = ($answer->answer == '0 POINTS') ? $count_0+1 : $count_0;
+
+            $group_quiz_answers['count_4'] = $count_4;
+            $group_quiz_answers['count_3'] = $count_3;
+            $group_quiz_answers['count_2'] = $count_2;
+            $group_quiz_answers['count_1'] = $count_1;
+            $group_quiz_answers['count_0'] = $count_0;
+        }
+        $data['group'] = $group_quiz_answers;
+
+        // get individual quiz answers
+        $count_4 = $count_3 = $count_2 = $count_1 = $count_0 = 0;
+        foreach ($individual_quiz_answers as $answer) {
+            $count_4 = ($answer->answer == '4 POINTS') ? $count_4+1 : $count_4;
+            $count_3 = ($answer->answer == '3 POINTS') ? $count_3+1 : $count_3;
+            $count_2 = ($answer->answer == '2 POINTS') ? $count_2+1 : $count_2;
+            $count_1 = ($answer->answer == '1 POINTS') ? $count_1+1 : $count_1;
+            $count_0 = ($answer->answer == '0 POINTS') ? $count_0+1 : $count_0;
+
+            $individual_quiz_answers['count_4'] = $count_4;
+            $individual_quiz_answers['count_3'] = $count_3;
+            $individual_quiz_answers['count_2'] = $count_2;
+            $individual_quiz_answers['count_1'] = $count_1;
+            $individual_quiz_answers['count_0'] = $count_0;
+        }
+        $data['individual'] = $individual_quiz_answers;
+
+        return response()->json($data);
     }
 
     /**
