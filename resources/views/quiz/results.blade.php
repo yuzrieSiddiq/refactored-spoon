@@ -202,6 +202,7 @@
 <script src="{{ asset('js/datatables.bootstrap.js') }}"></script>
 <script src="{{ asset('js/Chart.min.js') }}"></script>
 <script src="{{ asset('js/chart.piecelabel.min.js') }}"></script>
+<script src="{{ asset('js/chartjs-plugin-datalabels.min.js') }}"></script>
 <script type="text/javascript">
 (function() {
     let getToken = function () {
@@ -244,12 +245,12 @@
             'method': 'POST',
             'data': data,
         }).done(function(response) {
-            console.log(response)
             for (let i = 0; i < response.length; i++) {
                 let text_color = ""
                 let t_text_color = ""
 
                 if (response[i]['answer'] == "4 POINTS")        text_color = 'text-success'
+                else if (response[i]['answer'] == "3 POINTS")   text_color = 'text-primary'
                 else if (response[i]['answer'] == "2 POINTS")   text_color = 'text-primary'
                 else if (response[i]['answer'] == "1 POINTS")   text_color = 'text-warning'
                 else                                            text_color = 'text-danger'
@@ -288,31 +289,42 @@
         })
     })
 
+    // 2nd part - plugins
+    let bar_plugins = {
+        datalabels: {
+            backgroundColor: '#797979',
+            borderColor: '#84888E',
+            borderRadius: 90,
+            color: 'white',
+            font: { weight: 'bold' },
+            align: 'end',
+            anchor: 'end',
+        }
+    }
+
+    let pie_plugins = {
+        datalabels: {
+            backgroundColor: '#797979',
+            borderColor: '#84888E',
+            borderRadius: 90,
+            color: 'white',
+            font: { weight: 'bold' },
+            align: 'center',
+            anchor: 'center',
+        }
+    }
+
     // 2nd part
     let teams_ctx = document.getElementById("teams-chart").getContext('2d');
     let teams_chart = new Chart(teams_ctx, {
         type: 'bar',
         data: {
-            labels: ['Team 1', 'Team 2', 'Team 3', 'Team 4', 'Team 5', 'Team 6'],
+            labels: [@foreach ($team_leaders as $leader) 'Team {{ $leader->team_number }}', @endforeach],
             datasets: [{
-                label: '# of Votes',
-                data: [12, 19, 3, 5, 2, 3],
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.8)',
-                    'rgba(54, 162, 235, 0.8)',
-                    'rgba(255, 206, 86, 0.8)',
-                    'rgba(75, 192, 192, 0.8)',
-                    'rgba(153, 102, 255, 0.8)',
-                    'rgba(255, 159, 64, 0.8)'
-                ],
-                borderColor: [
-                    'rgba(255,99,132,1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(153, 102, 255, 1)',
-                    'rgba(255, 159, 64, 1)'
-                ],
+                label: 'Team Score (%)',
+                data: [@foreach ($team_leaders as $leader) {{ $leader->t_score }}, @endforeach],
+                backgroundColor: [ @foreach ($team_leaders as $leader)'rgba({{ $leader->color }},0.8)', @endforeach ],
+                borderColor: [ @foreach ($team_leaders as $leader)'rgba({{ $leader->color }},1)', @endforeach ],
                 borderWidth: 1
             }]
         },
@@ -322,10 +334,13 @@
             scales: {
                 yAxes: [{
                     ticks: {
+                        min: 0,
+                        max: 100,
                         beginAtZero:true
                     }
                 }]
-            }
+            },
+            plugins: bar_plugins,
         }
     })
 
@@ -334,33 +349,34 @@
     let groups_chart = new Chart(groups_ctx, {
         type: 'bar',
         data: {
-            labels: ['Group 1', 'Group 2', 'Group 3', 'Group 4'],
-            datasets: [
-                {
-                    label: 'Pass',
-                    backgroundColor: 'rgba(54, 162, 235, 0.8)',
-                    data: [4,3,5,4] // passed students
-                },
-                {
-                    label: 'Fail',
-                    backgroundColor: 'rgba(255, 99, 132, 0.8)',
-                    data: [3,7,4,8] // failed students
-                },
-            ]
+            labels: [@foreach ($groups as $group) 'Group {{ $group['group_number'] }}', @endforeach],
+            datasets: [{
+                label: 'Individual Quiz Passing Rate (%)',
+                data: [@foreach ($groups as $group) {{ $group['i_passed_count_percentage'] }}, @endforeach],
+                backgroundColor: [ @foreach ($groups as $group)'rgba({{ $group['group_rgb'] }},0.8)', @endforeach ],
+                borderColor: [ @foreach ($groups as $group)'rgba({{ $group['group_rgb'] }},1)', @endforeach ],
+                borderWidth: 1
+            }, {
+                label: 'Group Quiz Passing Rate (%)',
+                data: [@foreach ($groups as $group) {{ $group['t_passed_count_percentage'] }}, @endforeach],
+                backgroundColor: [ @foreach ($groups as $group)'rgba({{ $group['group_rgb'] }},0.8)', @endforeach ],
+                borderColor: [ @foreach ($groups as $group)'rgba({{ $group['group_rgb'] }},1)', @endforeach ],
+                borderWidth: 1
+            }]
         },
         options: {
             maintainAspectRatio: false,
             legend: { display: false },
             scales: {
-                xAxes: [{
-                    barPercentage: 1.0,
-                }],
                 yAxes: [{
                     ticks: {
+                        min: 0,
+                        max: 100,
                         beginAtZero:true
                     }
                 }]
-            }
+            },
+            plugins: bar_plugins,
         }
     });
 
@@ -380,6 +396,9 @@
                         'rgba(255, 99, 132, 0.8)',
                     ],
                 }],
+            },
+            options: {
+                plugins: pie_plugins,
             }
         });
 
@@ -397,6 +416,9 @@
                         'rgba(255, 99, 132, 0.8)',
                     ],
                 }],
+            },
+            options: {
+                plugins: pie_plugins,
             }
         });
     })

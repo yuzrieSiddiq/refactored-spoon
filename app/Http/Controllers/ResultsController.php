@@ -33,26 +33,6 @@ class ResultsController extends Controller
         $data = [];
         $data['quiz'] = $quiz_group;
         $data['quiz_individual'] = $quiz_individual;
-        /**
-         * 2nd part - compare results between teams (group_leaders)
-         * */
-        $team_leaders = Student::with(['user' => function($query) { $query->with('student_info')->get(); }])
-            ->where('unit_id', $quiz_group->unit_id)
-            ->where('semester', $semester)
-            ->where('year', $year)
-            ->where('is_group_leader', true)
-            ->get();
-
-        $team_rankings = Ranking::with(['student' => function($query) {
-                $query->with(['user' => function($next_query) {
-                    $next_query->with('student_info')->get();
-                }])->get();
-            }])
-            ->where('quiz_id', $quiz_group->id)
-            ->orderBy('rank_no')->get();
-
-        $data['team_leaders'] = $team_leaders;
-        $data['team_rankings'] = $team_rankings;
 
         /**
          * 1st part - overall quiz results
@@ -70,8 +50,7 @@ class ResultsController extends Controller
                     ->get();
 
         }])->get();
-
-        // add the team ranking information
+        // add the team ranking information into overall results table
         foreach ($rankings as $ranking) {
             $team_ranking = Ranking::where('student_id', $ranking->student_id)
                 ->where('quiz_id', $quiz_group->id)
@@ -80,6 +59,28 @@ class ResultsController extends Controller
             $ranking['t_rank_no'] = isset($team_ranking->rank_no) ? $team_ranking->rank_no : 'NA';
         }
         $data['rankings'] = $rankings;
+
+        /**
+         * 2nd part - compare results between teams (group_leaders)
+         * */
+        $team_leaders = Student::with(['user' => function($query) { $query->with('student_info')->get(); }])
+            ->where('unit_id', $quiz_group->unit_id)
+            ->where('semester', $semester)
+            ->where('year', $year)
+            ->where('is_group_leader', true)
+            ->get();
+
+        foreach ($team_leaders as $leader) {
+            $ranking = Ranking::where('student_id', $leader->id)
+                ->where('quiz_id', $quiz_group->id)
+                ->first();
+
+            // get color to put for the charts
+            $leader['color'] = implode(',', $this->generate_rgb($leader->id));
+            $leader['t_rank'] = isset($ranking) ? $ranking->rank_no: 0;
+            $leader['t_score'] = isset($ranking) ? $ranking->score : 0;
+        }
+        $data['team_leaders'] = $team_leaders;
 
         /**
          * 3rd part - compare results by questions
@@ -105,22 +106,56 @@ class ResultsController extends Controller
         $data['questions'] = $questions;
         $data['group_quiz_answers'] = $group_quiz_answers;
         $data['individual_quiz_answers'] = $individual_quiz_answers;
+
         /**
          * 4th part - compare results between students in different groups
          * */
-        $individual_quiz_groups = Group::where('quiz_id', $quiz_individual->id)
-            ->with(['quiz' => function ($query) {
-                $query->with(['ranking'])->get();
-            }])->get();
-        $group_quiz_groups = Group::where('quiz_id', $quiz_group->id)
-            ->with(['quiz' => function ($query) {
-                $query->with(['ranking'])->get();
-            }])->get();
+        $groups = []; // to store all the students following their group
+        $student_groups = Student::where('unit_id', $quiz_group->unit_id)
+            ->where('semester', $semester)->where('year', $year)
+            ->orderBy('group_number', 'asc')->groupBy('group_number')->get();
 
-        $data['individual_quiz_groups'] = $individual_quiz_groups;
-        $data['group_quiz_groups'] = $group_quiz_groups;
+        foreach ($student_groups as $student) {
+            // part 1 - individual quiz
+            $ranking = [];
+            $i_total_count = $i_passed_count = 0;
+            $t_total_count = $t_passed_count = 0;
 
-        // return response()->json($data);
+            // get the students in this group... later append his ranking if exist
+            $i_students = Student::where('year', $year)->where('semester', $semester)->where('group_number', $student->group_number)->get();
+            foreach ($i_students as $student) {
+                $student['ranking'] = Ranking::where('student_id', $student->id)->where('quiz_id', $quiz_individual->id)->first();
+                if (!is_null($student['ranking'])) {
+                    $i_passed_count = $student['ranking']->score >= 50 ? $i_passed_count+1 : $i_passed_count;
+                    $i_total_count++;
+                }
+            }
+            $ranking['i_total_count'] = $i_total_count;
+            $ranking['i_passed_count'] = $i_passed_count;
+            $ranking['i_passed_count_percentage'] = $i_total_count != 0 ? $i_passed_count*100 / $i_total_count : 0;
+
+            // part  2 - team quiz
+            $t_students = Student::where('unit_id', $quiz_group->unit_id)
+                ->where('semester', $semester)->where('year', $year)
+                ->where('group_number', $student->group_number)->where('is_group_leader', true)->get();
+            foreach ($t_students as $student) {
+                $student['ranking'] = Ranking::where('student_id', $student->id)->where('quiz_id', $quiz_group->id)->first();
+                if (!is_null($student['ranking'])) {
+                    $t_passed_count = $student['ranking']->score >= 50 ? $t_passed_count+1 : $t_passed_count;
+                    $t_total_count++;
+                }
+            }
+            $ranking['t_total_count'] = $t_total_count;
+            $ranking['t_passed_count'] = $t_passed_count;
+            $ranking['t_passed_count_percentage'] = $t_total_count != 0 ? $t_passed_count*100 / $t_total_count : 0;
+            $ranking['group_number'] = $student->group_number;
+            $ranking['group_rgb'] = implode(',', $this->generate_rgb($student->id));
+            // ^ need only one because the graph shows only for passed
+            array_push($groups, $ranking);
+        }
+
+        $data['groups'] = $groups;
+
         return view ('quiz.results', $data);
     }
 
@@ -182,5 +217,13 @@ class ResultsController extends Controller
         }
 
         return response()->json($answer_list);
+    }
+
+    public function generate_rgb($num) {
+        $hash = md5('color' . $num); // modify 'color' to get a different palette
+        return array(
+            hexdec(substr($hash, 0, 2)), // r
+            hexdec(substr($hash, 2, 2)), // g
+            hexdec(substr($hash, 4, 2))); //b
     }
 }

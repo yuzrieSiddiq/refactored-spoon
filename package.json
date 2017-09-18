@@ -15,11 +15,12 @@
   },
   "dependencies": {
     "bootstrap-datepicker": "^1.7.1",
-    "chart.js": "^2.6.0",
+    "chart.js": "^2.7.0",
     "chart.piecelabel.js": "^0.5.0",
-    "datatables.net": "^1.10.15",
-    "datatables.net-bs": "^1.10.15",
-    "papaparse": "^4.3.5",
+    "chartjs-plugin-datalabels": "^0.1.0",
+    "datatables.net": "^1.10.16",
+    "datatables.net-bs": "^1.10.16",
+    "papaparse": "^4.3.6",
     "twbs-pagination": "^1.4.1"
   }
 }
