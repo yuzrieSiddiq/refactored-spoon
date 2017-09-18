@@ -50,19 +50,19 @@
                         @foreach ($rankings as $count => $ranking)
                             <tr class="text-center">
                                 <td>{{ $ranking->rank_no }}</td>
-                                <td>N/A</td>
+                                <td>{{ $ranking->t_rank_no }}</td>
                                 <td>{{ $ranking->student['group_number'] }}</td>
                                 <td>{{ $ranking->student['team_number'] }}</td>
                                 <td>{{ $ranking->student['user']['student_info']['student_id'] }}</td>
                                 <td>{{ $ranking->student['user']['firstname'] }} {{ $ranking->student['user']['lastname'] }}</td>
                                 <td>{{ $ranking->score }}</td>
-                                <td>N/A</td>
+                                <td>{{ $ranking->t_score }}</td>
                                 <td>
                                     <button class="btn btn-primary questions-modal" data-id="{{ $ranking->id }}" data-student-id="{{ $ranking->student['user']['student_info']['student_id'] }}"
                                         data-group-number="{{ $ranking->student['group_number'] }}" data-team-number="{{ $ranking->student['team_number'] }}"
                                         data-std-id="{{ $ranking->student['id'] }}"
                                         data-name="{{ $ranking->student['user']['firstname'] }} {{ $ranking->student['user']['lastname'] }}"
-                                        data-route="{{ route('results.get.answers', ['quiz' => $quiz_individual->id, 'student' => $ranking->student['id']]) }}">
+                                        data-route="{{ route('results.get.answers', ['quiz' => $quiz->id, 'student' => $ranking->student['id']]) }}">
                                         Details
                                     </button>
                                 </td>
@@ -247,11 +247,17 @@
             console.log(response)
             for (let i = 0; i < response.length; i++) {
                 let text_color = ""
+                let t_text_color = ""
 
                 if (response[i]['answer'] == "4 POINTS")        text_color = 'text-success'
                 else if (response[i]['answer'] == "2 POINTS")   text_color = 'text-primary'
                 else if (response[i]['answer'] == "1 POINTS")   text_color = 'text-warning'
                 else                                            text_color = 'text-danger'
+
+                if (response[i]['team_answer'] == "4 POINTS")       t_text_color = 'text-success'
+                else if (response[i]['team_answer'] == "2 POINTS")  t_text_color = 'text-primary'
+                else if (response[i]['team_answer'] == "1 POINTS")  t_text_color = 'text-warning'
+                else                                                t_text_color = 'text-danger'
 
                 let tbody_template = modal.find('.tbody-template').clone()
                 tbody_template.removeClass('tbody-template hidden')
@@ -259,8 +265,8 @@
                 tbody_template.find('.question').text(response[i]['question']['question'])
                 tbody_template.find('.individual-answer').text(response[i]['answer'])
                 tbody_template.find('.individual-answer').addClass(text_color)
-                tbody_template.find('.team-answer').text('N/A')
-                // tbody_template.find('.std-answer').addClass(text_color)
+                tbody_template.find('.team-answer').text(response[i]['team_answer'])
+                tbody_template.find('.team-answer').addClass(t_text_color)
                 modal.find('.table-body').append(tbody_template)
             }
 
@@ -276,7 +282,6 @@
 
         $('.container').append(modal)
 
-        // ISSUE: everytime the modal close and open again, it will make duplicate modal
         modal.modal('toggle')
         modal.on('hidden.bs.modal', function (e) {
             $(this).remove()
