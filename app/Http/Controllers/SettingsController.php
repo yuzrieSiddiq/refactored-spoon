@@ -17,10 +17,7 @@ class SettingsController extends Controller
         $year = Settings::where('name', 'year')->first();
 
         // get the quizzes
-        $quizzes = Quiz::with('questions')
-            ->where('semester', $semester->value)
-            ->where('year', $year->value)
-            ->get();
+        $quizzes = Quiz::where('semester', $semester->value)->where('year', $year->value)->get();
 
         // update the settings
         $semester->update([ 'value' => $input['settings-semester'] ]);
@@ -28,7 +25,7 @@ class SettingsController extends Controller
 
         /** Copy over the quizzes to the next semester if exist **/
         foreach ($quizzes as $quiz) {
-            Quiz::create([
+            Quiz::firstOrCreate([
                 'unit_id'           => $quiz->unit_id,
                 'title'             => $quiz->title ,
                 'type'              => $quiz->type,

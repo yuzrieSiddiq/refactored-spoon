@@ -451,11 +451,17 @@
             'settings-semester': $('#settings-semester').val(),
             'settings-year': $('#settings-year').val()
         }
+
+        $('#loading').modal('toggle')
         $.ajax({
             'url': '{{ route('settings.update') }}',
             'method': 'PUT',
             'data': data
         }).done(function() {
+            // show the loading screen
+            setTimeout(function () {
+                $('#loading').modal('toggle')
+            }, 3000)
             window.location.reload()
         })
     })
