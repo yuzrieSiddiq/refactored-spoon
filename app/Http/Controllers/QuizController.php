@@ -301,13 +301,29 @@ class QuizController extends Controller
             ->where('group_number', $group_no)
             ->first();
 
-        $group_group->update([
-            'chosen_questions' => $request['chosen_questions'],
-        ]);
+        $chosen_group_questions = $request['chosen_questions'];
+        $chosen_individual_questions = [];
 
-        $group_individual->update([
-            'chosen_questions' => $request['chosen_questions'],
-        ]);
+        // explode the questions and get the questions for the individual ones
+        $request['chosen_questions'] = explode(' ', $request['chosen_questions']);
+        foreach ($request['chosen_questions'] as $chosen) {
+            $chosen_for_group = Question::find($chosen);
+            $chosen_for_individual = Question::where('quiz_id', $quiz_individual->id)
+                ->where('question', $chosen_for_group->question)
+                ->where('answer1', $chosen_for_group->answer1)
+                ->where('answer2', $chosen_for_group->answer2)
+                ->where('answer3', $chosen_for_group->answer3)
+                ->where('answer4', $chosen_for_group->answer4)
+                ->where('answer5', $chosen_for_group->answer5)
+                ->where('correct_answer', $chosen_for_group->correct_answer)
+                ->first();
+            array_push($chosen_individual_questions, $chosen_for_individual->id);
+        }
+        $chosen_individual_questions = implode(' ', $chosen_individual_questions);
+
+        // update the chosen_questions in Group
+        $group_group->update([ 'chosen_questions' => $chosen_group_questions ]);
+        $group_individual->update([ 'chosen_questions' => $chosen_individual_questions ]);
     }
 
     /**
