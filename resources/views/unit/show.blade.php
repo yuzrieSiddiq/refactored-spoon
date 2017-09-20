@@ -76,20 +76,6 @@
                                                         </select>
                                                     </div>
                                                 </div>
-
-                                                <div class="form-group">
-                                                    <label class="col-sm-2 control-label">Semester</label>
-                                                    <div class="col-sm-10">
-                                                        <input class="form-control semester">
-                                                    </div>
-                                                </div>
-
-                                                <div class="form-group">
-                                                    <label class="col-sm-2 control-label">Year</label>
-                                                    <div class="col-sm-10">
-                                                        <input class="form-control year">
-                                                    </div>
-                                                </div>
                                             </div>
                                         </div> {{-- modal-body --}}
                                         <div class="modal-footer">
@@ -138,8 +124,7 @@
                                                     <td class="text-center">{{ $quiz->show_questions }}</td>
                                                     <td>{{ $quiz->title }}</td>
                                                     <td class="pull-right">
-                                                        {{-- <a href="{{ route('quizzes.report', $quiz->id) }}" class="btn btn-primary">Report</a> --}}
-                                                        <a href="{{ route('quizzes.edit', $quiz->id) }}" class="btn btn-success">Edit Quiz</a>
+                                                        <a href="{{ route('quizzes.edit', $quiz->id) }}" class="btn btn-success">Manage Quiz</a>
                                                         <a class="btn btn-info manage" href="{{ route('quizzes.questions.index', $quiz->id)}}">Manage Questions</a>
                                                     </td>
                                                 </tr>
@@ -364,8 +349,6 @@
         data = {
             '_token': getToken(),
             'student_user_id': $('.select-student').val(),
-            'semester': $('.semester').val(),
-            'year': $('.year').val(),
         }
 
         $.ajax({

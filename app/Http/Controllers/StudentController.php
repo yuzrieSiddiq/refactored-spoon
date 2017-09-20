@@ -54,15 +54,16 @@ class StudentController extends Controller
      */
     public function store(Request $request, $unit_id)
     {
-        $input = $request->only([
-            'student_user_id', 'semester', 'year'
-        ]);
+        $semester = Settings::where('name', 'semester')->first()->value;
+        $year = Settings::where('name', 'year')->first()->value;
+
+        $input = $request->only([ 'student_user_id' ]);
 
         Student::create([
             'user_id' => $input['student_user_id'],
             'unit_id' => $unit_id,
-            'semester'=> $input['semester'],
-            'year'    => $input['year'],
+            'semester'=> $semester,
+            'year'    => $year,
             'team_number' => null,
             'group_number' => null,
             'is_group_leader' => false,
